@@ -1,0 +1,7 @@
+{
+  // Cloudflare Pages 프로젝트 설정 (Wrangler CLI 배포용)
+  // 배포: `npm run deploy` (= npm run build && wrangler pages deploy dist)
+  "name": "reverse-app",
+  "compatibility_date": "2026-06-24",
+  "pages_build_output_dir": "dist"
+}
