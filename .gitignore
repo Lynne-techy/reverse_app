@@ -23,3 +23,6 @@ pnpm-debug.log*
 # cloudflare / wrangler
 .wrangler/
 .gstack/
+
+# typescript incremental build cache
+*.tsbuildinfo
