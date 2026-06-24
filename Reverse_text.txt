@@ -1,0 +1,931 @@
+PRODUCT REQUIREMENTS DOCUMENT · v1.0
+
+Re:Verse
+하나님과의 가장 적극적인 만남
+내가 적은 만큼 만나는 하나님.
+PROJECT · RE:VERSE MVP
+
+KICKOFF · 2026.06.01
+
+DEMO DAY · 2026.08.01
+
+01 · VISION
+
+성경을 읽는 앱이 아니라,
+성경을 쓰는 사람을 위한 앱.
+는 성경 필사를 중심으로 한 크리스천 라이프스타일 앱입니다.
+단순한 성경 읽기 앱이 아닌, 손으로 직접 말씀을 쓰는 행위를 통해
+하나님과 가장 깊이 만나는 경험을 디지털로 기록하고 시각화합니다.
+Re:Verse
+
+PILLAR 01
+
+능동적 신앙 훈련
+
+읽기를 넘어, 쓰는 행위로
+몰입 깊이를 끌어올린다.
+
+PILLAR 02
+
+PILLAR 03
+
+절 히트맵과 잔디로
+여정을 눈으로 확인한다.
+
+성경 인물·지명·시대를
+탐험하고 함께 나눈다.
+
+데이터 기반 성취감
+31,102
+
+배경 탐구 · 공유
+02 / 18
+
+02 · PROBLEM
+
+크리스천은 성경을 매일 만나고 싶지만,
+오늘의 도구는 그것을 도와주지 못한다.
+PROBLEM 01
+
+01
+
+PROBLEM 02
+
+PROBLEM 03
+
+습관이 끊긴다
+
+노트, 종이 성경, 메모 앱이 분산되어 있어 지속의 증거가 남
+지 않는다. 며칠만 빠져도 동기가 사라진다.
+
+맥락이 보이지 않는다
+
+읽고 있는 본문의 저자·시대·지명을 찾으려면 앱을 떠나야 한다.
+입문 크리스천은 진입 장벽에 막혀 멈춘다.
+
+성취가 보이지 않는다
+
+QT
+
+02
+
+03
+
+얼마나 읽었지?"의 답이 없다. 시각적 성취감이 부재해 행위는
+의무가 되고, 결국 앱을 떠난다.
+"
+
+03 / 18
+
+03 · USER PERSONAS
+
+두 명의 사용자, 하나의 여정
+신앙대 꾸준한훈련자
+습관자
+
+PERSONA B
+
+NEEDS
+
+NEEDS
+
+·
+
+·
+
+CORE VALUE
+
+CORE VALUE
+
+"
+
+"
+
+PERSONA A
+
+20-40
+
+·
+
+QT
+
+매일의 성경 묵상을 한 곳에서 누적하고 싶다
+· 내가 쌓아온 시간을 눈에 보이는 형태로 확인하고 싶다
+· 흩어진 QT 노트·기도제목·필사 사진을 통합 관리하고 싶다
+
+내 1년치 묵상이 한 화면에 보인다."
+
+입문대 성경이크리스천
+어려운 새신자
+10-20
+
+·
+
+어디서부터 읽어야 할지 모른다
+· 본문의 배경·인물·지명을 알기 어렵다
+· 지금의 감정·상황에 맞는 말씀을 추천받고 싶다
+
+오늘은 어디부터 펴야 할지 알려준다."
+04 / 18
+
+04 · SOLUTION OVERVIEW
+
+네 가지 기둥으로 짓는 필사 라이프스타일
+쓰기"라는 단일 행위를 중심에 두고, 그 위에 추천·공부·게임화를 얹어
+개인의 신앙 여정을 하나의 일관된 흐름으로 묶는다.
+"
+
+FEATURE 01
+
+습관 만들기
+
+FEATURE 02
+
+FEATURE 04
+
+HABIT TRACKING
+
+필사 범위 추천
+
+FEATURE 03
+
+CONTENT RECOMMEND
+
+BIBLE STUDY
+
+GAMIFICATION
+
+성경 66권 네비게이션, 카메라 필사 인증,
+오늘의 말씀, 500자 QT 에디터
+
+감정·상황 기반(우울·감사·두려움 등) 큐
+레이션 구절 자동 추천
+
+저자·시대·장소·수신 대상·주제 배경 정보
++ The Bible Project 영상 연동
+
+성경 공부
+
+게이미피케이션
+절 히트맵 · 일별 잔디 · 인물/지명
+스탬프(성경 여권)
+31,102
+
+05 / 18
+
+FEATURE 01 · HABIT TRACKING
+
+오늘 펴는 그 페이지가, 곧 기록이 된다
+USER FLOW ·
+
+필사 1회의 4단계
+2026.06.01 ·
+
+01
+
+범위 선택
+
+권 → 장 → 절(시작·종료) · 3단계 드릴다운
+
+02
+
+사진 인증
+
+03
+
+오늘의 말씀 지정
+
+04
+
+간단 QT 기록
+
+손으로 적은 노트 촬영 → Supabase Storage
+
+새벽 5 : 4 2
+
+시편 23편 1-6절
+★ KEY VERSE
+
+여호와는 나의 목자시니
+내게 부족함이 없으리로다."
+"
+
+—
+
+시편 23:1
+
+범위 중 1절을 Key Verse로 픽 → 홈 인용구
+묵상 · 적용 · 기도제목 (각 500자) · 오프라인 저장
+
+REQ-101 · REQ-102 · REQ-103 · REQ-104
+
+QT ·
+
+묵상
+
+목자가 양을 인도하듯, 오늘 하루 내 걸음을 주께 맡기겠습니다.
+
+06 / 18
+
+FEATURE 02 · CONTENT RECOMMENDATION
+
+오늘 마음에" 맞는 구절을, 골라드립니다
+
+"
+
+감정·상황 태그를 선택하면 큐레이션된 구절 묶음을 추천. 결과는 바로 필사 범위로 이어진다.
+EMOTION · SITUATION TAGS
+
+우울할 때
+
+두려울 때
+
+감사할 때
+
+사랑할 때
+
+불안할 때
+
+길을 잃을 때
+
+기뻐할 때
+
++ 12
+
+개
+
+RECOMMENDATION ·
+
+우울할 때
+
+아래의 6구절을 천천히 필사해보세요.
+시편 42:5 — "내 영혼아 네가 어찌하여..."
+· 시편 34:18 — "여호와는 마음이 상한 자를..."
+· 마태복음 11:28 — "수고하고 무거운 짐 진..."
+· 이사야 41:10 — "두려워하지 말라 내가..."
+· 로마서 8:28 — "모든 것이 합력하여 선을..."
+· 빌립보서 4:6-7 — "아무것도 염려하지 말고..."
+·
+
+→ 필사 시작하기
+REQ-201 · REQ-202
+
+07 / 18
+
+FEATURE 03 · BIBLE STUDY
+
+이 본문은 누가, 언제, 어디서, 왜?"
+
+"
+
+성경 66권의 배경 메타데이터를 인앱에서 즉시 조회. The Bible Project 영상이 그 다음 한 발을 받쳐준다.
+
+로마서
+
+BIBLE BACKGROUND CARD
+
+Romans
+
+신약 · 바울서신 · 16장 433절
+저자
+기록 시기
+기록 장소
+수신 대상
+핵심 주제
+
+REQ-301 · REQ-302
+
+사도 바울
+AD 57년경 (3차 전도여행 끝)
+고린도
+로마에 있는 그리스도인들
+이신칭의 · 복음의 보편성 · 새로운 삶
+
+EXTERNAL CONTENT
+
+The Bible Project
+
+한국어 영상 연동
+
+책별 5-8분 요약 영상 임베드
+· Deep link로 앱 내 시청
+· 시청 후 바로 해당 책으로 필사 이동
+· 다국어 자막 (ko / en) 지원
+·
+
+"Read Scripture: Romans Ch. 1-4" · 8:24
+
+08 / 18
+
+FEATURE 04 · GAMIFICATION
+
+내가 쌓아온 시간이 한 눈에 보인다
+A · BIBLE DOT MAP · 31,102
+
+절
+
+B ·
+
+성경 여권
+
+필사한 본문 속 인물·지명이
+스탬프로 수집된다
+예루살렘 · 다윗 · 바울
+· 갈릴리 · 베드로
+· 가나안 (잠김)
+· 에덴동산 (잠김)
+·
+
+적게
+
+많이
+
+전체 진척률 28.4% (8,832 / 31,102 절 )
+
+획득 5 / 전체 122
+
+C · DAILY STREAK · 365 DAYS
+
+REQ-401 · REQ-402 · REQ-403
+
+09 / 18
+
+05 · SCREEN DEFINITIONS
+
+MVP
+ID
+
+SCR-01
+SCR-02
+SCR-03
+SCR-04
+SCR-05
+SCR-06
+
+i18n
+
+화면 정의 12 screens
+
+SCREEN
+
+온보딩
+홈 대시보드
+필사 기록 입력
+절별 히트맵
+일별 히트맵
+추천
+
+PURPOSE
+
+가치 소개 + 로그인
+오늘의 말씀 · 진척률 · 최근 기록
+범위 · 사진 · Key Verse · QT
+31,102 절 Bible Dot Map
+365일 연속 기록 잔디
+감정·상황 태그 → 큐레이션
+3-step
+
+ID
+
+SCR-07
+SCR-08
+SCR-09
+SCR-10
+SCR-11
+SCR-12
+
+SCREEN
+
+배경 상세
+지도 뷰
+인물 카드
+히스토리
+통계
+프로필
+
+PURPOSE
+
+권 메타데이터 + 영상 임베드
+필사한 지명 핀 (성경 여권)
+수집한 인물 스탬프 디테일
+날짜순 기록 타임라인
+총 절수 · 평균 · 가장 많이 쓴 책
+계정 · 알림 · 언어 · 데이터 백업
+66
+
+원 칙 초기 설계부터 언어 팩 분리 (ko.json / en.json). 글로벌(영어권) 확장 기반 확보.
+10 / 18
+
+06 · TECH STACK
+
+주 안에 만들 수 있는 가장 단단한 스택
+
+6
+
+LAYER 01
+
+LAYER 02
+
+LAYER 03
+
+LAYER 04
+
+CLIENT
+
+BACKEND
+
+DATA
+
+OPS
+
+Mobile App
+
+API Server
+
+DB + Storage
+
+Infra · 3rd party
+
+React Native (Expo)
+
+Node.js + Express
+
+PostgreSQL
+
+Vercel · EAS Build
+
+NativeWind (Tailwind)
+
+(or FastAPI
+
+via Supabase
+
+GitHub Actions
+
+Zustand state mgmt
+
+JWT auth
+
+Supabase Auth
+
+Sentry
+
+i18next ko / en pack
+
+REST API /v1/*
+
+Supabase Storage (S3)
+
+Bible Project
+
+— iOS / Android
+—
+
+동시 빌드
+
+오프라인 Local Storage
+
+후보)
+
+사진 업로드 presigned URL
+— 추천 룰베이스 V1
+—
+
+— bible_verses JSON
+—
+
+필사 사진 영구 저장
+
+구조
+
+— KRV / NIV / ESV
+— ko.json / en.json
+
+11 / 18
+
+07 · DATABASE SCHEMA
+
+핵심 6 테이블
+
+PostgreSQL
+
+TABLE
+
+TABLE
+
+TABLE
+
+users
+
+bible_books
+
+bible_verses
+
+id uuid PK
+email text unique
+
+id int PK (1..66)
+name_ko / name_en text
+
+id
+
+display_name text
+preferred_locale text
+
+testament enum
+author, written_at, location
+
+created_at timestamptz
+
+key_themes text[]
+
+31,102 rows
+
+★ CORE TABLE
+
+TABLE
+
+TABLE
+
+transcription_records
+
+qt_entries
+
+bible_locations
+
+id uuid PK
+user_id uuid FK
+
+id uuid PK
+transcription_id uuid FK
+
+range_json
+
+meditation text (max 500)
+application text (max 500)
+
+jsonb
+
+{book, chapter, start_v, end_v}
+
+photo_url, key_verse_id, created_at
+
+bigserial PK
+
+book_id int FK
+chapter, verse int
+text_krv, text_niv, text_esv
+
++ bible_people
+
+id, name_ko, name_en
+lat, lng / type
+verse_refs bigint[]
+
+prayer text (max 500)
+
+12 / 18
+
+08 · API SPECIFICATION
+
+REST API /v1 MVP 13 endpoints
+AUTH · BIBLE
+
+TRANSCRIPTION · RECOMMEND
+
+POST
+
+/v1/auth/signup
+
+POST
+
+/v1/transcriptions
+
+POST
+
+/v1/auth/login
+
+GET
+
+/v1/transcriptions?from=&to=
+
+POST
+
+/v1/auth/refresh
+
+PATCH
+
+/v1/transcriptions/:id
+
+GET
+
+/v1/bible/books
+
+POST
+
+/v1/storage/photo (presigned)
+
+GET
+
+/v1/bible/books/:id
+
+GET
+
+/v1/recommend?emotion=
+
+GET
+
+/v1/bible/verses?book=&chapter=
+
+GET
+
+/v1/stats/heatmap
+
+GET
+
+/v1/passport (stamps)
+
+REQUEST · POST /v1/transcriptions
+
+RESPONSE · 201 Created
+
+{
+
+{
+
+}
+
+"range": { "book": 19, "chapter": 23,
+"start_verse": 1, "end_verse": 6 },
+"key_verse_id": 14245,
+"photo_url": "supabase://photos/u1/2026-06-01.jpg",
+"qt": { "meditation": "...", "prayer": "..." }
+
+"id": "8a3...e1",
+"verses_count": 6,
+"streak_days": 14,
+"new_stamps": ["
+", "
+"total_progress": 0.284
+
+다윗
+
+예루살렘"],
+
+}
+
+13 / 18
+
+09 · 6-WEEK TIMELINE
+
+킥오프 → 데모데이 · 6주 스프린트
+2026.06.08
+
+→ 2026.08.01 · 4 phases · 데모데이 D-Day 고정
+
+PHASE 00 · W1-W2
+
+SPRINT 01 · W3-W4
+
+SPRINT 02 · W5-W6
+
+SPRINT 03 · W7-W8
+
+06.08 — 06.20
+
+06.21 — 07.04
+
+07.05 — 07.18
+
+07.19 — 08.01
+
+사전 준비기
+
+코어 엔진
+
+시각화 & 콘텐츠
+
+완성 & QA
+
+★
+사전 예약 페이지 오픈
+· 팀빌딩 / 디자인 시스템 확정
+· 와이어프레임 12 화면 동결
+· 성경 텍스트 라이선스 검토
+·
+
+스키마 구축 / 시드 데이터
+· 회원가입 · 로그인 (JWT)
+· 필사 코어: 범위 선택 → 저장
+· QT 에디터 (500자) MVP
+· DB
+
+D-DAY
+
+2026.08.01 · DEMO DAY
+"내가 적은 만큼 만나는 하나님" — 첫 공개 시연
+
+카메라 → Supabase Storage
+· 잔디(일별/절별) 렌더링
+· 성경 배경 데이터 뷰어
+· The Bible Project 영상 연동
+·
+
+추천 알고리즘 룰베이스 V1
+· i18n 아키텍처 세팅
+· QA · 크래시 1% 미만 목표
+· 데모데이 배포 / 스토어 검수
+·
+
+내부 테스터 30명+,
+7일 리텐션 50%+, 크래시 <1%
+14 / 18
+
+10 · TEAM
+
+명 주 한 방향
+
+6 ,6 ,
+×1 · PRODUCT
+
+×2 · ENGINEERING
+
+×1 · ENGINEERING
+
+PM / Product Owner
+
+Mobile Engineer
+
+Backend Engineer
+
+React Native (Expo) iOS+Android
+
+Node.js + PostgreSQL + Supabase
+
+스프린트 운영 · 백로그 우선순위
+KPI 트래킹 · 스토어 출시 디렉팅
+
+필사 코어 · 잔디 렌더 최적화
+
+×1 · DESIGN
+
+×1 · CONTENT
+
+Product Designer
+
+Bible Data Lead
+
+디자인 시스템 · 일러스트
+잔디 / 스탬프 / 카드 비주얼 설계
+
+성경 메타데이터 · 큐레이션 셋업
+신학 자문 · 콘텐츠 카피
+
+UI/UX ·
+
+API ·
+
+인증 · 추천 로직 V1
+
+SHARED · TEAM NORMS
+
+매주 1% 개선
+·
+
+주 2회 스탠드업 · 매주 데모
+
+· GitHub Issues + Projects
+· Friday
+
+회고
+
+15 / 18
+
+11 · GOALS & KPIs
+
+데모데이 합격선
+8
+
+월 1일에 이 다섯 숫자가 모이면, 우리는 다음 단계로 간다.
+METRIC 01
+
+METRIC 02
+
+30
+
++
+
+내부 테스터
+
+활성 시드 유저 확보
+
+METRIC 03
+
+15
+
++
+
+일평균 세션
+필사 기록 / 일
+
+★
+
+METRIC 04
+
+METRIC 05
+
+50
+
+40
+
+7
+
+DAU / MAU
+
+%
+
+일 리텐션
+
+습관 형성 핵심 지표
+
+%
+
+참여 깊이
+
+<1
+
+%
+
+크래시율
+Sentry
+
+모니터링
+
+측정 기간 : 2026.07.25 — 08.01 ( 데모데이 직전 1 주 ) · 분석 도구 : Amplitude / Supabase Logs / Sentry
+
+16 / 18
+
+12 · RISKS & POST-MVP ROADMAP
+
+예상되는 벽, 그 다음의 지도
+RISKS · 3 KEY BLOCKERS
+
+R1 성경 텍스트 저작권
+
+개역개정/NIV/ESV 라이선스 협의 지연 가능. → 공개 도메인(WEB) 백업 트랙 병행.
+
+POST-MVP · 4 PHASES
+
+PHASE 2
+
+NIV/ESV
+
+라이선스 · App Store US/UK 배포 · 영어 UX 카피
+
+PHASE 3
+
+R2 31,102 도트 렌더링 성능
+
+글로벌 영어권 출시
+
+커뮤니티 & AI 추천
+
+소그룹 · 기도제목 공유 · 개인화 추천(LLM) · QT 자동 요약
+
+절별 히트맵 초기 페인트 지연 우려. → Canvas 가상 스크롤 + 청크 로딩.
+PHASE 4
+
+디바이스 연동
+
+스마트펜 · iPad 스타일러스 · 웨어러블(독서 시간 자동 트래킹)
+
+R3 6주 일정의 압축
+
+추천 알고리즘은 V1(룰베이스)로 의도적 축소. → AI 기반은 Phase 3로 이연.
+
+PHASE 5
+
+B2B &
+
+사역 파트너십
+
+교회 단위 라이선스 · 선교단체 협업 · QT 출판 파트너
+17 / 18
+
+THE BEGINNING
+
+내가 적은 만큼
+만나는 하나님."
+"
+
+월 1일, 우리는 하나의 완전한 필사 경험을
+세상에 처음 펴 보입니다.
+8
+
+Re:Verse
+PRD v1.0 · 2026.06.01
+
+감사합니다.
+DEMO DAY · 2026.08.01
+
+
