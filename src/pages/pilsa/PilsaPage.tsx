@@ -1,237 +1,206 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./WritingPage.css";
 
+
+
 function WritingPage() {
-
-  // ===========================
-  // Current State
-  // ===========================
-
+ 
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
 
-  // ===========================
-  // Future State
-  // ===========================
+ 
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  // Scripture Range
+ 
+  const [error, setError] = useState("");
+
+ 
+  const [isLoading, setIsLoading] = useState(false);
+
+
   const [range, setRange] = useState("");
-
-  // Language
   const [language, setLanguage] = useState("");
-
-  // Key Verse
   const [keyVerse, setKeyVerse] = useState("");
-
-  // QT Notes
   const [qt, setQt] = useState("");
-
-  // OCR / AI Result
   const [result, setResult] = useState("");
 
-  // ===========================
-  // Event Handlers
-  // ===========================
 
-  const handleImageChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
 
-    if (!event.target.files) return;
 
-    setSelectedImage(event.target.files[0]);
-
-  };
-
-  const handleSubmit = (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
-
-    event.preventDefault();
-
+  useEffect(() => {
     if (!selectedImage) {
-      alert("Please upload an image.");
+      setPreviewUrl(null);
       return;
     }
 
-    console.log("Submitting Writing Record");
+  
+    const objectUrl = URL.createObjectURL(selectedImage);
+    setPreviewUrl(objectUrl);
 
-    console.log({
-      range,
-      language,
-      selectedImage,
-      keyVerse,
-      qt,
-      result,
-    });
+   
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [selectedImage]);
 
-    // TODO:
-    // Send data to backend
+  
 
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || event.target.files.length === 0) return;
+    setSelectedImage(event.target.files[0]);
+    setError(""); // clear any previous "please upload an image" error
   };
 
-  // ===========================
-  // JSX
-  // ===========================
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setError("");
+
+    if (!selectedImage) {
+      setError("Please upload an image of your handwritten scripture.");
+      return;
+    }
+
+  
+    setIsLoading(true);
+    setTimeout(() => {
+      console.log("Submitting Writing Record", {
+        range,
+        language,
+        selectedImage,
+        keyVerse,
+        qt,
+        result,
+      });
+      setIsLoading(false);
+      // TODO: send data to backend
+    }, 1200);
+  };
+
+
 
   return (
+    <div className="writing-page">
+      <div className="writing-container">
+        <h1 className="writing-title">Scripture Writing</h1>
+        <p className="writing-subtitle">
+          Copy today's verse, upload it, and keep the moment.
+        </p>
 
-    <div>
+        <form className="writing-form" onSubmit={handleSubmit}>
+          {error && (
+            <div className="error-message" role="alert">
+              {error}
+            </div>
+          )}
 
-      <h1>Scripture Writing</h1>
+       
+          <div className="form-group">
+            <div className="label-row">
+              <label htmlFor="range">Scripture Range</label>
+              <span className="badge">Coming soon</span>
+            </div>
+            <input
+              id="range"
+              type="text"
+              placeholder="e.g. Psalm 23:1-6"
+              value={range}
+              onChange={(e) => setRange(e.target.value)}
+              disabled
+            />
+          </div>
 
-      <form onSubmit={handleSubmit}>
+         
+          <div className="form-group">
+            <div className="label-row">
+              <label htmlFor="language">Language</label>
+              <span className="badge">Coming soon</span>
+            </div>
+            <input
+              id="language"
+              type="text"
+              placeholder="e.g. Korean / English"
+              value={language}
+              onChange={(e) => setLanguage(e.target.value)}
+              disabled
+            />
+          </div>
 
-        {/* ===========================
-            Future Feature
-            Scripture Range
-        =========================== */}
+         
+          <div className="form-group">
+            <label htmlFor="image-upload">Upload Handwritten Scripture</label>
 
-        <div>
+         
+            <label htmlFor="image-upload" className="upload-dropzone">
+              {previewUrl ? (
+                <img src={previewUrl} alt="Preview of uploaded scripture" className="upload-preview" />
+              ) : (
+                <span className="upload-placeholder">
+                  📷 Tap to select a photo
+                </span>
+              )}
+            </label>
+            <input
+              id="image-upload"
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="upload-input"
+            />
 
-          <label>Scripture Range</label>
+            {selectedImage && (
+              <p className="file-name">Selected file: {selectedImage.name}</p>
+            )}
+          </div>
 
-          <input
-            type="text"
-            placeholder="Coming Soon"
-            value={range}
-            onChange={(e) => setRange(e.target.value)}
-            disabled
-          />
+        
+          <div className="form-group">
+            <div className="label-row">
+              <label htmlFor="key-verse">Key Verse</label>
+              <span className="badge">Coming soon</span>
+            </div>
+            <textarea
+              id="key-verse"
+              placeholder="Which verse stood out to you?"
+              value={keyVerse}
+              onChange={(e) => setKeyVerse(e.target.value)}
+              disabled
+            />
+          </div>
 
-        </div>
+       
+          <div className="form-group">
+            <div className="label-row">
+              <label htmlFor="qt">QT Notes</label>
+              <span className="badge">Coming soon</span>
+            </div>
+            <textarea
+              id="qt"
+              placeholder="What is this verse teaching you?"
+              value={qt}
+              onChange={(e) => setQt(e.target.value)}
+              disabled
+            />
+          </div>
 
-        <br />
+        
+          <div className="form-group">
+            <div className="label-row">
+              <label htmlFor="result">Recognition Result</label>
+              <span className="badge">Coming soon</span>
+            </div>
+            <textarea
+              id="result"
+              placeholder="Transcribed text will appear here"
+              value={result}
+              onChange={(e) => setResult(e.target.value)}
+              disabled
+            />
+          </div>
 
-        {/* ===========================
-            Future Feature
-            Language
-        =========================== */}
-
-        <div>
-
-          <label>Language</label>
-
-          <input
-            type="text"
-            placeholder="Coming Soon"
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            disabled
-          />
-
-        </div>
-
-        <br />
-
-        {/* ===========================
-            Current Feature
-            Image Upload
-        =========================== */}
-
-        <div>
-
-          <label>Upload Handwritten Scripture</label>
-
-          <br />
-
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-          />
-
-        </div>
-
-        <br />
-
-        {selectedImage && (
-
-          <p>
-
-            Selected File:
-
-            {" "}
-
-            {selectedImage.name}
-
-          </p>
-
-        )}
-
-        <br />
-
-        {/* ===========================
-            Future Feature
-            Key Verse
-        =========================== */}
-
-        <div>
-
-          <label>Key Verse</label>
-
-          <textarea
-            placeholder="Coming Soon"
-            value={keyVerse}
-            onChange={(e) => setKeyVerse(e.target.value)}
-            disabled
-          />
-
-        </div>
-
-        <br />
-
-        {/* ===========================
-            Future Feature
-            QT
-        =========================== */}
-
-        <div>
-
-          <label>QT Notes</label>
-
-          <textarea
-            placeholder="Coming Soon"
-            value={qt}
-            onChange={(e) => setQt(e.target.value)}
-            disabled
-          />
-
-        </div>
-
-        <br />
-
-        {/* ===========================
-            Future Feature
-            OCR / AI Result
-        =========================== */}
-
-        <div>
-
-          <label>Recognition Result</label>
-
-          <textarea
-            placeholder="Coming Soon"
-            value={result}
-            onChange={(e) => setResult(e.target.value)}
-            disabled
-          />
-
-        </div>
-
-        <br />
-
-        <button type="submit">
-
-          Upload
-
-        </button>
-
-      </form>
-
+          <button className="submit-button" type="submit" disabled={isLoading}>
+            {isLoading ? "Saving..." : "Upload"}
+          </button>
+        </form>
+      </div>
     </div>
-
   );
-
 }
 
 export default WritingPage;
