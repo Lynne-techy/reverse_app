@@ -11,8 +11,9 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/" element={<MainPage />} />
+        <Route path="/mainpage" element={<MainPage />} />
         <Route path="/pilsa" element={<PilsaPage />} />
         <Route path="/heatmap" element={<HeatmapPage />} />
         <Route path="/profile" element={<ProfilePage />} />
