@@ -1,1 +1,177 @@
-/* TBU */
+
+:root {
+  --color-parchment: #eaf4fd;
+  --color-surface: #ffffff;
+  --color-ink: #16304a;
+  --color-subink: #5e7488;
+  --color-indigo2: #2e90d9;
+  --color-gold: #f97e62;
+  --color-line: #d6e8f6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.writing-page {
+  min-height: 100vh;
+  padding: 32px 16px 64px;
+  background: linear-gradient(180deg, #dcefec 0%, var(--color-parchment) 100%);
+  font-family: "Pretendard", system-ui, sans-serif;
+  color: var(--color-ink);
+}
+
+.writing-container {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.writing-title {
+  font-family: "Noto Serif KR", serif;
+  font-size: 26px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.writing-subtitle {
+  font-size: 14px;
+  color: var(--color-subink);
+  margin: 6px 0 24px;
+}
+
+.writing-form {
+  background: var(--color-surface);
+  border-radius: 24px;
+  box-shadow: 0 1px 2px rgba(30, 32, 48, 0.04), 0 8px 24px rgba(30, 32, 48, 0.06);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.error-message {
+  background: #fdecea;
+  color: #b3261e;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 13px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-subink);
+}
+
+.badge {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--color-gold);
+  background: rgba(249, 126, 98, 0.12);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.form-group input[type="text"],
+.form-group textarea {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--color-line);
+  font-size: 14px;
+  outline: none;
+  font-family: inherit;
+  resize: none;
+}
+
+.form-group input:disabled,
+.form-group textarea:disabled {
+  background: #f4f8fb;
+  color: var(--color-subink);
+  cursor: not-allowed;
+}
+
+.form-group textarea {
+  min-height: 72px;
+}
+
+.form-group input[type="text"]:focus,
+.form-group textarea:focus {
+  border-color: var(--color-indigo2);
+}
+
+
+.upload-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.upload-dropzone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+  border: 2px dashed var(--color-line);
+  border-radius: 16px;
+  cursor: pointer;
+  overflow: hidden;
+  background: #f9fbfd;
+  transition: border-color 0.15s ease;
+}
+
+.upload-dropzone:hover {
+  border-color: var(--color-indigo2);
+}
+
+.upload-placeholder {
+  font-size: 14px;
+  color: var(--color-subink);
+}
+
+.upload-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.file-name {
+  font-size: 12px;
+  color: var(--color-subink);
+  margin: 0;
+}
+
+.submit-button {
+  margin-top: 4px;
+  padding: 14px;
+  border-radius: 16px;
+  border: none;
+  background: var(--color-indigo2);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.submit-button:hover:not(:disabled) {
+  opacity: 0.9;
+}
