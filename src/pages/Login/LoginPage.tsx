@@ -2,7 +2,6 @@ import { useState } from "react";
 import "./LoginPage.css";
 
 function LoginPage() {
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -10,70 +9,54 @@ function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); 
+    e.preventDefault();
     setError("");
 
     const trimmedEmail = email.trim();
     const trimmedPassword = password.trim();
 
     if (!trimmedEmail || !trimmedPassword) {
-    setError("Please enter your email and password.");
-    return;
-  }
+      setError("Please enter your email and password.");
+      return;
+    }
 
     if (!trimmedEmail.includes("@")) {
-    setError("Please enter a valid email address.");
-    return;
-  }
+      setError("Please enter a valid email address.");
+      return;
+    }
 
     setIsLoading(true);
 
     try {
-    /*
-      To call backend later
-      Example:
-      await login({
-          email: trimmedEmail,
-          password: trimmedPassword
+      /*
+        To call backend later
+        Example:
+        await login({
+            email: trimmedEmail,
+            password: trimmedPassword
+        });
+      */
+      console.log("Login button clicked", {
+        email: trimmedEmail,
+        password: trimmedPassword,
+        rememberMe,
       });
-
-    */
-
-    console.log("Login button clicked", {
-      email: trimmedEmail,
-      password: trimmedPassword,
-      rememberMe
-    });
-  }
-
-    catch (err) {
-    setError("Unable to log in. Please try again.");
-  }
-
-  finally {
-
-    // Whether login succeeds or fails,
-    // re-enable the button.
-    setIsLoading(false);
-
-  }
-
-};
-    
+    } catch (err) {
+      setError("Unable to log in. Please try again.");
+    } finally {
+      // Whether login succeeds or fails, re-enable the button.
+      setIsLoading(false);
+    }
   };
 
-  
   const handleSocialLogin = (provider: "kakao" | "google") => {
     console.log(`${provider} login clicked`);
     // TODO: 백엔드 API 필요 (replace with real OAuth redirect / API call)
   };
 
   return (
-    
     <div className="login-page">
-     
       <div className="login-hero">
-      
         <span className="cloud cloud--top" />
         <span className="cloud cloud--bottom" />
 
@@ -87,19 +70,16 @@ function LoginPage() {
         </div>
       </div>
 
-  
       <div className="login-card">
-    
         {error && (
           <p className="login-error" role="alert">
             {error}
           </p>
         )}
 
-   
         <div className="login-social">
           <button
-            type="button" 
+            type="button"
             className="btn btn--kakao"
             onClick={() => handleSocialLogin("kakao")}
           >
@@ -115,17 +95,14 @@ function LoginPage() {
           </button>
         </div>
 
-  
         <div className="login-divider">
           <span />
           <p>or</p>
           <span />
         </div>
 
-   
         <form className="login-form" onSubmit={handleLogin}>
           <div className="form-field">
-         
             <label htmlFor="email">Email</label>
             <input
               id="email"
@@ -151,32 +128,18 @@ function LoginPage() {
             />
           </div>
 
-          <label 
-            className="checkbox-field"
-            htmlFor="rememberMe"
-            >
+          <label className="checkbox-field" htmlFor="rememberMe">
             <input
               id="rememberMe"
               type="checkbox"
-              checked={rememberMe} 
+              checked={rememberMe}
               onChange={(e) => setRememberMe(e.target.checked)}
             />
             로그인 상태 유지
           </label>
 
-          <button 
-            type="submit" 
-            className="btn btn--primary"
-            disabled={isLoading}        
-            >
-            Login
-            disabled={isLoading}
-          >
-            {
-              isLoading
-                ? "Logging in..."
-                : "Login"
-            }
+          <button type="submit" className="btn btn--primary" disabled={isLoading}>
+            {isLoading ? "Logging in..." : "Login"}
           </button>
         </form>
 
