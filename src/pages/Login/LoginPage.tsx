@@ -2,89 +2,188 @@ import { useState } from "react";
 import "./LoginPage.css";
 
 function LoginPage() {
-  
-  // State 
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Event Handlers 
-    const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); 
     setError("");
 
-    if (email.trim() === "" || password.trim() === "") {
-      setError("Please enter your email and password.");
-      return;
-    }
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
 
-    // 나중에 API call로 업뎃
-    console.log("Login button clicked");
-    console.log({
-      email,
-      password,
-      rememberMe,
+    if (!trimmedEmail || !trimmedPassword) {
+    setError("Please enter your email and password.");
+    return;
+  }
+
+    if (!trimmedEmail.includes("@")) {
+    setError("Please enter a valid email address.");
+    return;
+  }
+
+    setIsLoading(true);
+
+    try {
+    /*
+      To call backend later
+      Example:
+      await login({
+          email: trimmedEmail,
+          password: trimmedPassword
+      });
+
+    */
+
+    console.log("Login button clicked", {
+      email: trimmedEmail,
+      password: trimmedPassword,
+      rememberMe
     });
+  }
+
+    catch (err) {
+    setError("Unable to log in. Please try again.");
+  }
+
+  finally {
+
+    // Whether login succeeds or fails,
+    // re-enable the button.
+    setIsLoading(false);
+
+  }
+
+};
+    
+  };
+
+  
+  const handleSocialLogin = (provider: "kakao" | "google") => {
+    console.log(`${provider} login clicked`);
+    // TODO: 백엔드 API 필요 (replace with real OAuth redirect / API call)
   };
 
   return (
-    <div>
+    
+    <div className="login-page">
+     
+      <div className="login-hero">
+      
+        <span className="cloud cloud--top" />
+        <span className="cloud cloud--bottom" />
 
-      <h1>Login</h1>
+        <div className="login-hero__content">
+          <h1 className="login-logo">
+            Re
+            <span className="login-logo__accent">:</span>
+            Verse
+          </h1>
+          <p className="login-tagline">내가 적은 만큼 만나는 하나님</p>
+        </div>
+      </div>
 
-      {error && <p>{error}</p>}
+  
+      <div className="login-card">
+    
+        {error && (
+          <p className="login-error" role="alert">
+            {error}
+          </p>
+        )}
 
-      <form onSubmit={handleLogin}>
+   
+        <div className="login-social">
+          <button
+            type="button" 
+            className="btn btn--kakao"
+            onClick={() => handleSocialLogin("kakao")}
+          >
+            <span className="btn__icon">💬</span> 카카오로 시작하기
+          </button>
 
-        <div>
-          <label>Email</label>
-          <br />
-
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
+          <button
+            type="button"
+            className="btn btn--google"
+            onClick={() => handleSocialLogin("google")}
+          >
+            <span className="btn__icon">🔵</span> Google로 시작하기
+          </button>
         </div>
 
-        <br />
-
-        <div>
-          <label>Password</label>
-          <br />
-
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
+  
+        <div className="login-divider">
+          <span />
+          <p>or</p>
+          <span />
         </div>
 
-        <br />
+   
+        <form className="login-form" onSubmit={handleLogin}>
+          <div className="form-field">
+         
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+            />
+          </div>
 
-        <label>
+          <div className="form-field">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+            />
+          </div>
 
-          <input
-            type="checkbox"
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
-          />
+          <label 
+            className="checkbox-field"
+            htmlFor="rememberMe"
+            >
+            <input
+              id="rememberMe"
+              type="checkbox"
+              checked={rememberMe} 
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
+            로그인 상태 유지
+          </label>
 
-          로그인 상태 유지
+          <button 
+            type="submit" 
+            className="btn btn--primary"
+            disabled={isLoading}        
+            >
+            Login
+            disabled={isLoading}
+          >
+            {
+              isLoading
+                ? "Logging in..."
+                : "Login"
+            }
+          </button>
+        </form>
 
-        </label>
-
-        <br />
-        <br />
-
-        <button type="submit">
-          Login
-        </button>
-
-      </form>
-
+        <p className="login-terms">
+          계속 진행하면 이용약관 및 개인정보처리방침에 동의합니다
+        </p>
+      </div>
     </div>
   );
 }
