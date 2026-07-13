@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import "./WritingPage.css";
+import "./PilsaPage.css";
 
 
 
