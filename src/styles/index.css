@@ -4,6 +4,8 @@
 @theme {
   /* 브랜드 */
   --color-brand: #2663ec;
+  --color-sidebar: #15598a;
+  --color-accent: #f97e62;
 
   /* 잔디밭(contribution calendar) 5단계 컬러맵 */
   --color-jandi-0: #f0f0f0;
