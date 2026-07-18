@@ -5,6 +5,8 @@ docs
 *.log
 .env
 .env.*
+# 프로덕션 빌드(vite build)에 필요한 공개 값(Supabase URL/anon 키)이라 이미지에 포함한다.
+!.env.production
 README.md
 Reverse_text.txt
 wrangler.jsonc
