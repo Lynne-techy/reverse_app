@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../../auth/AuthContext";
 import "./LoginPage.css";
 
 const onboardingSlides = [
@@ -23,6 +25,8 @@ const onboardingSlides = [
 ];
 
 function LoginPage() {
+  const { session, isLoading: isAuthLoading, signInWithGoogle } = useAuth();
+
   const [showLogin, setShowLogin] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -30,7 +34,12 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [socialLoading, setSocialLoading] = useState<"google" | null>(null);
+
+  // 이미 로그인돼 있으면(새로고침·재방문) 메인으로 보낸다.
+  if (!isAuthLoading && session) {
+    return <Navigate to="/mainpage" replace />;
+  }
 
   const handleNext = () => {
     if (currentSlide < onboardingSlides.length - 1) {
@@ -61,26 +70,28 @@ function LoginPage() {
       return;
     }
 
-    setIsLoading(true);
-
-    try {
-      console.log("Login button clicked", {
-        email: trimmedEmail,
-        password: trimmedPassword,
-        rememberMe,
-      });
-
-      // TODO
-      // await login(...)
-    } catch {
-      setError("Unable to log in. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
+    // 이메일/비밀번호 로그인은 아직 연결되지 않았습니다(구글 OAuth 우선).
+    setError("이메일 로그인은 준비 중입니다. 아래 'Google로 시작하기'를 이용해 주세요.");
   };
 
-  const handleSocialLogin = (provider: "kakao" | "google") => {
-    console.log(`${provider} login clicked`);
+  const handleSocialLogin = async (provider: "kakao" | "google") => {
+    setError("");
+
+    if (provider === "kakao") {
+      // 카카오는 Supabase에 provider 미설정 상태 — 설정 후 연결 예정.
+      setError("카카오 로그인은 준비 중입니다. 구글로 시작해 주세요.");
+      return;
+    }
+
+    setSocialLoading("google");
+    try {
+      // Supabase → Google 동의 화면으로 리다이렉트된다(성공 시 이 페이지를 떠남).
+      await signInWithGoogle();
+    } catch (err) {
+      console.error("google login error", err);
+      setError("구글 로그인을 시작하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+      setSocialLoading(null);
+    }
   };
 
   return (
@@ -213,10 +224,13 @@ function LoginPage() {
             type="button"
             className="btn btn-google"
             onClick={() => handleSocialLogin("google")}
+            disabled={socialLoading === "google"}
           >
             <span className="social-icon">🔵</span>
 
-            Google로 시작하기
+            {socialLoading === "google"
+              ? "구글로 이동 중…"
+              : "Google로 시작하기"}
           </button>
 
         </div>
@@ -280,12 +294,8 @@ function LoginPage() {
             로그인 상태 유지
           </label>
 
-          <button
-            type="submit"
-            className="btn btn-primary"
-            disabled={isLoading}
-          >
-            {isLoading ? "Logging in..." : "Login"}
+          <button type="submit" className="btn btn-primary">
+            Login
           </button>
 
         </form>

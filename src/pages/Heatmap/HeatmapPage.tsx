@@ -10,8 +10,8 @@ interface HeatmapDay {
 }
 
 interface HeatmapProps {
- 
-  activity: number[];
+  // 임시방편: prop이 없어도 크래시하지 않도록 optional + 기본값([]) 처리.
+  activity?: number[];
 
 
   startDate?: Date | string;
@@ -79,7 +79,7 @@ function formatDateLabel(date: Date): string {
   });
 }
 
-function Heatmap({ activity, startDate }: HeatmapProps) {
+function Heatmap({ activity = [], startDate }: HeatmapProps) {
   const days = buildCalendarDays(activity, startDate);
   const weeks = chunkIntoWeeks(days);
 

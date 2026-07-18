@@ -131,3 +131,12 @@ export function buildContributionWeeks(today: Date, weeks: number): Week[] {
   }
   return result;
 }
+
+/**
+ * 히트맵(HeatmapPage)용 임시 더미 — 최근 365일 필사 횟수 배열(오래된→최신).
+ * HeatmapPage는 flat `number[]`를 받으므로 별도로 생성한다. 실제 API 연동 시 대체.
+ */
+export const heatmapActivity: number[] = Array.from({ length: 365 }, (_, i) => {
+  const cellDate = new Date(Date.now() - (364 - i) * DAY_MS);
+  return baseCount(cellDate);
+});

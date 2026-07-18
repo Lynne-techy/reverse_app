@@ -19,6 +19,8 @@ pnpm-debug.log*
 .env
 .env.*
 !.env.example
+# .env.production 은 프로덕션 빌드에 필요한 공개 값(Supabase anon 키·URL)만 담으므로 추적한다.
+!.env.production
 
 # cloudflare / wrangler
 .wrangler/
