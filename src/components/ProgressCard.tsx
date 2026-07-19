@@ -1,5 +1,7 @@
 import { progress } from "../data/dummy";
 
+// 현재는 더미(progress). 실제 연동 시 GET /users/me/progress 응답으로 교체:
+//   percent = progressRate, written = coveredVerses, total = totalVerses(백엔드 31,088 기준).
 export default function ProgressCard() {
   const percent = progress.ratio * 100;
 

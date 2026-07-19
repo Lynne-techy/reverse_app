@@ -1,8 +1,11 @@
 // 예시용 더미 데이터. 실제 API/DB 연동은 이후 단계에서 대체된다.
 
-export const BIBLE_TOTAL_VERSES = 31_102;
+// 진척률 분모. 백엔드가 실제로 시딩한 개역개정 66권 절 수(31,088)와 일치해야 한다.
+// (31,102는 KJV 영어 전통 총 절 수라 이 앱 데이터와 무관 — 쓰면 100% 도달 불가.)
+// 실제 API 연동 시엔 이 상수를 버리고 GET /users/me/progress 응답의 totalVerses를 쓸 것.
+export const BIBLE_TOTAL_VERSES = 31_088;
 
-/** 전체 진척률 (PRD: 28.4% / 8,832절) */
+/** 전체 진척률 (더미). 실제로는 GET /users/me/progress의 coveredVerses/totalVerses로 대체. */
 export const progress = {
   written: 8_832,
   total: BIBLE_TOTAL_VERSES,
