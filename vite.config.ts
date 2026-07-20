@@ -5,7 +5,7 @@ import tailwindcss from "@tailwindcss/vite";
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, ".", "");
-  const apiTarget = env.VITE_API_BASE_URL || "http://localhost:3000";
+  const apiTarget = env.VITE_API_BASE_URL || "http://localhost:3000"; // 포트 6333일지 확인하기
 
   return {
     plugins: [react(), tailwindcss()],

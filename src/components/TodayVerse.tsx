@@ -1,24 +1,45 @@
-import { todayVerse } from "../data/dummy";
+import type { Verse } from "../api/verses";
 
-export default function TodayVerse() {
+interface TodayVerseProps {
+  verse: Verse | null;
+  isLoading: boolean;
+}
+
+function TodayVerse({
+  verse,
+  isLoading,
+}: TodayVerseProps) {
+  if (isLoading) {
+    return (
+      <section className="rounded-2xl bg-white p-6">
+        오늘의 말씀을 불러오는 중...
+      </section>
+    );
+  }
+
+  if (!verse) {
+    return (
+      <section className="rounded-2xl bg-white p-6">
+        오늘의 말씀을 불러오지 못했습니다.
+      </section>
+    );
+  }
+
   return (
-    <section className="overflow-hidden rounded-3xl bg-gradient-to-br from-brand to-jandi-4 px-7 py-9 text-white shadow-sm sm:px-10 sm:py-12">
-      <p className="text-sm font-medium text-white/70">오늘의 말씀 · {todayVerse.reference}</p>
-
-      <blockquote className="mt-3 text-2xl font-bold leading-snug sm:text-3xl">
-        “{todayVerse.text}”
-      </blockquote>
-
-      <p className="mt-6 text-sm text-white/80">
-        내가 적은 만큼 만나는 하나님 — 오늘의 한 절을 손으로 적어보세요.
+    <section className="hero-card">
+      <p className="text-sm font-semibold text-blue-500">
+        오늘의 말씀
       </p>
 
-      <button
-        type="button"
-        className="mt-5 rounded-full bg-white px-5 py-2.5 text-sm font-semibold text-brand transition-transform hover:-translate-y-0.5"
-      >
-        오늘의 필사 시작하기 →
-      </button>
+      <p className="mt-4 text-xl leading-relaxed text-slate-800">
+        {verse.text}
+      </p>
+
+      <p className="mt-3 text-right text-sm text-slate-500">
+        {verse.bookName} {verse.chapter}:{verse.verseNo}
+      </p>
     </section>
   );
 }
+
+export default TodayVerse;

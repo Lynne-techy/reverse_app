@@ -1,1 +1,49 @@
 /* TBU */
+.profile-avatar {
+    width: 64px;
+    height: 64px;
+    display: grid;
+    place-items: center;
+    flex: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    font-family: "Noto Serif KR", serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.profile-progress-card {
+    margin-bottom: 24px;
+}
+
+.profile-achievement-grid {
+    grid-template-columns: 1fr;
+}
+
+.profile-achievement-grid .quick-card {
+    min-height: 132px;
+}
+
+.profile-achievement-grid .quick-card small {
+    white-space: normal;
+    line-height: 1.55;
+}
+
+.profile-error {
+    margin: 14px 0 0;
+    color: #d65b52;
+    font-size: 0.78rem;
+    text-align: center;
+}
+
+.profile-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 18px;
+}
+
+@media (min-width: 640px) {
+    .profile-achievement-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
