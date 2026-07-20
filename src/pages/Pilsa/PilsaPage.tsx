@@ -1,206 +1,610 @@
 import { useEffect, useState } from "react";
 import "./PilsaPage.css";
 
+type LanguageMode = "ko" | "en" | "bilingual";
 
+const BOOKS = [
+  "창세기",
+  "출애굽기",
+  "레위기",
+  "민수기",
+  "신명기",
+  "여호수아",
+  "사사기",
+  "룻기",
+  "사무엘상",
+  "사무엘하",
+  "열왕기상",
+  "열왕기하",
+  "역대상",
+  "역대하",
+  "에스라",
+  "느헤미야",
+  "에스더",
+  "욥기",
+  "시편",
+  "잠언",
+  "전도서",
+  "아가",
+  "이사야",
+  "예레미야",
+  "에스겔",
+  "다니엘",
+  "마태복음",
+  "마가복음",
+  "누가복음",
+  "요한복음",
+];
 
-function WritingPage() {
- 
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+const STEPS = [
+  "범위 선택",
+  "언어 선택",
+  "사진 업로드",
+  "Key Verse",
+  "QT",
+];
 
- 
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+function PilsaPage() {
+  const [step, setStep] = useState(1);
 
- 
-  const [error, setError] = useState("");
+  const [book, setBook] = useState("시편");
+  const [chapter, setChapter] = useState(23);
+  const [startVerse, setStartVerse] = useState(1);
+  const [endVerse, setEndVerse] = useState(6);
 
- 
-  const [isLoading, setIsLoading] = useState(false);
+  const [language, setLanguage] =
+    useState<LanguageMode>("bilingual");
 
+  const [koImage, setKoImage] = useState<File | null>(null);
+  const [enImage, setEnImage] = useState<File | null>(null);
 
-  const [range, setRange] = useState("");
-  const [language, setLanguage] = useState("");
-  const [keyVerse, setKeyVerse] = useState("");
-  const [qt, setQt] = useState("");
-  const [result, setResult] = useState("");
+  const [koPreview, setKoPreview] =
+    useState<string | null>(null);
 
-
-
+  const [enPreview, setEnPreview] =
+    useState<string | null>(null);
 
   useEffect(() => {
-    if (!selectedImage) {
-      setPreviewUrl(null);
+    if (!koImage) {
+      setKoPreview(null);
       return;
     }
 
-  
-    const objectUrl = URL.createObjectURL(selectedImage);
-    setPreviewUrl(objectUrl);
+    const url = URL.createObjectURL(koImage);
+    setKoPreview(url);
 
-   
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [selectedImage]);
+    return () => URL.revokeObjectURL(url);
+  }, [koImage]);
 
-  
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files || event.target.files.length === 0) return;
-    setSelectedImage(event.target.files[0]);
-    setError(""); // clear any previous "please upload an image" error
-  };
-
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setError("");
-
-    if (!selectedImage) {
-      setError("Please upload an image of your handwritten scripture.");
+  useEffect(() => {
+    if (!enImage) {
+      setEnPreview(null);
       return;
     }
 
-  
-    setIsLoading(true);
-    setTimeout(() => {
-      console.log("Submitting Writing Record", {
-        range,
-        language,
-        selectedImage,
-        keyVerse,
-        qt,
-        result,
-      });
-      setIsLoading(false);
-      // TODO: send data to backend
-    }, 1200);
+    const url = URL.createObjectURL(enImage);
+    setEnPreview(url);
+
+    return () => URL.revokeObjectURL(url);
+  }, [enImage]);
+
+  const nextStep = () => {
+    setStep((prev) => Math.min(prev + 1, 5));
   };
 
+  const prevStep = () => {
+    setStep((prev) => Math.max(prev - 1, 1));
+  };
 
+  const handlePhotoUpload = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    target: "ko" | "en"
+  ) => {
+    const file = event.target.files?.[0];
 
-  return (
-    <div className="writing-page">
-      <div className="writing-container">
-        <h1 className="writing-title">Scripture Writing</h1>
-        <p className="writing-subtitle">
-          Copy today's verse, upload it, and keep the moment.
-        </p>
+    if (!file) return;
 
-        <form className="writing-form" onSubmit={handleSubmit}>
-          {error && (
-            <div className="error-message" role="alert">
-              {error}
-            </div>
+    if (target === "ko") {
+      setKoImage(file);
+    } else {
+      setEnImage(file);
+    }
+  };
+
+  const renderProgress = () => (
+    <div className="pilsa-progress-wrapper">
+      {STEPS.map((label, index) => (
+        <div
+          className="progress-item"
+          key={label}
+        >
+          <div
+            className={`progress-bar ${
+              index + 1 <= step ? "active" : ""
+            }`}
+          />
+
+          <span
+            className={`progress-label ${
+              index + 1 === step ? "active" : ""
+            }`}
+          >
+            {label}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderRangeStep = () => (
+    <div className="step-content">
+
+      <div className="card">
+        <div className="section-label">
+          ① 성경 선택
+        </div>
+
+        <select
+          className="pilsa-select"
+          value={book}
+          onChange={(e) =>
+            setBook(e.target.value)
+          }
+        >
+          {BOOKS.map((bookName) => (
+            <option
+              key={bookName}
+              value={bookName}
+            >
+              {bookName}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="card">
+
+        <div className="section-label">
+          ② 장 선택
+        </div>
+
+        <input
+          className="pilsa-input"
+          type="number"
+          value={chapter}
+          onChange={(e) =>
+            setChapter(Number(e.target.value))
+          }
+        />
+      </div>
+
+      <div className="card">
+
+        <div className="section-label">
+          ③ 절 범위
+        </div>
+
+        <div className="verse-range">
+          <input
+            type="number"
+            className="pilsa-input"
+            value={startVerse}
+            onChange={(e) =>
+              setStartVerse(
+                Number(e.target.value)
+              )
+            }
+          />
+
+          <span>~</span>
+
+          <input
+            type="number"
+            className="pilsa-input"
+            value={endVerse}
+            onChange={(e) =>
+              setEndVerse(
+                Number(e.target.value)
+              )
+            }
+          />
+        </div>
+      </div>
+
+      <div className="selected-range-card">
+        <span>선택한 범위</span>
+
+        <h2>
+          {book} {chapter}:{startVerse}
+          {endVerse > startVerse
+            ? `-${endVerse}`
+            : ""}
+        </h2>
+      </div>
+    </div>
+  );
+
+  const renderLanguageStep = () => (
+    <div className="step-content">
+
+      <button
+        type="button"
+        className={`language-card ${
+          language === "ko"
+            ? "selected"
+            : ""
+        }`}
+        onClick={() =>
+          setLanguage("ko")
+        }
+      >
+        <div className="language-icon">
+          🇰🇷
+        </div>
+
+        <div>
+          <h3>한국어</h3>
+          <p>
+            우리말 성경으로 필사
+          </p>
+        </div>
+      </button>
+
+      <button
+        type="button"
+        className={`language-card ${
+          language === "en"
+            ? "selected"
+            : ""
+        }`}
+        onClick={() =>
+          setLanguage("en")
+        }
+      >
+        <div className="language-icon">
+          🇺🇸
+        </div>
+
+        <div>
+          <h3>English</h3>
+          <p>
+            NIV / ESV 필사
+          </p>
+        </div>
+      </button>
+
+      <button
+        type="button"
+        className={`language-card ${
+          language === "bilingual"
+            ? "selected"
+            : ""
+        }`}
+        onClick={() =>
+          setLanguage("bilingual")
+        }
+      >
+        <div className="language-icon">
+          🌍
+        </div>
+
+        <div>
+          <h3>한 · 영 병행</h3>
+          <p>
+            한국어 + 영어 함께
+          </p>
+        </div>
+      </button>
+    </div>
+  );
+
+  const renderPhotoStep = () => (
+    <div className="step-content">
+
+      <div className="upload-card">
+
+        <div className="upload-title">
+          한국어 노트
+        </div>
+
+        <label className="upload-zone">
+          {koPreview ? (
+            <img
+              src={koPreview}
+              className="upload-preview"
+            />
+          ) : (
+            <span>
+              📷 사진 업로드
+            </span>
           )}
 
-       
-          <div className="form-group">
-            <div className="label-row">
-              <label htmlFor="range">Scripture Range</label>
-              <span className="badge">Coming soon</span>
-            </div>
-            <input
-              id="range"
-              type="text"
-              placeholder="e.g. Psalm 23:1-6"
-              value={range}
-              onChange={(e) => setRange(e.target.value)}
-              disabled
-            />
+          <input
+            type="file"
+            accept="image/*"
+            hidden
+            onChange={(e) =>
+              handlePhotoUpload(
+                e,
+                "ko"
+              )
+            }
+          />
+        </label>
+      </div>
+
+      {language ===
+        "bilingual" && (
+        <div className="upload-card">
+
+          <div className="upload-title">
+            영어 노트
           </div>
 
-         
-          <div className="form-group">
-            <div className="label-row">
-              <label htmlFor="language">Language</label>
-              <span className="badge">Coming soon</span>
-            </div>
-            <input
-              id="language"
-              type="text"
-              placeholder="e.g. Korean / English"
-              value={language}
-              onChange={(e) => setLanguage(e.target.value)}
-              disabled
-            />
-          </div>
+          <label className="upload-zone">
+            {enPreview ? (
+              <img
+                src={enPreview}
+                className="upload-preview"
+              />
+            ) : (
+              <span>
+                📷 사진 업로드
+              </span>
+            )}
 
-         
-          <div className="form-group">
-            <label htmlFor="image-upload">Upload Handwritten Scripture</label>
-
-         
-            <label htmlFor="image-upload" className="upload-dropzone">
-              {previewUrl ? (
-                <img src={previewUrl} alt="Preview of uploaded scripture" className="upload-preview" />
-              ) : (
-                <span className="upload-placeholder">
-                  📷 Tap to select a photo
-                </span>
-              )}
-            </label>
             <input
-              id="image-upload"
               type="file"
               accept="image/*"
-              onChange={handleImageChange}
-              className="upload-input"
+              hidden
+              onChange={(e) =>
+                handlePhotoUpload(
+                  e,
+                  "en"
+                )
+              }
             />
+          </label>
+        </div>
+      )}
+    </div>
+  );
+    const [selectedVerse, setSelectedVerse] =
+    useState("");
 
-            {selectedImage && (
-              <p className="file-name">Selected file: {selectedImage.name}</p>
-            )}
-          </div>
+  const [qtNote, setQtNote] =
+    useState("");
 
-        
-          <div className="form-group">
-            <div className="label-row">
-              <label htmlFor="key-verse">Key Verse</label>
-              <span className="badge">Coming soon</span>
-            </div>
-            <textarea
-              id="key-verse"
-              placeholder="Which verse stood out to you?"
-              value={keyVerse}
-              onChange={(e) => setKeyVerse(e.target.value)}
-              disabled
-            />
-          </div>
+  const keyVerseOptions = [
+    `${book} ${chapter}:${startVerse}`,
+    `${book} ${chapter}:${Math.min(
+      startVerse + 1,
+      endVerse
+    )}`,
+    `${book} ${chapter}:${endVerse}`,
+  ];
 
-       
-          <div className="form-group">
-            <div className="label-row">
-              <label htmlFor="qt">QT Notes</label>
-              <span className="badge">Coming soon</span>
-            </div>
-            <textarea
-              id="qt"
-              placeholder="What is this verse teaching you?"
-              value={qt}
-              onChange={(e) => setQt(e.target.value)}
-              disabled
-            />
-          </div>
+  const renderKeyVerseStep = () => (
+    <div className="step-content">
 
-        
-          <div className="form-group">
-            <div className="label-row">
-              <label htmlFor="result">Recognition Result</label>
-              <span className="badge">Coming soon</span>
-            </div>
-            <textarea
-              id="result"
-              placeholder="Transcribed text will appear here"
-              value={result}
-              onChange={(e) => setResult(e.target.value)}
-              disabled
-            />
-          </div>
+      <div className="card">
+        <div className="section-label">
+          마음에 남은 말씀
+        </div>
 
-          <button className="submit-button" type="submit" disabled={isLoading}>
-            {isLoading ? "Saving..." : "Upload"}
-          </button>
-        </form>
+        <div className="verse-list">
+          {keyVerseOptions.map(
+            (verse) => (
+              <button
+                key={verse}
+                type="button"
+                className={`verse-option ${
+                  selectedVerse === verse
+                    ? "selected"
+                    : ""
+                }`}
+                onClick={() =>
+                  setSelectedVerse(
+                    verse
+                  )
+                }
+              >
+                {verse}
+              </button>
+            )
+          )}
+        </div>
       </div>
+
+      <div className="selected-range-card">
+        <span>선택한 Key Verse</span>
+
+        <h2>
+          {selectedVerse ||
+            "말씀을 선택해주세요"}
+        </h2>
+      </div>
+    </div>
+  );
+
+  const renderQtStep = () => (
+    <div className="step-content">
+
+      <div className="card">
+        <div className="section-label">
+          QT 묵상 기록
+        </div>
+
+        <textarea
+          className="qt-textarea"
+          placeholder="오늘 말씀을 통해 느낀 점, 결단한 내용, 감사한 점 등을 자유롭게 적어보세요."
+          value={qtNote}
+          onChange={(e) =>
+            setQtNote(
+              e.target.value
+            )
+          }
+        />
+      </div>
+
+      <div className="summary-card">
+
+        <h3>
+          오늘의 필사 요약
+        </h3>
+
+        <div className="summary-item">
+          <span>범위</span>
+
+          <strong>
+            {book} {chapter}:
+            {startVerse}
+            {endVerse >
+            startVerse
+              ? `-${endVerse}`
+              : ""}
+          </strong>
+        </div>
+
+        <div className="summary-item">
+          <span>언어</span>
+
+          <strong>
+            {language === "ko"
+              ? "한국어"
+              : language ===
+                "en"
+              ? "영어"
+              : "한·영 병행"}
+          </strong>
+        </div>
+
+        <div className="summary-item">
+          <span>
+            Key Verse
+          </span>
+
+          <strong>
+            {selectedVerse ||
+              "-"}
+          </strong>
+        </div>
+      </div>
+    </div>
+  );
+
+  const handleSave = () => {
+    console.log(
+      "Pilsa Save",
+      {
+        book,
+        chapter,
+        startVerse,
+        endVerse,
+        language,
+        selectedVerse,
+        qtNote,
+        koImage,
+        enImage,
+      }
+    );
+
+    alert(
+      "필사 기록이 저장되었습니다."
+    );
+  };
+
+  const renderCurrentStep = () => {
+    switch (step) {
+      case 1:
+        return renderRangeStep();
+
+      case 2:
+        return renderLanguageStep();
+
+      case 3:
+        return renderPhotoStep();
+
+      case 4:
+        return renderKeyVerseStep();
+
+      case 5:
+        return renderQtStep();
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="pilsa-page">
+
+      <div className="pilsa-container">
+
+        <div className="page-header">
+
+          <span className="page-badge">
+            DAILY PILSA
+          </span>
+
+          <h1 className="page-title">
+            성경 필사
+          </h1>
+
+          <p className="page-subtitle">
+            한 글자씩 적으며
+            말씀을 마음에
+            새겨보세요.
+          </p>
+
+        </div>
+
+        {renderProgress()}
+
+        {renderCurrentStep()}
+
+        <div className="bottom-actions">
+
+          {step > 1 && (
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={
+                prevStep
+              }
+            >
+              이전
+            </button>
+          )}
+
+          {step < 5 ? (
+            <button
+              type="button"
+              className="primary-button"
+              onClick={
+                nextStep
+              }
+            >
+              다음
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="primary-button"
+              onClick={
+                handleSave
+              }
+            >
+              저장하기
+            </button>
+          )}
+
+        </div>
+
+      </div>
+
     </div>
   );
 }
 
-export default WritingPage;
+export default PilsaPage;
