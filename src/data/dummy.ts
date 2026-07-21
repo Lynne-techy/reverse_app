@@ -1,7 +1,5 @@
 // 예시용 더미 데이터. 실제 API/DB 연동은 이후 단계에서 대체된다.
 
-import type { MyStatistics } from "../api/stats";
-
 // 진척률 분모. 백엔드가 실제로 시딩한 개역개정 66권 절 수(31,088)와 일치해야 한다.
 // (31,102는 KJV 영어 전통 총 절 수라 이 앱 데이터와 무관 — 쓰면 100% 도달 불가.)
 // 실제 API 연동 시엔 이 상수를 버리고 GET /users/me/progress 응답의 totalVerses를 쓸 것.
@@ -136,32 +134,3 @@ export function buildContributionWeeks(today: Date, weeks: number): Week[] {
   }
   return result;
 }
-
-/**
- * 히트맵(HeatmapPage)용 임시 더미 — 최근 365일 필사 횟수 배열(오래된→최신).
- * HeatmapPage는 flat `number[]`를 받으므로 별도로 생성한다. 실제 API 연동 시 대체.
- */
-export const heatmapActivity: number[] = Array.from({ length: 365 }, (_, i) => {
-  const cellDate = new Date(Date.now() - (364 - i) * DAY_MS);
-  return baseCount(cellDate);
-});
-
-/**
- * 통계(HeatmapPage 스탯 카드 + 연속 시작 카드)용 임시 더미.
- * 실제 API 연동 시 GET /stats/me(getMyStatistics) 응답으로 그대로 대체한다.
- * streakStart.date는 "N개월 전" 표기를 확인할 수 있도록 58일 전으로 잡는다.
- */
-export const dummyStatistics: MyStatistics = {
-  userId: "dummy-user",
-  currentStreak: 58,
-  longestStreak: 63,
-  totalCount: 832,
-  lastWrittenDate: new Date().toISOString().slice(0, 10),
-  freezeAvailable: 2,
-  streakStart: {
-    date: new Date(Date.now() - 58 * DAY_MS).toISOString().slice(0, 10),
-    bookNo: 19,
-    bookName: "시편",
-    chapter: 1,
-  },
-};
