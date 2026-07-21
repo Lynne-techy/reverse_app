@@ -1,0 +1,530 @@
+<title>Re:Verse 디자인 시스템</title>
+<style>
+  :root{
+    /* primitives — blue scale (= 잔디) */
+    --blue-50:#E8F1FF; --blue-100:#BFDBFE; --blue-300:#93C5FD; --blue-500:#3B82F6; --blue-600:#2663EC; --blue-700:#1E40B0;
+    /* primitives — grey (warm-cool) */
+    --grey-50:#F9FAFB; --grey-100:#F2F4F6; --grey-200:#E5E8EB; --grey-300:#D1D6DB; --grey-400:#9AA4B0; --grey-500:#8B95A1; --grey-600:#6B7684; --grey-700:#4E5968; --grey-800:#334155; --grey-900:#17324A;
+    /* semantic */
+    --bg:#FFFFFF; --surface:var(--grey-50); --fill:var(--grey-100); --border:var(--grey-200); --border-strong:var(--grey-300);
+    --ink:var(--grey-900); --body:var(--grey-700); --sub:var(--grey-500);
+    --blue:var(--blue-500); --blue-deep:var(--blue-600); --blue-soft:var(--blue-50);
+    --accent:#F97E62; --success:#03B26C; --danger:#F04452; --warning:#FE9800;
+    --j0:#EDF1F5; --j1:var(--blue-100); --j2:var(--blue-300); --j3:var(--blue-500); --j4:var(--blue-700);
+    --grad-greet:linear-gradient(135deg,#dbeafe,#eef6ff);
+    --grad-identity:linear-gradient(120deg,#3B82F6,#6f9cf0 52%,#F4A187);
+    --grad-range:linear-gradient(135deg,#2f8fd8,#1e6fb1);
+    /* radius / elevation / space scale */
+    --r-sm:6px; --r-md:10px; --r-lg:12px; --r-xl:16px; --r-full:999px;
+    --e-sm:0 1px 2px rgba(23,50,74,.06); --e-md:0 6px 18px rgba(23,50,74,.08); --e-lg:0 14px 34px rgba(23,50,74,.11);
+    --sans:"Pretendard","Noto Sans KR","Malgun Gothic",-apple-system,"Apple SD Gothic Neo",system-ui,sans-serif;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--body);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+  a{color:var(--blue);text-decoration:none}
+  h1,h2,h3,h4{color:var(--ink);text-wrap:balance}
+  code{font-family:var(--mono);font-size:.84em;background:var(--fill);padding:.08em .4em;border-radius:5px;color:var(--ink)}
+
+  /* ---------- doc shell ---------- */
+  .ds{display:grid;grid-template-columns:224px 1fr;max-width:78rem;margin:0 auto}
+  .ds-nav{position:sticky;top:0;align-self:start;height:100vh;overflow:auto;border-right:1px solid var(--border);padding:22px 16px;background:var(--surface)}
+  .ds-nav .brand{font-weight:800;font-size:16px;color:var(--ink);margin-bottom:2px}
+  .ds-nav .brand span{color:var(--accent)}
+  .ds-nav .ver{font-size:11px;color:var(--sub);margin-bottom:18px}
+  .ds-nav .nz{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--sub);font-weight:700;margin:16px 6px 6px}
+  .ds-nav a{display:block;font-size:12.5px;color:var(--body);padding:5px 8px;border-radius:7px}
+  .ds-nav a:hover{background:var(--blue-soft);color:var(--blue-deep)}
+  .ds-main{padding:clamp(1.6rem,4vw,3rem) clamp(1.2rem,4vw,3rem) 6rem;min-width:0}
+  @media(max-width:52rem){
+    .ds{grid-template-columns:1fr}
+    .ds-nav{position:static;height:auto;display:flex;flex-wrap:wrap;gap:2px 4px;border-right:0;border-bottom:1px solid var(--border)}
+    .ds-nav .brand,.ds-nav .ver,.ds-nav .nz{width:100%}
+    .ds-nav .nz{margin:8px 6px 2px}
+  }
+
+  .lead h1{font-size:clamp(1.9rem,5vw,2.7rem);letter-spacing:-.03em;margin:0 0 .4rem}
+  .lead p{max-width:44em;font-size:1rem;color:var(--body);margin:0}
+  .lead .badges{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.1rem}
+  .lead .badges b{font-size:.7rem;font-weight:700;letter-spacing:.04em;background:var(--fill);color:var(--ink);border-radius:99px;padding:.3rem .7rem}
+
+  section.blk{padding-top:2.4rem;margin-top:2.4rem;border-top:1px solid var(--border)}
+  .eyebrow{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);font-weight:700;margin:0 0 .5rem}
+  h2.h{font-size:clamp(1.3rem,3vw,1.7rem);letter-spacing:-.02em;margin:0 0 .3rem}
+  .desc{color:var(--body);max-width:46em;margin:0 0 1.4rem;font-size:.95rem}
+  h3.ch{font-size:1.02rem;margin:1.8rem 0 .2rem;font-weight:700}
+  .chspec{font-family:var(--mono);font-size:.76rem;color:var(--sub);margin:0 0 .8rem}
+
+  /* preview canvas */
+  .canvas{border:1px solid var(--border);border-radius:var(--r-lg);background:var(--surface);padding:20px;display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+  .canvas.col{flex-direction:column;align-items:stretch}
+  .stk{display:flex;flex-direction:column;gap:6px;align-items:center}
+  .stk .lbl{font-size:11px;color:var(--sub)}
+
+  /* ---------- tokens: color ---------- */
+  .swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(8.5rem,1fr));gap:10px}
+  .sw{border:1px solid var(--border);border-radius:var(--r-md);overflow:hidden;background:var(--bg)}
+  .sw .well{height:52px}
+  .sw .m{padding:8px 10px 10px}
+  .sw .nm{font-size:12px;font-weight:600;color:var(--ink)}
+  .sw .tk{font-family:var(--mono);font-size:10.5px;color:var(--sub)}
+  .sw .hx{font-family:var(--mono);font-size:10.5px;color:var(--body)}
+
+  /* ---------- tokens: type ---------- */
+  .ttable{width:100%;border-collapse:collapse}
+  .ttable td{border-bottom:1px solid var(--border);padding:11px 8px;vertical-align:baseline}
+  .ttable .tk{font-family:var(--mono);font-size:11px;color:var(--sub);white-space:nowrap;width:8.5rem}
+  .ttable .me{font-family:var(--mono);font-size:11px;color:var(--sub);white-space:nowrap;text-align:right;width:8rem}
+  .ttable .sm{color:var(--ink);font-weight:600;line-height:1.1}
+
+  /* scale chips */
+  .scale-row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end}
+  .scale-row .u{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;color:var(--sub)}
+  .box-space{background:var(--blue-soft);border:1px solid #cfe0fb;height:34px}
+  .box-rad{width:52px;height:52px;background:var(--fill);border:1px solid var(--border-strong)}
+  .box-elev{width:78px;height:52px;background:var(--bg);border-radius:var(--r-lg)}
+
+  /* motion */
+  .easings{display:grid;grid-template-columns:repeat(auto-fill,minmax(11rem,1fr));gap:12px}
+  .ease{border:1px solid var(--border);border-radius:var(--r-md);padding:12px 14px;background:var(--bg)}
+  .ease b{font-size:12px;color:var(--ink)}
+  .ease .c{font-family:var(--mono);font-size:10px;color:var(--sub);display:block;margin-top:2px}
+  .ease .track{height:6px;background:var(--fill);border-radius:99px;margin-top:10px;overflow:hidden}
+  .ease .dot{width:22%;height:100%;background:var(--blue);border-radius:99px;animation:slide 2.4s infinite}
+  .ease.e1 .dot{animation-timing-function:cubic-bezier(.4,0,.2,1)}
+  .ease.e2 .dot{animation-timing-function:cubic-bezier(.2,.9,.3,1.2)}
+  .ease.e3 .dot{animation-timing-function:linear}
+  @keyframes slide{0%{margin-left:0}50%{margin-left:78%}100%{margin-left:0}}
+
+  /* icons */
+  .icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(6rem,1fr));gap:10px}
+  .ico{display:flex;flex-direction:column;align-items:center;gap:7px;border:1px solid var(--border);border-radius:var(--r-md);padding:14px 8px;background:var(--bg);color:var(--ink)}
+  .ico svg{width:24px;height:24px}
+  .ico span{font-size:10.5px;color:var(--sub);font-family:var(--mono)}
+
+  /* =========================================================
+     COMPONENTS (실사용 정의 — dogfooding)
+     ========================================================= */
+  .btn{--bh:40px;display:inline-flex;align-items:center;justify-content:center;gap:7px;height:var(--bh);padding:0 16px;border:1px solid transparent;border-radius:var(--r-lg);font-family:inherit;font-size:14px;font-weight:600;cursor:pointer;transition:background .15s,border-color .15s,transform .06s;line-height:1;background:var(--fill);color:var(--ink)}
+  .btn svg{width:16px;height:16px}
+  .btn:active{transform:translateY(1px)}
+  .btn:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+  .btn--primary{background:var(--blue);color:#fff}
+  .btn--primary:hover{background:var(--blue-deep)}
+  .btn--secondary{background:var(--bg);color:var(--ink);border-color:var(--border-strong)}
+  .btn--secondary:hover{border-color:var(--blue);color:var(--blue-deep)}
+  .btn--ghost{background:transparent;color:var(--blue-deep)}
+  .btn--ghost:hover{background:var(--blue-soft)}
+  .btn--danger{background:var(--danger);color:#fff}
+  .btn--danger:hover{filter:brightness(.94)}
+  .btn--sm{--bh:32px;font-size:12.5px;padding:0 12px;border-radius:var(--r-md)}
+  .btn--lg{--bh:48px;font-size:15px;padding:0 22px}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .btn .spin{width:15px;height:15px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .field{display:flex;flex-direction:column;gap:6px;max-width:280px}
+  .field label{font-size:12px;font-weight:600;color:var(--ink)}
+  .input{height:42px;padding:0 12px;border:1px solid var(--border-strong);border-radius:var(--r-md);font-family:inherit;font-size:14px;color:var(--ink);background:var(--bg);transition:border-color .15s,box-shadow .15s}
+  textarea.input{height:auto;padding:10px 12px;min-height:76px;resize:vertical}
+  .input::placeholder{color:var(--grey-400)}
+  .input:hover{border-color:var(--grey-400)}
+  .input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft)}
+  .input.err{border-color:var(--danger)}
+  .input.err:focus{box-shadow:0 0 0 3px #fde2e5}
+  .input[disabled]{background:var(--fill);color:var(--sub);cursor:not-allowed}
+  .field .help{font-size:11px;color:var(--sub)}
+  .field .help.err{color:var(--danger)}
+  .selectw{position:relative;max-width:280px}
+  .selectw svg{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--sub);pointer-events:none}
+  .selectw select{width:100%;-webkit-appearance:none;appearance:none;padding-right:34px}
+
+  .card{border:1px solid var(--border);border-radius:var(--r-xl);background:var(--bg);padding:18px}
+  .card--stat{padding:16px}
+  .kicker{font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--blue);font-weight:700;margin-bottom:6px}
+  .verse-lg{font-size:20px;font-weight:500;line-height:1.85;color:var(--ink)}
+  .verse-ref{font-size:12px;color:var(--sub);margin-top:10px}
+
+  .stat{border:1px solid var(--border);border-radius:var(--r-lg);padding:13px 15px;background:var(--bg);min-width:120px}
+  .stat b{display:block;font-size:22px;font-weight:800;color:var(--ink);line-height:1.1}
+  .stat span{font-size:11px;color:var(--sub)}
+  .stat .d{font-size:10px;color:var(--success);font-weight:700;margin-top:3px}
+
+  .pbar{height:8px;border-radius:99px;background:var(--fill);overflow:hidden;width:220px}
+  .pbar i{display:block;height:100%;background:var(--blue);border-radius:99px}
+  .ring{--p:71;width:76px;height:76px}
+  .ring circle{fill:none;stroke-width:8;stroke-linecap:round}
+  .ring .bg{stroke:var(--fill)}
+  .ring .fg{stroke:var(--blue);transition:stroke-dashoffset .6s}
+
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:700;padding:4px 9px;border-radius:99px;background:var(--fill);color:var(--body)}
+  .badge--blue{background:var(--blue-soft);color:var(--blue-deep)}
+  .badge--success{background:#e3f7ee;color:#087a4e}
+  .badge--danger{background:#fdecee;color:#b02330}
+  .badge--coral{background:#ffece6;color:#c2502f}
+  .badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+
+  .avatar{display:inline-flex;align-items:center;justify-content:center;border-radius:50%;background:var(--blue);color:#fff;font-weight:700}
+  .avatar--sm{width:28px;height:28px;font-size:12px}
+  .avatar--md{width:40px;height:40px;font-size:15px}
+  .avatar--lg{width:56px;height:56px;font-size:20px}
+  .avatar--grad{background:var(--grad-identity)}
+
+  .navdemo{width:190px;border:1px solid var(--border);border-radius:var(--r-lg);padding:10px;background:var(--surface)}
+  .navitem{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r-md);color:var(--body);font-size:13px;font-weight:500}
+  .navitem svg{width:17px;height:17px}
+  .navitem.on{background:var(--blue-soft);color:var(--blue-deep);font-weight:700}
+  .tabbar{display:flex;justify-content:space-around;border:1px solid var(--border);border-radius:var(--r-lg);padding:8px 4px;background:var(--bg);width:260px}
+  .tabitem{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9.5px;color:var(--sub)}
+  .tabitem svg{width:20px;height:20px}
+  .tabitem.on{color:var(--blue)}
+
+  .jandi{display:grid;grid-template-columns:repeat(26,1fr);gap:3px;max-width:420px}
+  .jandi i{aspect-ratio:1;border-radius:3px;background:var(--j0)}
+  .jandi i.l1{background:var(--j1)}.jandi i.l2{background:var(--j2)}.jandi i.l3{background:var(--j3)}.jandi i.l4{background:var(--j4)}
+  .legend{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--sub);margin-top:8px}
+  .legend i{width:12px;height:12px;border-radius:3px;display:inline-block}
+
+  .alert{display:flex;gap:10px;align-items:flex-start;border-radius:var(--r-md);padding:11px 13px;max-width:420px;border:1px solid}
+  .alert svg{width:18px;height:18px;flex:none;margin-top:1px}
+  .alert p{margin:0;font-size:13px;line-height:1.5}
+  .alert--success{background:#e7f8f0;border-color:#b7e6cf;color:#0a7a4e}
+  .alert--error{background:#fdecee;border-color:#f2c4bd;color:#8a2f25}
+  .alert--info{background:var(--blue-soft);border-color:#cfe0fb;color:var(--blue-deep)}
+
+  .modal-demo{border:1px solid var(--border);border-radius:var(--r-lg);background:linear-gradient(rgba(23,50,74,.14),rgba(23,50,74,.14)),var(--fill);padding:26px;display:flex;justify-content:center}
+  .modal{width:270px;background:#fff;border-radius:var(--r-xl);box-shadow:var(--e-lg);padding:28px 24px;text-align:center}
+  .modal .chk{width:60px;height:60px;margin:0 auto 12px}
+  .modal .chk circle{fill:none;stroke:#2fa36b;stroke-width:3;stroke-dasharray:151;stroke-dashoffset:151;animation:draw .5s ease forwards}
+  .modal .chk path{fill:none;stroke:#2fa36b;stroke-width:4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:40;stroke-dashoffset:40;animation:draw .35s .42s ease forwards}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  .modal h4{font-size:16px;margin:0 0 4px}
+  .modal p{font-size:12px;color:var(--sub);margin:0 0 16px}
+
+  .sk{background:var(--fill);border-radius:6px;animation:sh 1.3s ease-in-out infinite}
+  @keyframes sh{0%,100%{opacity:1}50%{opacity:.45}}
+  .empty{border:1px dashed var(--border-strong);border-radius:var(--r-xl);padding:22px;text-align:center;max-width:280px;background:var(--surface)}
+  .empty .ej{display:grid;grid-template-columns:repeat(16,1fr);gap:2px;margin-bottom:12px}
+  .empty .ej i{aspect-ratio:1;border-radius:2px;background:var(--fill)}
+  .empty h4{font-size:14px;margin:0 0 3px}
+  .empty p{font-size:11.5px;color:var(--sub);margin:0 0 12px}
+
+  .steps{display:flex;flex-direction:column;gap:8px;max-width:320px}
+  .steps .bars{display:grid;grid-template-columns:repeat(5,1fr);gap:5px}
+  .steps .bars i{height:4px;border-radius:99px;background:var(--border)}
+  .steps .bars i.on{background:var(--blue)}
+  .steps .labs{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;font-size:9.5px;color:var(--sub);text-align:center}
+  .steps .labs .on{color:var(--blue-deep);font-weight:700}
+
+  .bookcard{border:1px solid var(--border);border-radius:var(--r-lg);padding:12px 13px;background:var(--bg);width:150px}
+  .bookcard .t{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:8px}
+  .bookcard .p{font-size:9.5px;color:var(--sub);margin-top:5px}
+
+  .foot{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--border);color:var(--sub);font-size:.82rem}
+
+  @media(prefers-reduced-motion:reduce){
+    .ease .dot,.spin,.sk,.modal .chk circle,.modal .chk path{animation:none}
+    .modal .chk circle,.modal .chk path{stroke-dashoffset:0}
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <g id="i-base" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></g>
+  <symbol id="ic-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></symbol>
+  <symbol id="ic-pen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4.5-1L20 7.5 16.5 4 5 15.5 4 20z"/><path d="M14.5 6L18 9.5"/></symbol>
+  <symbol id="ic-book" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11a2 2 0 012 2v14H7a2 2 0 00-2 2V4z"/><path d="M5 4a2 2 0 002 2h11"/></symbol>
+  <symbol id="ic-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M6 20V11M12 20V5M18 20v-6"/></symbol>
+  <symbol id="ic-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.5"/><path d="M5 20a7 7 0 0114 0"/></symbol>
+  <symbol id="ic-flame" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3s5 4 5 9a5 5 0 01-10 0c0-2 1-3 1-3s0 2 2 2c1.5 0 2-2 1-5 0-2 0-4 1-4z"/></symbol>
+  <symbol id="ic-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></symbol>
+  <symbol id="ic-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="ic-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="ic-camera" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.2"/></symbol>
+  <symbol id="ic-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M4 9h16M8 3v4M16 3v4"/></symbol>
+  <symbol id="ic-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M13 6l6 6-6 6"/></symbol>
+  <symbol id="ic-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.4"/></symbol>
+</defs></svg>
+
+<div class="ds">
+  <aside class="ds-nav">
+    <div class="brand">Re<span>:</span>Verse</div>
+    <div class="ver">디자인 시스템 · v0.1</div>
+    <div class="nz">Foundations</div>
+    <a href="#color">색상</a><a href="#type">타이포그래피</a><a href="#space">여백 · 라운드 · 그림자</a><a href="#motion">모션</a><a href="#icon">아이콘</a>
+    <div class="nz">Components</div>
+    <a href="#button">버튼</a><a href="#field">인풋 · 셀렉트</a><a href="#card">카드</a><a href="#stat">지표 · 프로그레스</a><a href="#badge">뱃지 · 아바타</a><a href="#nav">내비게이션</a><a href="#jandi">잔디 (시그니처)</a><a href="#feedback">알럿 · 모달</a><a href="#state">상태 (로딩·빈·스텝)</a><a href="#book">책 카드</a>
+  </aside>
+
+  <main class="ds-main">
+    <div class="lead">
+      <h1>Re:Verse 디자인 시스템</h1>
+      <p>통합안 방향("맑은 파랑 + 성장, 그라디언트 유지")을 실제 구현 가능한 정의로 확정한 문서입니다. 파운데이션(토큰)과 모든 컴포넌트를 변형·상태까지 규정합니다. 버튼·인풋은 실제 요소라 hover·focus를 눌러/탭해 확인할 수 있습니다.</p>
+      <div class="badges"><b>단일 블루 #3B82F6</b><b>tabular-nums</b><b>focus-visible</b><b>그라디언트 유지</b><b>Pretendard + Noto Sans KR</b></div>
+    </div>
+
+    <!-- ================= COLOR ================= -->
+    <section class="blk" id="color">
+      <p class="eyebrow">Foundations</p><h2 class="h">색상</h2>
+      <p class="desc">프리미티브(스케일) → 시맨틱(역할) → 그라디언트 3층 구조. UI에서 파랑은 <b>인터랙션에만</b>, 코랄은 스트릭·콜론 한 곳, 그라디언트는 정체성 표면(프로필·인사·범위)에만.</p>
+      <h3 class="ch">Blue (= 잔디 스케일)</h3>
+      <div class="swatches">
+        <div class="sw"><div class="well" style="background:#E8F1FF"></div><div class="m"><div class="nm">blue 50</div><div class="tk">--blue-50</div><div class="hx">#E8F1FF</div></div></div>
+        <div class="sw"><div class="well" style="background:#BFDBFE"></div><div class="m"><div class="nm">blue 100</div><div class="tk">--blue-100</div><div class="hx">#BFDBFE</div></div></div>
+        <div class="sw"><div class="well" style="background:#93C5FD"></div><div class="m"><div class="nm">blue 300</div><div class="tk">--blue-300</div><div class="hx">#93C5FD</div></div></div>
+        <div class="sw"><div class="well" style="background:#3B82F6"></div><div class="m"><div class="nm">blue 500 · primary</div><div class="tk">--blue-500</div><div class="hx">#3B82F6</div></div></div>
+        <div class="sw"><div class="well" style="background:#2663EC"></div><div class="m"><div class="nm">blue 600 · deep</div><div class="tk">--blue-600</div><div class="hx">#2663EC</div></div></div>
+        <div class="sw"><div class="well" style="background:#1E40B0"></div><div class="m"><div class="nm">blue 700</div><div class="tk">--blue-700</div><div class="hx">#1E40B0</div></div></div>
+      </div>
+      <h3 class="ch">Neutral</h3>
+      <div class="swatches">
+        <div class="sw"><div class="well" style="background:#F9FAFB"></div><div class="m"><div class="nm">grey 50 · surface</div><div class="tk">--surface</div><div class="hx">#F9FAFB</div></div></div>
+        <div class="sw"><div class="well" style="background:#F2F4F6"></div><div class="m"><div class="nm">grey 100 · fill</div><div class="tk">--fill</div><div class="hx">#F2F4F6</div></div></div>
+        <div class="sw"><div class="well" style="background:#E5E8EB"></div><div class="m"><div class="nm">grey 200 · border</div><div class="tk">--border</div><div class="hx">#E5E8EB</div></div></div>
+        <div class="sw"><div class="well" style="background:#8B95A1"></div><div class="m"><div class="nm">grey 500 · sub</div><div class="tk">--sub</div><div class="hx">#8B95A1</div></div></div>
+        <div class="sw"><div class="well" style="background:#4E5968"></div><div class="m"><div class="nm">grey 700 · body</div><div class="tk">--body</div><div class="hx">#4E5968</div></div></div>
+        <div class="sw"><div class="well" style="background:#17324A"></div><div class="m"><div class="nm">grey 900 · ink</div><div class="tk">--ink</div><div class="hx">#17324A</div></div></div>
+      </div>
+      <h3 class="ch">Semantic · Gradient</h3>
+      <div class="swatches">
+        <div class="sw"><div class="well" style="background:#F97E62"></div><div class="m"><div class="nm">accent</div><div class="tk">--accent</div><div class="hx">#F97E62</div></div></div>
+        <div class="sw"><div class="well" style="background:#03B26C"></div><div class="m"><div class="nm">success</div><div class="tk">--success</div><div class="hx">#03B26C</div></div></div>
+        <div class="sw"><div class="well" style="background:#F04452"></div><div class="m"><div class="nm">danger</div><div class="tk">--danger</div><div class="hx">#F04452</div></div></div>
+        <div class="sw"><div class="well" style="background:#FE9800"></div><div class="m"><div class="nm">warning</div><div class="tk">--warning</div><div class="hx">#FE9800</div></div></div>
+        <div class="sw"><div class="well" style="background:linear-gradient(135deg,#dbeafe,#eef6ff)"></div><div class="m"><div class="nm">grad · 인사</div><div class="tk">--grad-greet</div><div class="hx">유지</div></div></div>
+        <div class="sw"><div class="well" style="background:linear-gradient(120deg,#3B82F6,#6f9cf0 52%,#F4A187)"></div><div class="m"><div class="nm">grad · 정체성</div><div class="tk">--grad-identity</div><div class="hx">유지</div></div></div>
+      </div>
+    </section>
+
+    <!-- ================= TYPE ================= -->
+    <section class="blk" id="type">
+      <p class="eyebrow">Foundations</p><h2 class="h">타이포그래피</h2>
+      <p class="desc">디스플레이·본문 = <b>Pretendard</b>, 폴백·데이터 = <b>Noto Sans KR</b>. 6단 스케일 고정, 숫자는 전부 <code>tabular-nums</code>. 말씀은 20px+ / line-height 1.85로 <b>같은 sans 안에서 격</b>을 준다.</p>
+      <table class="ttable"><tbody>
+        <tr><td class="tk">display</td><td class="sm" style="font-size:40px">오늘의 말씀</td><td class="me">40 / 1.1 / 700</td></tr>
+        <tr><td class="tk">h1</td><td class="sm" style="font-size:32px">성장 대시보드</td><td class="me">32 / 1.15 / 700</td></tr>
+        <tr><td class="tk">h2 · number</td><td class="sm" style="font-size:24px">1,234 / 31,088절</td><td class="me">24 / 1.2 / 800</td></tr>
+        <tr><td class="tk">h3</td><td class="sm" style="font-size:20px">전체 진척률 4.0%</td><td class="me">20 / 1.3 / 700</td></tr>
+        <tr><td class="tk">verse</td><td class="sm" style="font-size:20px;font-weight:500;line-height:1.85">여호와는 나의 목자시니</td><td class="me">20 / 1.85 / 500</td></tr>
+        <tr><td class="tk">body</td><td class="sm" style="font-size:16px;font-weight:400">한 글자씩 적으며 말씀을 새깁니다</td><td class="me">16 / 1.6 / 400</td></tr>
+        <tr><td class="tk">caption</td><td class="sm" style="font-size:13px;font-weight:500;color:var(--sub)">연속 7일 · 최장 42일</td><td class="me">13 / 1.4 / 500</td></tr>
+      </tbody></table>
+    </section>
+
+    <!-- ================= SPACE/RADIUS/ELEV ================= -->
+    <section class="blk" id="space">
+      <p class="eyebrow">Foundations</p><h2 class="h">여백 · 라운드 · 그림자</h2>
+      <p class="desc">4의 배수 여백, 4단 라운드, 3단 그림자. 카드는 <code>--r-xl(16)</code>, 컨트롤은 <code>--r-md/lg(10~12)</code>, 칩·pill은 <code>--r-full</code>.</p>
+      <h3 class="ch">Space</h3>
+      <div class="scale-row">
+        <div class="u"><span class="box-space" style="width:4px"></span>4</div><div class="u"><span class="box-space" style="width:8px"></span>8</div><div class="u"><span class="box-space" style="width:12px"></span>12</div><div class="u"><span class="box-space" style="width:16px"></span>16</div><div class="u"><span class="box-space" style="width:24px"></span>24</div><div class="u"><span class="box-space" style="width:32px"></span>32</div><div class="u"><span class="box-space" style="width:48px"></span>48</div>
+      </div>
+      <h3 class="ch">Radius</h3>
+      <div class="scale-row">
+        <div class="u"><span class="box-rad" style="border-radius:6px"></span>sm 6</div><div class="u"><span class="box-rad" style="border-radius:10px"></span>md 10</div><div class="u"><span class="box-rad" style="border-radius:12px"></span>lg 12</div><div class="u"><span class="box-rad" style="border-radius:16px"></span>xl 16</div><div class="u"><span class="box-rad" style="border-radius:999px;width:52px"></span>full</div>
+      </div>
+      <h3 class="ch">Elevation</h3>
+      <div class="scale-row">
+        <div class="u"><span class="box-elev" style="box-shadow:var(--e-sm)"></span>sm</div><div class="u"><span class="box-elev" style="box-shadow:var(--e-md)"></span>md</div><div class="u"><span class="box-elev" style="box-shadow:var(--e-lg)"></span>lg</div>
+      </div>
+    </section>
+
+    <!-- ================= MOTION ================= -->
+    <section class="blk" id="motion">
+      <p class="eyebrow">Foundations</p><h2 class="h">모션</h2>
+      <p class="desc">절제된 마이크로 인터랙션 + 단 하나의 오케스트레이션(잔디 채워짐·저장 체크). 모든 모션은 <code>prefers-reduced-motion</code> 존중.</p>
+      <div class="easings">
+        <div class="ease e1"><b>standard · 150ms</b><span class="c">cubic-bezier(.4,0,.2,1)</span><div class="track"><div class="dot"></div></div></div>
+        <div class="ease e2"><b>spring · 300ms</b><span class="c">cubic-bezier(.2,.9,.3,1.2)</span><div class="track"><div class="dot"></div></div></div>
+        <div class="ease e3"><b>linear · loading</b><span class="c">linear</span><div class="track"><div class="dot"></div></div></div>
+      </div>
+    </section>
+
+    <!-- ================= ICON ================= -->
+    <section class="blk" id="icon">
+      <p class="eyebrow">Foundations</p><h2 class="h">아이콘</h2>
+      <p class="desc">24×24 · stroke 2 · round · <code>currentColor</code> 라인 아이콘 세트. 이모지(🇰🇷📷🔥) 대체. 크기 16(버튼)/20(탭바)/24(기본).</p>
+      <div class="icons">
+        <div class="ico"><svg><use href="#ic-home"/></svg><span>home</span></div>
+        <div class="ico"><svg><use href="#ic-pen"/></svg><span>pen · 필사</span></div>
+        <div class="ico"><svg><use href="#ic-book"/></svg><span>book · 서재</span></div>
+        <div class="ico"><svg><use href="#ic-chart"/></svg><span>chart · 통계</span></div>
+        <div class="ico"><svg><use href="#ic-user"/></svg><span>user</span></div>
+        <div class="ico"><svg style="color:var(--accent)"><use href="#ic-flame"/></svg><span>flame · 연속</span></div>
+        <div class="ico"><svg><use href="#ic-check"/></svg><span>check</span></div>
+        <div class="ico"><svg><use href="#ic-x"/></svg><span>close</span></div>
+        <div class="ico"><svg><use href="#ic-chevron"/></svg><span>chevron</span></div>
+        <div class="ico"><svg><use href="#ic-camera"/></svg><span>camera</span></div>
+        <div class="ico"><svg><use href="#ic-calendar"/></svg><span>calendar</span></div>
+        <div class="ico"><svg><use href="#ic-arrow"/></svg><span>arrow</span></div>
+        <div class="ico"><svg><use href="#ic-target"/></svg><span>target · 목표</span></div>
+      </div>
+    </section>
+
+    <!-- ================= BUTTON ================= -->
+    <section class="blk" id="button">
+      <p class="eyebrow">Components</p><h2 class="h">버튼</h2>
+      <p class="desc">variant × size × state. 실제 버튼이라 <b>hover · 클릭 · Tab 포커스</b>가 동작합니다. 액션은 끝까지 같은 이름(오늘 필사 시작 → 토스트 "필사 기록 저장됨").</p>
+      <h3 class="ch">Variant</h3><p class="chspec">.btn--primary / --secondary / --ghost / --danger</p>
+      <div class="canvas">
+        <button class="btn btn--primary"><svg><use href="#ic-pen"/></svg>오늘 필사 시작</button>
+        <button class="btn btn--secondary">이전</button>
+        <button class="btn btn--ghost">건너뛰기</button>
+        <button class="btn btn--danger">삭제</button>
+      </div>
+      <h3 class="ch">Size</h3><p class="chspec">.btn--sm (32) / 기본 (40) / .btn--lg (48)</p>
+      <div class="canvas">
+        <button class="btn btn--primary btn--sm">Small</button>
+        <button class="btn btn--primary">Medium</button>
+        <button class="btn btn--primary btn--lg">Large</button>
+      </div>
+      <h3 class="ch">State</h3><p class="chspec">default · hover · disabled · loading</p>
+      <div class="canvas">
+        <div class="stk"><button class="btn btn--primary">기본</button><span class="lbl">default</span></div>
+        <div class="stk"><button class="btn btn--primary" style="background:var(--blue-deep)">호버</button><span class="lbl">hover</span></div>
+        <div class="stk"><button class="btn btn--primary" disabled>비활성</button><span class="lbl">disabled</span></div>
+        <div class="stk"><button class="btn btn--primary"><span class="spin"></span>저장 중…</button><span class="lbl">loading</span></div>
+      </div>
+    </section>
+
+    <!-- ================= FIELD ================= -->
+    <section class="blk" id="field">
+      <p class="eyebrow">Components</p><h2 class="h">인풋 · 셀렉트</h2>
+      <p class="desc">라벨 + 컨트롤 + 도움말/오류. 포커스는 파랑 테두리 + 3px 소프트 링. 클릭해 포커스 상태를 확인하세요.</p>
+      <div class="canvas">
+        <div class="field"><label for="d1">이메일</label><input id="d1" class="input" placeholder="you@example.com"><span class="help">로그인에 사용됩니다</span></div>
+        <div class="field"><label for="d2">절 범위</label><input id="d2" class="input err" value="0"><span class="help err">1 이상을 입력해 주세요</span></div>
+        <div class="field"><label for="d3">성경</label><div class="selectw"><select id="d3" class="input"><option>시편</option><option>잠언</option></select><svg><use href="#ic-chevron"/></svg></div></div>
+        <div class="field"><label>비활성</label><input class="input" value="자동 입력" disabled></div>
+        <div class="field" style="max-width:100%;flex:1;min-width:220px"><label for="d4">QT 묵상</label><textarea id="d4" class="input" placeholder="오늘 느낀 점을 자유롭게 적어보세요"></textarea></div>
+      </div>
+    </section>
+
+    <!-- ================= CARD ================= -->
+    <section class="blk" id="card">
+      <p class="eyebrow">Components</p><h2 class="h">카드</h2>
+      <p class="desc">base(16 radius · 1px border) · 말씀 카드 · 그라디언트 카드(정체성 유지).</p>
+      <div class="canvas">
+        <div class="card" style="max-width:260px"><div class="kicker">시편 23:1 · 오늘의 말씀</div><div class="verse-lg">여호와는 나의 목자시니 내게 부족함이 없으리로다</div><div class="verse-ref">— 시편 23편 1절</div></div>
+        <div class="card" style="max-width:250px;background:var(--grad-identity);border:0;color:#fff;display:flex;gap:12px;align-items:center"><span class="avatar avatar--md" style="background:rgba(255,255,255,.28)">김</span><div><div style="font-weight:700">김현수님</div><div style="font-size:11px;opacity:.9">2권 완필 · 7일 연속</div></div></div>
+      </div>
+    </section>
+
+    <!-- ================= STAT / PROGRESS ================= -->
+    <section class="blk" id="stat">
+      <p class="eyebrow">Components</p><h2 class="h">지표 · 프로그레스</h2>
+      <p class="desc">지표 타일(숫자 tabular) · 선형 바 · 도넛 링. 습관 앱의 진척을 정밀하게.</p>
+      <div class="canvas">
+        <div class="stat"><b>128</b><span>총 필사</span></div>
+        <div class="stat"><b>7일</b><span>연속</span><div class="d">+1 오늘</div></div>
+        <div class="stat"><b>4.0%</b><span>전체 진척</span></div>
+        <div class="stk"><div class="pbar"><i style="width:40%"></i></div><span class="lbl">linear · 40%</span></div>
+        <div class="stk">
+          <svg class="ring" viewBox="0 0 76 76"><circle class="bg" cx="38" cy="38" r="32"/><circle class="fg" cx="38" cy="38" r="32" stroke-dasharray="201" stroke-dashoffset="58" transform="rotate(-90 38 38)"/></svg>
+          <span class="lbl">ring · 71% (주간 5/7)</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= BADGE / AVATAR ================= -->
+    <section class="blk" id="badge">
+      <p class="eyebrow">Components</p><h2 class="h">뱃지 · 아바타</h2>
+      <div class="canvas">
+        <span class="badge">기본</span>
+        <span class="badge badge--blue">진행 중</span>
+        <span class="badge badge--success"><span class="dot"></span>완료</span>
+        <span class="badge badge--danger">오류</span>
+        <span class="badge badge--coral"><svg style="width:12px;height:12px;color:currentColor"><use href="#ic-flame"/></svg>7일 연속</span>
+      </div>
+      <div class="canvas" style="margin-top:12px">
+        <div class="stk"><span class="avatar avatar--sm">김</span><span class="lbl">sm 28</span></div>
+        <div class="stk"><span class="avatar avatar--md">김</span><span class="lbl">md 40</span></div>
+        <div class="stk"><span class="avatar avatar--lg">김</span><span class="lbl">lg 56</span></div>
+        <div class="stk"><span class="avatar avatar--lg avatar--grad">김</span><span class="lbl">grad</span></div>
+      </div>
+    </section>
+
+    <!-- ================= NAV ================= -->
+    <section class="blk" id="nav">
+      <p class="eyebrow">Components</p><h2 class="h">내비게이션</h2>
+      <p class="desc">데스크탑 = 사이드바 아이템, 모바일 = 하단 탭바. 활성은 blue-soft 배경/블루 텍스트.</p>
+      <div class="canvas" style="align-items:flex-start">
+        <div class="navdemo">
+          <div class="navitem on"><svg><use href="#ic-home"/></svg>오늘</div>
+          <div class="navitem"><svg><use href="#ic-pen"/></svg>필사</div>
+          <div class="navitem"><svg><use href="#ic-book"/></svg>서재</div>
+          <div class="navitem"><svg><use href="#ic-chart"/></svg>통계</div>
+          <div class="navitem"><svg><use href="#ic-user"/></svg>마이페이지</div>
+        </div>
+        <div class="tabbar">
+          <div class="tabitem on"><svg><use href="#ic-home"/></svg>오늘</div>
+          <div class="tabitem"><svg><use href="#ic-pen"/></svg>필사</div>
+          <div class="tabitem"><svg><use href="#ic-book"/></svg>서재</div>
+          <div class="tabitem"><svg><use href="#ic-user"/></svg>MY</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= JANDI ================= -->
+    <section class="blk" id="jandi">
+      <p class="eyebrow">Components · 시그니처</p><h2 class="h">잔디 (Contribution)</h2>
+      <p class="desc">브랜드 정체성 요소. 5단 블루 스케일(<code>--j0~j4</code>), 로드 시 셀이 차례로 채워지는 오케스트레이션 모션. 활동량 0~4 매핑.</p>
+      <div class="canvas col">
+        <div class="jandi" id="jandi"></div>
+        <div class="legend">적게 <i style="background:var(--j0)"></i><i style="background:var(--j1)"></i><i style="background:var(--j2)"></i><i style="background:var(--j3)"></i><i style="background:var(--j4)"></i> 많이</div>
+      </div>
+    </section>
+
+    <!-- ================= FEEDBACK ================= -->
+    <section class="blk" id="feedback">
+      <p class="eyebrow">Components</p><h2 class="h">알럿 · 모달</h2>
+      <p class="desc">인라인 알럿(성공/오류/정보) + 저장 성공 모달(초록 체크 애니메이션). 오류는 원인+행동, 사과 없음.</p>
+      <div class="canvas col">
+        <div class="alert alert--success"><svg><use href="#ic-check"/></svg><p>필사 기록을 저장했어요.</p></div>
+        <div class="alert alert--error"><svg><use href="#ic-x"/></svg><p>필사 기록을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.</p></div>
+        <div class="alert alert--info"><svg><use href="#ic-target"/></svg><p>이번 주 목표까지 2일 남았어요.</p></div>
+      </div>
+      <div class="modal-demo" style="margin-top:12px">
+        <div class="modal">
+          <svg class="chk" viewBox="0 0 52 52"><circle cx="26" cy="26" r="24"/><path d="M14 27l8 8 16-18"/></svg>
+          <h4>필사 기록을 저장했어요</h4><p>시편 23:1-6 · 오늘도 한 걸음</p>
+          <button class="btn btn--primary" style="width:100%">확인</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= STATE ================= -->
+    <section class="blk" id="state">
+      <p class="eyebrow">Components</p><h2 class="h">상태 — 로딩 · 빈 · 스텝</h2>
+      <div class="canvas" style="align-items:flex-start">
+        <div class="card" style="width:220px"><div class="sk" style="height:11px;width:55%;margin-bottom:10px"></div><div class="sk" style="height:30px;width:100%;margin-bottom:10px"></div><div class="sk" style="height:10px;width:80%;margin-bottom:6px"></div><div class="sk" style="height:10px;width:60%"></div></div>
+        <div class="empty"><div class="ej"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><h4>아직 심은 잔디가 없어요</h4><p>오늘 첫 필사로 시작해 보세요</p><button class="btn btn--primary btn--sm">첫 필사 시작</button></div>
+        <div class="steps"><div class="bars"><i class="on"></i><i></i><i></i><i></i><i></i></div><div class="labs"><span class="on">범위</span><span>언어</span><span>사진</span><span>Key</span><span>QT</span></div></div>
+      </div>
+    </section>
+
+    <!-- ================= BOOK CARD ================= -->
+    <section class="blk" id="book">
+      <p class="eyebrow">Components</p><h2 class="h">책 카드 (서재)</h2>
+      <p class="desc">66권 서재의 단위. 책 이름 + 읽기 진척 바 + %. 백엔드 <code>books/book_infos</code> 매핑.</p>
+      <div class="canvas">
+        <div class="bookcard"><div class="t">창세기</div><div class="pbar" style="width:100%;height:5px"><i style="width:88%"></i></div><div class="p">88% · 50장</div></div>
+        <div class="bookcard"><div class="t">시편</div><div class="pbar" style="width:100%;height:5px"><i style="width:26%"></i></div><div class="p">26% · 150편</div></div>
+        <div class="bookcard"><div class="t">민수기</div><div class="pbar" style="width:100%;height:5px"><i style="width:0%"></i></div><div class="p">0% · 시작 전</div></div>
+      </div>
+    </section>
+
+    <footer class="foot">Re:Verse 디자인 시스템 · v0.1 · 통합안("맑은 파랑 + 성장, 그라디언트 유지")에서 확정. 이 문서의 컴포넌트 CSS는 그대로 <code>src/ui/</code> 프리미티브로 옮길 수 있게 작성했습니다.</footer>
+  </main>
+</div>
+
+<script>
+  (function(){
+    var lv=[0,1,0,2,3,1,0,4,2,3,1,2,0,3,1,2,3,1,0,2,4,3,2,1,0,3,2,4,0,3,1,4,2,1,3,0,2,4,1,3,2,0,1,3];
+    var el=document.getElementById("jandi"); if(!el) return;
+    var reduce=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    for(var i=0;i<78;i++){var c=document.createElement("i");var l=lv[(i*3+1)%lv.length];if(l)c.className="l"+l;
+      if(!reduce){c.style.opacity=0;c.style.transform="scale(.3)";c.style.transition="opacity .4s, transform .4s";c.style.transitionDelay=(i*7)+"ms";}
+      el.appendChild(c);}
+    if(!reduce){requestAnimationFrame(function(){requestAnimationFrame(function(){for(var j=0;j<el.children.length;j++){el.children[j].style.opacity=1;el.children[j].style.transform="none";}});});}
+  })();
+</script>

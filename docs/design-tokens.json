@@ -1,0 +1,117 @@
+{
+  "$description": "Re:Verse 디자인 토큰 (W3C DTCG). Tokens Studio(Figma) 임포트 및 코드 @theme 이관용. 통합안 '맑은 파랑 + 성장, 그라디언트 유지' v0.1.",
+  "color": {
+    "blue": {
+      "50":  { "$type": "color", "$value": "#E8F1FF" },
+      "100": { "$type": "color", "$value": "#BFDBFE" },
+      "300": { "$type": "color", "$value": "#93C5FD" },
+      "500": { "$type": "color", "$value": "#3B82F6" },
+      "600": { "$type": "color", "$value": "#2663EC" },
+      "700": { "$type": "color", "$value": "#1E40B0" }
+    },
+    "grey": {
+      "50":  { "$type": "color", "$value": "#F9FAFB" },
+      "100": { "$type": "color", "$value": "#F2F4F6" },
+      "200": { "$type": "color", "$value": "#E5E8EB" },
+      "300": { "$type": "color", "$value": "#D1D6DB" },
+      "400": { "$type": "color", "$value": "#9AA4B0" },
+      "500": { "$type": "color", "$value": "#8B95A1" },
+      "600": { "$type": "color", "$value": "#6B7684" },
+      "700": { "$type": "color", "$value": "#4E5968" },
+      "800": { "$type": "color", "$value": "#334155" },
+      "900": { "$type": "color", "$value": "#17324A" }
+    },
+    "accent":  { "$type": "color", "$value": "#F97E62", "$description": "코랄. 스트릭·콜론 단 한 곳" },
+    "success": { "$type": "color", "$value": "#03B26C" },
+    "danger":  { "$type": "color", "$value": "#F04452" },
+    "warning": { "$type": "color", "$value": "#FE9800" },
+    "semantic": {
+      "bg":          { "$type": "color", "$value": "#FFFFFF" },
+      "surface":     { "$type": "color", "$value": "{color.grey.50}" },
+      "fill":        { "$type": "color", "$value": "{color.grey.100}" },
+      "border":      { "$type": "color", "$value": "{color.grey.200}" },
+      "borderStrong":{ "$type": "color", "$value": "{color.grey.300}" },
+      "ink":         { "$type": "color", "$value": "{color.grey.900}" },
+      "body":        { "$type": "color", "$value": "{color.grey.700}" },
+      "sub":         { "$type": "color", "$value": "{color.grey.500}" },
+      "primary":     { "$type": "color", "$value": "{color.blue.500}", "$description": "인터랙션(CTA/링크/활성)에만" },
+      "primaryDeep": { "$type": "color", "$value": "{color.blue.600}", "$description": "hover/pressed" },
+      "primarySoft": { "$type": "color", "$value": "{color.blue.50}", "$description": "정보 배경·선택" }
+    },
+    "jandi": {
+      "0": { "$type": "color", "$value": "#EDF1F5" },
+      "1": { "$type": "color", "$value": "{color.blue.100}" },
+      "2": { "$type": "color", "$value": "{color.blue.300}" },
+      "3": { "$type": "color", "$value": "{color.blue.500}" },
+      "4": { "$type": "color", "$value": "{color.blue.700}" }
+    }
+  },
+  "gradient": {
+    "greet":    { "$type": "gradient", "$description": "인사 히어로. linear 135deg", "$value": [ { "color": "#DBEAFE", "position": 0 }, { "color": "#EEF6FF", "position": 1 } ] },
+    "identity": { "$type": "gradient", "$description": "프로필 정체성 카드. linear 120deg", "$value": [ { "color": "#3B82F6", "position": 0 }, { "color": "#6F9CF0", "position": 0.52 }, { "color": "#F4A187", "position": 1 } ] },
+    "range":    { "$type": "gradient", "$description": "필사 범위 카드. linear 135deg", "$value": [ { "color": "#2F8FD8", "position": 0 }, { "color": "#1E6FB1", "position": 1 } ] }
+  },
+  "fontFamily": {
+    "sans": { "$type": "fontFamily", "$value": ["Pretendard", "Noto Sans KR", "Malgun Gothic", "-apple-system", "system-ui", "sans-serif"] },
+    "mono": { "$type": "fontFamily", "$value": ["ui-monospace", "SFMono-Regular", "Menlo", "Consolas", "monospace"] }
+  },
+  "fontWeight": {
+    "regular":  { "$type": "fontWeight", "$value": 400 },
+    "medium":   { "$type": "fontWeight", "$value": 500 },
+    "semibold": { "$type": "fontWeight", "$value": 600 },
+    "bold":     { "$type": "fontWeight", "$value": 700 },
+    "extrabold":{ "$type": "fontWeight", "$value": 800 }
+  },
+  "fontSize": {
+    "caption": { "$type": "dimension", "$value": "13px" },
+    "body":    { "$type": "dimension", "$value": "16px" },
+    "verse":   { "$type": "dimension", "$value": "20px" },
+    "h3":      { "$type": "dimension", "$value": "20px" },
+    "h2":      { "$type": "dimension", "$value": "24px" },
+    "h1":      { "$type": "dimension", "$value": "32px" },
+    "display": { "$type": "dimension", "$value": "40px" }
+  },
+  "lineHeight": {
+    "tight":  { "$type": "number", "$value": 1.15 },
+    "snug":   { "$type": "number", "$value": 1.3 },
+    "normal": { "$type": "number", "$value": 1.6 },
+    "verse":  { "$type": "number", "$value": 1.85 }
+  },
+  "typography": {
+    "display": { "$type": "typography", "$value": { "fontFamily": "{fontFamily.sans}", "fontWeight": "{fontWeight.bold}", "fontSize": "{fontSize.display}", "lineHeight": "{lineHeight.tight}", "letterSpacing": "-0.03em" } },
+    "h1":      { "$type": "typography", "$value": { "fontFamily": "{fontFamily.sans}", "fontWeight": "{fontWeight.bold}", "fontSize": "{fontSize.h1}", "lineHeight": "{lineHeight.tight}", "letterSpacing": "-0.02em" } },
+    "h2":      { "$type": "typography", "$value": { "fontFamily": "{fontFamily.sans}", "fontWeight": "{fontWeight.extrabold}", "fontSize": "{fontSize.h2}", "lineHeight": "{lineHeight.snug}", "letterSpacing": "-0.01em" } },
+    "h3":      { "$type": "typography", "$value": { "fontFamily": "{fontFamily.sans}", "fontWeight": "{fontWeight.bold}", "fontSize": "{fontSize.h3}", "lineHeight": "{lineHeight.snug}", "letterSpacing": "0" } },
+    "verse":   { "$type": "typography", "$value": { "fontFamily": "{fontFamily.sans}", "fontWeight": "{fontWeight.medium}", "fontSize": "{fontSize.verse}", "lineHeight": "{lineHeight.verse}", "letterSpacing": "-0.005em" } },
+    "body":    { "$type": "typography", "$value": { "fontFamily": "{fontFamily.sans}", "fontWeight": "{fontWeight.regular}", "fontSize": "{fontSize.body}", "lineHeight": "{lineHeight.normal}", "letterSpacing": "0" } },
+    "caption": { "$type": "typography", "$value": { "fontFamily": "{fontFamily.sans}", "fontWeight": "{fontWeight.medium}", "fontSize": "{fontSize.caption}", "lineHeight": "1.4", "letterSpacing": "0" } }
+  },
+  "spacing": {
+    "0": { "$type": "dimension", "$value": "0" },
+    "1": { "$type": "dimension", "$value": "4px" },
+    "2": { "$type": "dimension", "$value": "8px" },
+    "3": { "$type": "dimension", "$value": "12px" },
+    "4": { "$type": "dimension", "$value": "16px" },
+    "6": { "$type": "dimension", "$value": "24px" },
+    "8": { "$type": "dimension", "$value": "32px" },
+    "12": { "$type": "dimension", "$value": "48px" }
+  },
+  "radius": {
+    "sm":   { "$type": "dimension", "$value": "6px" },
+    "md":   { "$type": "dimension", "$value": "10px" },
+    "lg":   { "$type": "dimension", "$value": "12px" },
+    "xl":   { "$type": "dimension", "$value": "16px" },
+    "full": { "$type": "dimension", "$value": "999px" }
+  },
+  "shadow": {
+    "sm": { "$type": "shadow", "$value": { "color": "rgba(23,50,74,0.06)", "offsetX": "0", "offsetY": "1px",  "blur": "2px",  "spread": "0" } },
+    "md": { "$type": "shadow", "$value": { "color": "rgba(23,50,74,0.08)", "offsetX": "0", "offsetY": "6px",  "blur": "18px", "spread": "0" } },
+    "lg": { "$type": "shadow", "$value": { "color": "rgba(23,50,74,0.11)", "offsetX": "0", "offsetY": "14px", "blur": "34px", "spread": "0" } }
+  },
+  "breakpoint": {
+    "sm": { "$type": "dimension", "$value": "640px" },
+    "md": { "$type": "dimension", "$value": "768px" },
+    "lg": { "$type": "dimension", "$value": "1024px" },
+    "xl": { "$type": "dimension", "$value": "1280px" }
+  }
+}

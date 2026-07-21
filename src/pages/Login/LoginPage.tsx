@@ -30,9 +30,6 @@ function LoginPage() {
   const [showLogin, setShowLogin] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [socialLoading, setSocialLoading] = useState<"google" | null>(null);
 
@@ -53,36 +50,8 @@ function LoginPage() {
     setShowLogin(true);
   };
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleGoogleLogin = async () => {
     setError("");
-
-    const trimmedEmail = email.trim();
-    const trimmedPassword = password.trim();
-
-    if (!trimmedEmail || !trimmedPassword) {
-      setError("Please enter your email and password.");
-      return;
-    }
-
-    if (!trimmedEmail.includes("@")) {
-      setError("Please enter a valid email address.");
-      return;
-    }
-
-    // 이메일/비밀번호 로그인은 아직 연결되지 않았습니다(구글 OAuth 우선).
-    setError("이메일 로그인은 준비 중입니다. 아래 'Google로 시작하기'를 이용해 주세요.");
-  };
-
-  const handleSocialLogin = async (provider: "kakao" | "google") => {
-    setError("");
-
-    if (provider === "kakao") {
-      // 카카오는 Supabase에 provider 미설정 상태 — 설정 후 연결 예정.
-      setError("카카오 로그인은 준비 중입니다. 구글로 시작해 주세요.");
-      return;
-    }
-
     setSocialLoading("google");
     try {
       // Supabase → Google 동의 화면으로 리다이렉트된다(성공 시 이 페이지를 떠남).
@@ -206,24 +175,15 @@ function LoginPage() {
           </div>
         )}
 
-        {/* ================= SOCIAL ================= */}
+        {/* ================= SOCIAL (Google only) ================= */}
+        {/* 카카오·이메일/비밀번호 로그인은 미지원이라 숨김 (구글 OAuth만 지원). */}
 
         <div className="social-buttons">
 
           <button
             type="button"
-            className="btn btn-kakao"
-            onClick={() => handleSocialLogin("kakao")}
-          >
-            <span className="social-icon">💬</span>
-
-            카카오로 시작하기
-          </button>
-
-          <button
-            type="button"
             className="btn btn-google"
-            onClick={() => handleSocialLogin("google")}
+            onClick={handleGoogleLogin}
             disabled={socialLoading === "google"}
           >
             <span className="social-icon">🔵</span>
@@ -234,71 +194,6 @@ function LoginPage() {
           </button>
 
         </div>
-
-        <div className="login-divider">
-          <span></span>
-          <p>또는</p>
-          <span></span>
-        </div>
-
-        {/* ================= LOGIN FORM ================= */}
-
-        <form
-          className="login-form"
-          onSubmit={handleLogin}
-        >
-
-          <div className="form-group">
-            <label htmlFor="email">
-              Email
-            </label>
-
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="password">
-              Password
-            </label>
-
-            <input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          <label
-            className="remember-me"
-            htmlFor="rememberMe"
-          >
-            <input
-              id="rememberMe"
-              type="checkbox"
-              checked={rememberMe}
-              onChange={(e) =>
-                setRememberMe(e.target.checked)
-              }
-            />
-
-            로그인 상태 유지
-          </label>
-
-          <button type="submit" className="btn btn-primary">
-            Login
-          </button>
-
-        </form>
 
         <p className="login-terms">
           계속 진행하면 이용약관 및 개인정보처리방침에 동의합니다.

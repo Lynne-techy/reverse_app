@@ -28,3 +28,18 @@ pnpm-debug.log*
 
 # typescript incremental build cache
 *.tsbuildinfo
+
+# agent / tool caches (local only)
+.claude/
+.codex/
+.agents/
+.opencode/
+
+# design reference dumps (external, ~200MB)
+docs/design_mds/
+
+# throwaway figma debug screenshots
+docs/figmatest*.png
+docs/figmatest*.PNG
+docs/error*.png
+docs/error*.PNG

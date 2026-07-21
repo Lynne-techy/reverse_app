@@ -421,7 +421,8 @@
 
   height: 240px;
 
-  object-fit: cover;
+  /* 가로/세로 사진 모두 잘리지 않게 전체가 보이도록 맞춤(레터박스). cover는 잘림 발생. */
+  object-fit: contain;
 }
 
 .verse-list {
@@ -429,6 +430,16 @@
   flex-direction: column;
 
   gap: 12px;
+
+  /* 후보가 많아지면(넓은 절 범위) 이 영역만 세로 스크롤 — 적을 땐 스크롤 안 생김 */
+  max-height: 320px;
+  overflow-y: auto;
+
+  /* 스크롤바가 옵션 위에 겹치지 않도록 여백 확보 */
+  scrollbar-gutter: stable;
+  padding-right: 4px;
+
+  -webkit-overflow-scrolling: touch;
 }
 
 .verse-option {
@@ -664,5 +675,165 @@
 
   .secondary-button {
     width: 100%;
+  }
+}
+
+/* ===== 저장 성공 — alert 대체, 결제 성공 스타일 초록 체크 애니메이션 ===== */
+.save-success {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(23, 50, 74, 0.3);
+  animation: save-fade 0.2s ease;
+}
+
+.save-success-card {
+  width: min(340px, 100%);
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+  padding: 40px 32px 26px;
+  text-align: center;
+  animation: save-pop 0.3s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+}
+
+.save-success .check {
+  width: 76px;
+  height: 76px;
+  margin-bottom: 14px;
+}
+
+.save-success .check-circle {
+  fill: none;
+  stroke: #2fa36b;
+  stroke-width: 3;
+  stroke-dasharray: 151;
+  stroke-dashoffset: 151;
+  animation: save-draw 0.5s ease forwards;
+}
+
+.save-success .check-mark {
+  fill: none;
+  stroke: #2fa36b;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+  animation: save-draw 0.35s 0.42s ease forwards;
+}
+
+.save-success-card h2 {
+  margin: 4px 0 6px;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.save-success-card p {
+  margin: 0 0 20px;
+  font-size: 14px;
+  color: var(--text-sub);
+}
+
+.save-success-btn {
+  width: 100%;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--primary);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 13px;
+  cursor: pointer;
+}
+
+/* ===== 저장 실패 — alert 대신 인라인 배너 ===== */
+.save-error {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  background: #fdecea;
+  border: 1px solid #f2c4bd;
+  border-radius: var(--radius-md);
+}
+
+.save-error-icon {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #a33a2e;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.save-error p {
+  flex: 1;
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: #8a2f25;
+}
+
+.save-error-retry {
+  flex: none;
+  border: 1px solid #a33a2e;
+  border-radius: 10px;
+  background: transparent;
+  color: #a33a2e;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 12px;
+  cursor: pointer;
+}
+
+@keyframes save-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes save-pop {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes save-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .save-success,
+  .save-success-card,
+  .save-success .check-circle,
+  .save-success .check-mark {
+    animation: none;
+  }
+
+  .save-success .check-circle,
+  .save-success .check-mark {
+    stroke-dashoffset: 0;
   }
 }

@@ -47,13 +47,20 @@ const STEPS = [
 function PilsaPage() {
   const [step, setStep] = useState(1);
 
+  // 저장 상태 머신: idle → saving → success | error (alert 대신 인앱 피드백)
+  const [saveStatus, setSaveStatus] = useState<
+    "idle" | "saving" | "success" | "error"
+  >("idle");
+  const [saveError, setSaveError] = useState("");
+
   const [book, setBook] = useState("시편");
   const [chapter, setChapter] = useState(23);
   const [startVerse, setStartVerse] = useState(1);
   const [endVerse, setEndVerse] = useState(6);
 
+  // 한·영 병행은 아직 미지원이라 기본값을 한국어로 둔다(병행 옵션은 UI에서 숨김).
   const [language, setLanguage] =
-    useState<LanguageMode>("bilingual");
+    useState<LanguageMode>("ko");
 
   const [koImage, setKoImage] = useState<File | null>(null);
   const [enImage, setEnImage] = useState<File | null>(null);
@@ -273,28 +280,7 @@ function PilsaPage() {
         </div>
       </button>
 
-      <button
-        type="button"
-        className={`language-card ${
-          language === "bilingual"
-            ? "selected"
-            : ""
-        }`}
-        onClick={() =>
-          setLanguage("bilingual")
-        }
-      >
-        <div className="language-icon">
-          🌍
-        </div>
-
-        <div>
-          <h3>한 · 영 병행</h3>
-          <p>
-            한국어 + 영어 함께
-          </p>
-        </div>
-      </button>
+      {/* 한·영 병행은 아직 미지원이라 임시로 숨김 (기능 준비되면 복원). */}
     </div>
   );
 
@@ -375,14 +361,18 @@ function PilsaPage() {
   const [qtNote, setQtNote] =
     useState("");
 
-  const keyVerseOptions = [
-    `${book} ${chapter}:${startVerse}`,
-    `${book} ${chapter}:${Math.min(
-      startVerse + 1,
-      endVerse
-    )}`,
-    `${book} ${chapter}:${endVerse}`,
-  ];
+  // 선택한 절 범위(startVerse~endVerse) 전체를 Key Verse 후보로 노출한다.
+  // (기존엔 시작·시작+1·끝 3개만 하드코딩돼 있어 범위가 넓어도 3개만 보였음)
+  const keyVerseOptions =
+    Number.isFinite(startVerse) &&
+    Number.isFinite(endVerse) &&
+    endVerse >= startVerse
+      ? Array.from(
+          { length: endVerse - startVerse + 1 },
+          (_, i) =>
+            `${book} ${chapter}:${startVerse + i}`
+        )
+      : [`${book} ${chapter}:${startVerse}`];
 
   const renderKeyVerseStep = () => (
     <div className="step-content">
@@ -493,25 +483,34 @@ function PilsaPage() {
     </div>
   );
 
-  const handleSave = () => {
-    console.log(
-      "Pilsa Save",
-      {
-        book,
-        chapter,
-        startVerse,
-        endVerse,
-        language,
-        selectedVerse,
-        qtNote,
-        koImage,
-        enImage,
-      }
-    );
+  const handleSave = async () => {
+    setSaveError("");
+    setSaveStatus("saving");
 
-    alert(
-      "필사 기록이 저장되었습니다."
-    );
+    const payload = {
+      book,
+      chapter,
+      startVerse,
+      endVerse,
+      language,
+      selectedVerse,
+      qtNote,
+      koImage,
+      enImage,
+    };
+
+    try {
+      // TODO: 백엔드 저장 API(writing-sessions) 연결 — 지금은 로컬 확인용.
+      // 실제 연결 시 이 자리에서 await 하고, 실패는 catch로 떨어진다.
+      console.log("Pilsa Save", payload);
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      setSaveStatus("success");
+    } catch {
+      setSaveError(
+        "필사 기록을 저장하지 못했어요. 잠시 후 다시 시도해 주세요."
+      );
+      setSaveStatus("error");
+    }
   };
 
   const renderCurrentStep = () => {
@@ -561,6 +560,24 @@ function PilsaPage() {
 
         {renderProgress()}
 
+        {saveStatus === "error" && (
+          <div className="save-error" role="alert">
+            <span className="save-error-icon" aria-hidden="true">
+              !
+            </span>
+
+            <p>{saveError}</p>
+
+            <button
+              type="button"
+              className="save-error-retry"
+              onClick={handleSave}
+            >
+              다시 시도
+            </button>
+          </div>
+        )}
+
         {renderCurrentStep()}
 
         <div className="bottom-actions">
@@ -591,17 +608,56 @@ function PilsaPage() {
             <button
               type="button"
               className="primary-button"
-              onClick={
-                handleSave
-              }
+              onClick={handleSave}
+              disabled={saveStatus === "saving"}
             >
-              저장하기
+              {saveStatus === "saving"
+                ? "저장 중…"
+                : "저장하기"}
             </button>
           )}
 
         </div>
 
       </div>
+
+      {saveStatus === "success" && (
+        <div className="save-success" role="status">
+          <div className="save-success-card">
+            <svg
+              className="check"
+              viewBox="0 0 52 52"
+              aria-hidden="true"
+            >
+              <circle
+                className="check-circle"
+                cx="26"
+                cy="26"
+                r="24"
+              />
+              <path
+                className="check-mark"
+                d="M14 27 l8 8 l16 -18"
+              />
+            </svg>
+
+            <h2>필사 기록을 저장했어요</h2>
+
+            <p>
+              {book} {chapter}:{startVerse}
+              {endVerse > startVerse ? `-${endVerse}` : ""} · 오늘도 한 걸음
+            </p>
+
+            <button
+              type="button"
+              className="save-success-btn"
+              onClick={() => setSaveStatus("idle")}
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
 
     </div>
   );

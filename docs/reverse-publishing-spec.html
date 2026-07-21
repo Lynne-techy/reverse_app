@@ -1,0 +1,352 @@
+<title>Re:Verse 퍼블리싱 & 핸드오프 명세서</title>
+<style>
+  :root{
+    --blue:#3B82F6; --blue-deep:#2663EC; --blue-soft:#E8F1FF;
+    --ink:#17324A; --body:#4E5968; --sub:#8B95A1;
+    --bg:#FFFFFF; --surface:#F9FAFB; --fill:#F2F4F6; --border:#E5E8EB; --border-strong:#D1D6DB;
+    --accent:#F97E62; --success:#03B26C; --danger:#F04452; --warning:#FE9800;
+    --sans:"Pretendard","Noto Sans KR","Malgun Gothic",-apple-system,system-ui,sans-serif;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+    --r:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--body);font-family:var(--sans);line-height:1.62;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums}
+  a{color:var(--blue);text-decoration:none} a:hover{text-decoration:underline}
+  h1,h2,h3,h4{color:var(--ink);text-wrap:balance}
+  code{font-family:var(--mono);font-size:.85em;background:var(--fill);padding:.08em .4em;border-radius:5px;color:var(--ink)}
+  .ds{display:grid;grid-template-columns:236px 1fr;max-width:80rem;margin:0 auto}
+  .nav{position:sticky;top:0;align-self:start;height:100vh;overflow:auto;border-right:1px solid var(--border);padding:22px 16px;background:var(--surface)}
+  .nav .brand{font-weight:800;font-size:15px;color:var(--ink)} .nav .brand span{color:var(--accent)}
+  .nav .sub{font-size:11px;color:var(--sub);margin:2px 0 16px}
+  .nav a{display:block;font-size:12.5px;color:var(--body);padding:6px 9px;border-radius:7px}
+  .nav a:hover{background:var(--blue-soft);color:var(--blue-deep);text-decoration:none}
+  .nav .n{display:inline-block;width:16px;color:var(--sub);font-variant-numeric:tabular-nums}
+  .main{padding:clamp(1.6rem,4vw,3rem) clamp(1.2rem,4vw,3.2rem) 6rem;min-width:0}
+  @media(max-width:54rem){.ds{grid-template-columns:1fr}.nav{position:static;height:auto;display:flex;flex-wrap:wrap;gap:2px 4px;border-right:0;border-bottom:1px solid var(--border)}.nav .brand,.nav .sub{width:100%}}
+
+  .lead h1{font-size:clamp(1.9rem,5vw,2.6rem);letter-spacing:-.03em;margin:0 0 .4rem}
+  .lead p{max-width:46em;margin:0}
+  .tags{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.1rem}
+  .tags b{font-size:.7rem;font-weight:700;background:var(--fill);color:var(--ink);border-radius:99px;padding:.3rem .7rem}
+
+  section.blk{padding-top:2.5rem;margin-top:2.5rem;border-top:1px solid var(--border);scroll-margin-top:1rem}
+  .eyebrow{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);font-weight:700;margin:0 0 .4rem}
+  h2.h{font-size:clamp(1.3rem,3vw,1.75rem);letter-spacing:-.02em;margin:0 0 .3rem}
+  .desc{color:var(--body);max-width:48em;margin:0 0 1.3rem}
+  h3.ch{font-size:1.02rem;margin:1.7rem 0 .6rem;font-weight:700}
+
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:.4rem 0}
+  th,td{border-bottom:1px solid var(--border);padding:9px 10px;text-align:left;vertical-align:top}
+  th{font-size:11px;letter-spacing:.04em;text-transform:uppercase;color:var(--sub);font-weight:700;background:var(--surface)}
+  td code{white-space:nowrap}
+  .tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r)}
+  .tbl-wrap table{margin:0}
+  .tbl-wrap th:first-child,.tbl-wrap td:first-child{padding-left:14px}
+
+  pre.code{background:#0f1b2a;color:#dbe6f2;border-radius:var(--r);padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.65;margin:.6rem 0}
+  pre.code .c{color:#6b8299} pre.code .k{color:#8fb8ff} pre.code .s{color:#a8e6b0} pre.code .t{color:#ffd9a0}
+
+  .cols2{display:grid;grid-template-columns:1fr 1fr;gap:1rem 1.4rem}
+  @media(max-width:44rem){.cols2{grid-template-columns:1fr}}
+  .cols2 h4{font-size:.92rem;margin:0 0 .4rem}
+  ul.tick{list-style:none;padding:0;margin:0}
+  ul.tick li{position:relative;padding:4px 0 4px 22px;font-size:13.5px}
+  ul.tick li::before{content:"";position:absolute;left:2px;top:11px;width:9px;height:9px;border-radius:3px}
+  ul.tick.do li::before{background:var(--success)}
+  ul.tick.dont li::before{background:var(--danger)}
+
+  .pill{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;white-space:nowrap;display:inline-block}
+  .st-ok{background:#e3f7ee;color:#087a4e} .st-part{background:#fff3d9;color:#946200} .st-todo{background:var(--fill);color:var(--sub)}
+
+  .note{border:1px solid var(--border);border-left:3px solid var(--blue);background:var(--surface);border-radius:8px;padding:11px 14px;font-size:13px;margin:.8rem 0}
+  .note.warn{border-left-color:var(--warning)}
+
+  /* wireframe */
+  .wf{border:1.5px solid var(--border-strong);border-radius:14px;background:#fbfbfc;overflow:hidden}
+  .wf .wf-t{font-size:11px;color:var(--sub);font-weight:700;padding:7px 10px;border-bottom:1px solid var(--border);background:var(--surface)}
+  .wf .wf-b{padding:12px;display:flex;flex-direction:column;gap:8px}
+  .g{background:#e7ebef;border-radius:6px}
+  .g.line{height:9px} .g.line.s{width:55%} .g.line.m{width:75%}
+  .g.block{height:44px} .g.tall{height:66px}
+  .g.pill{height:26px;width:96px;border-radius:99px;background:#cdd8e6}
+  .g.grid{display:grid;gap:6px}
+  .g.grid.c2{grid-template-columns:1fr 1fr} .g.grid.c3{grid-template-columns:1fr 1fr 1fr} .g.grid.c4{grid-template-columns:repeat(4,1fr)}
+  .g.grid > i{height:34px;background:#dbe2ea;border-radius:5px;display:block}
+  .wf-shell{display:grid;grid-template-columns:52px 1fr;gap:8px}
+  .wf-shell .sb{background:#eef1f5;border-radius:6px}
+  .wfs{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+
+  footer{margin-top:3rem;padding-top:1.4rem;border-top:1px solid var(--border);color:var(--sub);font-size:.82rem}
+</style>
+
+<div class="ds">
+  <aside class="nav">
+    <div class="brand">Re<span>:</span>Verse</div>
+    <div class="sub">퍼블리싱 & 핸드오프 명세 · v0.1</div>
+    <a href="#overview"><span class="n">0</span>개요</a>
+    <a href="#guide"><span class="n">1</span>UI 개발 가이드</a>
+    <a href="#markup"><span class="n">2</span>마크업 명세</a>
+    <a href="#wa"><span class="n">3</span>웹 접근성 체크리스트</a>
+    <a href="#layout"><span class="n">4</span>공통 레이아웃·템플릿</a>
+    <a href="#wireframe"><span class="n">5</span>와이어프레임</a>
+    <a href="#figma"><span class="n">6</span>Figma 스타일·컴포넌트</a>
+    <a href="#handoff"><span class="n">7</span>개발 핸드오프</a>
+  </aside>
+
+  <main class="main">
+    <div class="lead" id="overview">
+      <h1>Re:Verse 퍼블리싱 & 핸드오프 명세서</h1>
+      <p>디자인 시스템 v0.1을 실제 마크업·개발·Figma 구축·핸드오프로 잇는 실무 문서입니다. 컴포넌트 비주얼은 <b>디자인 시스템 문서</b>, 토큰은 <b>design-tokens.json</b>을 참조합니다.</p>
+      <div class="tags"><b>React 18 · Vite · TS</b><b>Tailwind v4 @theme</b><b>Pretendard + Noto Sans KR</b><b>모바일 우선</b><b>WCAG 2.1 AA 목표</b></div>
+      <div class="note" style="margin-top:1.2rem"><b>연결 산출물</b> — ① 디자인 시스템 v0.1(컴포넌트 레퍼런스) ② <code>docs/design-tokens.json</code>(DTCG, Tokens Studio 임포트) ③ 본 명세서. Figma는 이 3종으로 세웁니다(§6).</div>
+    </div>
+
+    <!-- 1. UI 개발 가이드 -->
+    <section class="blk" id="guide">
+      <p class="eyebrow">01</p><h2 class="h">UI 개발 가이드</h2>
+      <p class="desc">토큰을 단일 소스로, 프리미티브 컴포넌트를 쌓고, 페이지는 조합만 한다. 하드코딩 금지.</p>
+
+      <h3 class="ch">폴더 구조</h3>
+      <pre class="code"><span class="c">src/</span>
+  <span class="k">styles/</span>
+    index.css        <span class="c"># @theme 토큰 단일 소스 (design-tokens.json에서 이관)</span>
+  <span class="k">ui/</span>               <span class="c"># 프리미티브 (디자인 시스템 그대로)</span>
+    Button.tsx  Input.tsx  Card.tsx  Stat.tsx  Badge.tsx
+    Progress.tsx  Alert.tsx  Modal.tsx  Skeleton.tsx  Icon.tsx
+  <span class="k">components/</span>       <span class="c"># 기능 조합 (도메인)</span>
+    TodayVerse.tsx  ContributionGraph.tsx  Sidebar.tsx ...
+  <span class="k">pages/</span>            <span class="c"># 화면 (ui + components 조합만)</span></pre>
+
+      <h3 class="ch">규약</h3>
+      <div class="tbl-wrap"><table><thead><tr><th>항목</th><th>규칙</th></tr></thead><tbody>
+        <tr><td>토큰</td><td><code>styles/index.css</code>의 <code>@theme</code>가 유일 소스. 값은 항상 <code>var(--...)</code>. <b>hex 하드코딩 금지</b></td></tr>
+        <tr><td>CSS 방법</td><td>컴포넌트 클래스 + BEM-lite modifier(<code>.btn--primary</code>). 유틸(Tailwind)은 레이아웃·간격에 한정</td></tr>
+        <tr><td>네이밍</td><td>컴포넌트 <code>PascalCase</code> / CSS <code>kebab-case</code> / 토큰 <code>--group-name</code></td></tr>
+        <tr><td>숫자</td><td>모든 통계·수치는 <code>font-variant-numeric: tabular-nums</code></td></tr>
+        <tr><td>상태</td><td>모든 인터랙티브 요소에 <code>hover · active · :focus-visible · [disabled]</code> 정의 필수</td></tr>
+        <tr><td>반응형</td><td>모바일 우선(<code>min-width</code>). 브레이크포인트 <code>640 / 768 / 1024 / 1280</code></td></tr>
+        <tr><td>모션</td><td><code>prefers-reduced-motion</code> 전역 존중. 오케스트레이션은 잔디·저장 체크 1곳</td></tr>
+        <tr><td>브라우저</td><td>Chrome/Edge/Safari 최신 2버전, iOS 15+, Android Chrome</td></tr>
+      </tbody></table></div>
+
+      <h3 class="ch">Do / Don't</h3>
+      <div class="cols2">
+        <div><h4 style="color:var(--success)">Do</h4><ul class="tick do">
+          <li>파랑은 CTA·링크·활성·잔디에만</li>
+          <li>카드는 <code>--r-xl(16)</code> + 1px 보더, 그림자 최소</li>
+          <li>숫자는 tabular, 라벨은 sentence case</li>
+          <li>포커스 링 항상 노출(<code>:focus-visible</code>)</li>
+        </ul></div>
+        <div><h4 style="color:var(--danger)">Don't</h4><ul class="tick dont">
+          <li>파랑 그라디언트를 일반 배경에 남발</li>
+          <li>이모지를 아이콘으로 사용(🇰🇷📷🔥)</li>
+          <li>페이지마다 <code>:root</code> 재정의</li>
+          <li><code>&lt;div onClick&gt;</code>로 버튼 흉내(→ <code>&lt;button&gt;</code>)</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <!-- 2. 마크업 명세 -->
+    <section class="blk" id="markup">
+      <p class="eyebrow">02</p><h2 class="h">마크업 명세</h2>
+      <p class="desc">의미에 맞는 태그, 접근 가능한 구조. 시각이 아니라 역할로 마크업한다.</p>
+
+      <h3 class="ch">시맨틱 태그 규약</h3>
+      <div class="tbl-wrap"><table><thead><tr><th>역할</th><th>태그</th><th>주의</th></tr></thead><tbody>
+        <tr><td>페이지 머리</td><td><code>&lt;header&gt;</code></td><td>로고·상단바</td></tr>
+        <tr><td>내비게이션</td><td><code>&lt;nav aria-label&gt;</code></td><td>사이드바/탭바</td></tr>
+        <tr><td>본문</td><td><code>&lt;main&gt;</code></td><td>페이지당 1개</td></tr>
+        <tr><td>구획</td><td><code>&lt;section&gt;</code> / <code>&lt;article&gt;</code></td><td>제목(<code>h2/h3</code>) 동반</td></tr>
+        <tr><td>목록(서재·기록)</td><td><code>&lt;ul&gt;&lt;li&gt;</code></td><td>나열은 리스트로</td></tr>
+        <tr><td>동작</td><td><code>&lt;button&gt;</code></td><td>같은 화면 액션</td></tr>
+        <tr><td>이동</td><td><code>&lt;a href&gt;</code></td><td>라우팅</td></tr>
+        <tr><td>입력</td><td><code>&lt;label&gt;</code>+<code>&lt;input&gt;</code></td><td>label <code>for</code> 연결 필수</td></tr>
+        <tr><td>이미지</td><td><code>&lt;img alt&gt;</code></td><td>의미 있으면 alt, 장식은 <code>alt=""</code></td></tr>
+      </tbody></table></div>
+
+      <h3 class="ch">컴포넌트 마크업 예시</h3>
+      <pre class="code"><span class="c">&lt;!-- Field: label 연결 + 오류 접근성 --&gt;</span>
+<span class="k">&lt;div</span> <span class="t">class</span>=<span class="s">"field"</span><span class="k">&gt;</span>
+  <span class="k">&lt;label</span> <span class="t">for</span>=<span class="s">"verse-range"</span><span class="k">&gt;</span>절 범위<span class="k">&lt;/label&gt;</span>
+  <span class="k">&lt;input</span> <span class="t">id</span>=<span class="s">"verse-range"</span> <span class="t">class</span>=<span class="s">"input"</span> <span class="t">aria-invalid</span>=<span class="s">"true"</span>
+         <span class="t">aria-describedby</span>=<span class="s">"vr-help"</span><span class="k">&gt;</span>
+  <span class="k">&lt;p</span> <span class="t">id</span>=<span class="s">"vr-help"</span> <span class="t">class</span>=<span class="s">"help err"</span><span class="k">&gt;</span>1 이상을 입력해 주세요<span class="k">&lt;/p&gt;</span>
+<span class="k">&lt;/div&gt;</span>
+
+<span class="c">&lt;!-- Alert / Modal 접근성 --&gt;</span>
+<span class="k">&lt;div</span> <span class="t">class</span>=<span class="s">"alert alert--error"</span> <span class="t">role</span>=<span class="s">"alert"</span><span class="k">&gt;</span> … <span class="k">&lt;/div&gt;</span>
+<span class="k">&lt;div</span> <span class="t">role</span>=<span class="s">"dialog"</span> <span class="t">aria-modal</span>=<span class="s">"true"</span> <span class="t">aria-labelledby</span>=<span class="s">"m-title"</span><span class="k">&gt;</span> … <span class="k">&lt;/div&gt;</span>
+
+<span class="c">&lt;!-- Jandi: 스크린리더용 요약 --&gt;</span>
+<span class="k">&lt;div</span> <span class="t">class</span>=<span class="s">"jandi"</span> <span class="t">role</span>=<span class="s">"img"</span>
+     <span class="t">aria-label</span>=<span class="s">"최근 1년 필사 잔디, 256일 기록"</span><span class="k">&gt;</span>…<span class="k">&lt;/div&gt;</span></pre>
+      <div class="note"><b>ARIA 원칙</b> — 네이티브 태그로 되면 ARIA를 쓰지 않는다. <code>role=dialog</code>엔 포커스 트랩 + <code>Esc</code> 닫기, 로딩엔 <code>aria-busy="true"</code>, 토스트는 <code>role="status"</code>(성공)/<code>role="alert"</code>(오류).</div>
+    </section>
+
+    <!-- 3. WA 체크리스트 -->
+    <section class="blk" id="wa">
+      <p class="eyebrow">03</p><h2 class="h">웹 접근성(WA) 체크리스트</h2>
+      <p class="desc">KWCAG 2.1 / WCAG 2.1 <b>AA</b> 기준. 상태는 현재 코드베이스 실측 기준.</p>
+      <div class="note warn">현 코드 실측: <code>:focus-visible</code> 0곳 · <code>&lt;img&gt;</code> alt 0/2 · 대비 미검증 — 아래 <span class="pill st-todo">예정</span> 항목이 다수. P1 개선 대상.</div>
+      <div class="tbl-wrap"><table><thead><tr><th>원칙</th><th>검사 항목</th><th>적용 방법</th><th>상태</th></tr></thead><tbody>
+        <tr><td>인식</td><td>대체 텍스트</td><td>의미 이미지 <code>alt</code>, 아이콘 버튼 <code>aria-label</code></td><td><span class="pill st-todo">예정</span></td></tr>
+        <tr><td>인식</td><td>명료성(대비)</td><td>본문 4.5:1, 큰 텍스트 3:1. ink/body on 흰 배경 통과</td><td><span class="pill st-part">부분</span></td></tr>
+        <tr><td>인식</td><td>색만으로 정보전달 금지</td><td>상태는 색+아이콘/텍스트 병기(잔디는 <code>aria-label</code>)</td><td><span class="pill st-part">부분</span></td></tr>
+        <tr><td>운용</td><td>키보드 접근</td><td>모든 인터랙티브 <code>&lt;button&gt;/&lt;a&gt;</code>, Tab 순서 논리적</td><td><span class="pill st-part">부분</span></td></tr>
+        <tr><td>운용</td><td>초점 이동·가시성</td><td><code>:focus-visible</code> 2px 링(전역 정의) · 모달 포커스 트랩</td><td><span class="pill st-todo">예정</span></td></tr>
+        <tr><td>운용</td><td>충분한 타깃 크기</td><td>버튼·탭 최소 44×44 (모바일)</td><td><span class="pill st-part">부분</span></td></tr>
+        <tr><td>운용</td><td>반응형·확대</td><td>200% 확대·모바일 무횡스크롤(검증됨)</td><td><span class="pill st-ok">적용</span></td></tr>
+        <tr><td>운용</td><td>움직임 최소화</td><td><code>prefers-reduced-motion</code> 존중</td><td><span class="pill st-part">부분</span></td></tr>
+        <tr><td>이해</td><td>레이블 제공</td><td><code>label for</code> 연결, placeholder만 사용 금지</td><td><span class="pill st-todo">예정</span></td></tr>
+        <tr><td>이해</td><td>오류 정정 안내</td><td><code>aria-invalid</code> + <code>aria-describedby</code>로 원인·해결 제시</td><td><span class="pill st-todo">예정</span></td></tr>
+        <tr><td>이해</td><td>일관성</td><td>같은 액션 = 같은 이름(오늘 필사 시작 → "저장됨")</td><td><span class="pill st-part">부분</span></td></tr>
+        <tr><td>견고</td><td>문법 준수</td><td>유효한 HTML, 중복 <code>id</code> 없음</td><td><span class="pill st-part">부분</span></td></tr>
+        <tr><td>견고</td><td>이름·역할·값</td><td>커스텀 UI에 적절한 <code>role/aria-*</code></td><td><span class="pill st-todo">예정</span></td></tr>
+        <tr><td>견고</td><td>언어 지정</td><td><code>&lt;html lang="ko"&gt;</code></td><td><span class="pill st-part">부분</span></td></tr>
+      </tbody></table></div>
+    </section>
+
+    <!-- 4. 레이아웃/템플릿 -->
+    <section class="blk" id="layout">
+      <p class="eyebrow">04</p><h2 class="h">공통 레이아웃 · 템플릿</h2>
+      <p class="desc">한 App Shell, 다섯 페이지 템플릿. 모바일=하단 탭바, 데스크탑=좌측 사이드바.</p>
+
+      <h3 class="ch">App Shell</h3>
+      <pre class="code"><span class="c">&lt;!-- 모바일: header(sticky) + main + tabbar(fixed bottom) --&gt;</span>
+<span class="c">&lt;!-- 데스크탑(≥1024): aside(sidebar sticky) + main(max-w 1120, 중앙) --&gt;</span>
+<span class="k">&lt;div</span> <span class="t">class</span>=<span class="s">"app-shell"</span><span class="k">&gt;</span>
+  <span class="k">&lt;aside</span> <span class="t">class</span>=<span class="s">"side-nav"</span><span class="k">&gt;</span>…<span class="k">&lt;/aside&gt;</span>   <span class="c">// ≥1024만</span>
+  <span class="k">&lt;main</span> <span class="t">class</span>=<span class="s">"content"</span><span class="k">&gt;</span>…<span class="k">&lt;/main&gt;</span>
+  <span class="k">&lt;nav</span> <span class="t">class</span>=<span class="s">"tab-bar"</span><span class="k">&gt;</span>…<span class="k">&lt;/nav&gt;</span>     <span class="c">// &lt;1024만</span>
+<span class="k">&lt;/div&gt;</span></pre>
+      <div class="tbl-wrap"><table><thead><tr><th>토큰</th><th>값</th></tr></thead><tbody>
+        <tr><td>content max-width</td><td><code>1120px</code> (중앙 정렬)</td></tr>
+        <tr><td>content padding</td><td>모바일 <code>16px</code> / 데스크탑 <code>24~32px</code></td></tr>
+        <tr><td>sidebar</td><td><code>224px</code> 고정, <code>sticky</code></td></tr>
+        <tr><td>tab-bar 높이</td><td><code>56px</code> + safe-area</td></tr>
+        <tr><td>섹션 간격</td><td><code>24px</code>(mobile) / <code>32px</code>(desktop)</td></tr>
+      </tbody></table></div>
+
+      <h3 class="ch">페이지 템플릿</h3>
+      <div class="tbl-wrap"><table><thead><tr><th>템플릿</th><th>화면</th><th>구성</th><th>반응형</th></tr></thead><tbody>
+        <tr><td>Dashboard</td><td>홈</td><td>인사 히어로 + 말씀 + 링·지표·잔디</td><td>1열 → 2열(2fr/1fr)</td></tr>
+        <tr><td>List</td><td>서재 · 최근 기록</td><td>헤더 + 이어읽기 + 아이템 목록</td><td>1열 → 3열 그리드</td></tr>
+        <tr><td>Detail</td><td>책 상세</td><td>타이틀 + 배경정보 + 장 그리드</td><td>1열 → 본문+사이드</td></tr>
+        <tr><td>Form(Wizard)</td><td>필사 5스텝</td><td>스텝바 + 단일 질문 + 하단 액션</td><td>중앙 정렬 max-w 520</td></tr>
+        <tr><td>Auth</td><td>로그인</td><td>로고 + 카드 + 구글 버튼</td><td>중앙 정렬 max-w 400</td></tr>
+      </tbody></table></div>
+    </section>
+
+    <!-- 5. 와이어프레임 -->
+    <section class="blk" id="wireframe">
+      <p class="eyebrow">05</p><h2 class="h">와이어프레임 (Lo-fi)</h2>
+      <p class="desc">구조 검증용 저충실 와이어프레임. 색·타이포 없이 배치와 위계만. html.to.design로 Figma 임포트 → 스타일 적용.</p>
+      <div class="wfs">
+        <div class="wf"><div class="wf-t">홈 · 모바일</div><div class="wf-b">
+          <div class="g block" style="background:#dfe7f2"></div>
+          <div class="g line s"></div><div class="g tall"></div>
+          <div class="g grid c2"><i></i><i></i><i></i><i></i></div>
+          <div class="g" style="height:38px"></div>
+        </div></div>
+        <div class="wf"><div class="wf-t">홈 · 데스크탑</div><div class="wf-b wf-shell">
+          <div class="sb"></div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div class="g block" style="background:#dfe7f2"></div>
+            <div class="g grid c2" style="grid-template-columns:1.6fr 1fr"><i style="height:56px"></i><i style="height:56px"></i></div>
+            <div class="g grid c3"><i></i><i></i><i></i></div>
+          </div>
+        </div></div>
+        <div class="wf"><div class="wf-t">필사 · 스텝</div><div class="wf-b">
+          <div class="g grid c4" style="gap:4px"><i style="height:5px"></i><i style="height:5px;background:#bcd0ea"></i><i style="height:5px"></i><i style="height:5px"></i></div>
+          <div class="g line m"></div><div class="g block"></div><div class="g block"></div>
+          <div style="flex:1"></div><div class="g pill" style="width:100%"></div>
+        </div></div>
+        <div class="wf"><div class="wf-t">서재 · 목록</div><div class="wf-b">
+          <div class="g line s"></div>
+          <div class="g block" style="background:#e3ecf7"></div>
+          <div class="g grid c2"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        </div></div>
+        <div class="wf"><div class="wf-t">로그인</div><div class="wf-b" style="align-items:center">
+          <div style="flex:1"></div>
+          <div class="g" style="width:60%;height:22px"></div>
+          <div class="g block" style="width:100%"></div>
+          <div class="g pill" style="width:100%"></div>
+          <div style="flex:1"></div>
+        </div></div>
+      </div>
+    </section>
+
+    <!-- 6. Figma -->
+    <section class="blk" id="figma">
+      <p class="eyebrow">06</p><h2 class="h">Figma 스타일 · 컴포넌트 구축</h2>
+      <p class="desc">토큰 → Styles/Variables, 컴포넌트 → Component + Variant props. 네이밍을 코드 클래스와 1:1로 맞춘다.</p>
+
+      <h3 class="ch">스타일 네이밍 (Figma Styles/Variables)</h3>
+      <div class="tbl-wrap"><table><thead><tr><th>종류</th><th>Figma 이름</th><th>토큰/값</th></tr></thead><tbody>
+        <tr><td>Color</td><td><code>blue/50…700</code>, <code>grey/50…900</code>, <code>semantic/primary…</code>, <code>gradient/greet…</code>, <code>jandi/0…4</code></td><td>design-tokens.json</td></tr>
+        <tr><td>Text</td><td><code>Display / H1 / H2 / H3 / Verse / Body / Caption</code></td><td>40/32/24/20/20·1.85/16/13</td></tr>
+        <tr><td>Effect</td><td><code>elevation/sm · md · lg</code></td><td>shadow 토큰</td></tr>
+        <tr><td>Grid</td><td><code>bp/sm 640 · md 768 · lg 1024 · xl 1280</code></td><td>breakpoint 토큰</td></tr>
+      </tbody></table></div>
+
+      <h3 class="ch">컴포넌트 · Variant Props</h3>
+      <div class="tbl-wrap"><table><thead><tr><th>컴포넌트</th><th>Variant props</th><th>코드 클래스</th></tr></thead><tbody>
+        <tr><td>Button</td><td><code>variant</code>: primary·secondary·ghost·danger / <code>size</code>: sm·md·lg / <code>state</code>: default·hover·focus·disabled·loading</td><td><code>.btn .btn--*</code></td></tr>
+        <tr><td>Input</td><td><code>state</code>: default·focus·error·disabled</td><td><code>.input .input--err</code></td></tr>
+        <tr><td>Badge</td><td><code>tone</code>: default·blue·success·danger·coral</td><td><code>.badge .badge--*</code></td></tr>
+        <tr><td>Avatar</td><td><code>size</code>: sm·md·lg / <code>fill</code>: solid·gradient</td><td><code>.avatar .avatar--*</code></td></tr>
+        <tr><td>Nav Item</td><td><code>active</code>: true·false</td><td><code>.navitem.on / .tabitem.on</code></td></tr>
+        <tr><td>Card</td><td><code>kind</code>: base·verse·gradient</td><td><code>.card .card--*</code></td></tr>
+        <tr><td>Progress</td><td><code>type</code>: bar·ring</td><td><code>.pbar / .ring</code></td></tr>
+        <tr><td>Alert</td><td><code>tone</code>: success·error·info</td><td><code>.alert .alert--*</code></td></tr>
+      </tbody></table></div>
+
+      <h3 class="ch">구축 절차 (플러그인)</h3>
+      <ol style="font-size:13.5px;padding-left:1.2rem">
+        <li><b>Tokens Studio</b> 플러그인 → <code>docs/design-tokens.json</code> Import → Create Variables/Styles로 색·타입·간격·라운드·그림자 자동 생성.</li>
+        <li><b>html.to.design</b> 플러그인 → 디자인 시스템 문서 URL / 화면 Artifact URL을 Import → 편집 가능한 프레임으로 변환.</li>
+        <li>임포트된 요소를 위 네이밍으로 <b>Component + Variant</b>화. 스타일은 1단계 Variables로 연결.</li>
+      </ol>
+      <div class="note">실제 <code>.fig</code> 생성은 사람/플러그인 단계입니다. 위 3종 산출물이 그 재료이며, 네이밍을 코드 클래스와 맞추면 §7 핸드오프가 무손실로 이어집니다.</div>
+    </section>
+
+    <!-- 7. 핸드오프 -->
+    <section class="blk" id="handoff">
+      <p class="eyebrow">07</p><h2 class="h">개발 핸드오프</h2>
+      <p class="desc">Figma → 코드 무손실. 토큰·컴포넌트·redline·상태를 규약으로 고정.</p>
+
+      <h3 class="ch">토큰 이관</h3>
+      <pre class="code"><span class="c">/* styles/index.css — design-tokens.json에서 이관 */</span>
+<span class="k">@theme</span> {
+  <span class="t">--color-blue-500</span>: #3B82F6;   <span class="t">--color-ink</span>: #17324A;
+  <span class="t">--radius-xl</span>: 16px;         <span class="t">--shadow-md</span>: 0 6px 18px rgba(23,50,74,.08);
+  <span class="c">/* … 전체는 design-tokens.json 참조 … */</span>
+}</pre>
+
+      <h3 class="ch">Redline 규약</h3>
+      <ul class="tick do">
+        <li>간격·크기는 <b>토큰명으로</b> 표기 — "16px"이 아니라 <code>space/4</code>, <code>radius/xl</code></li>
+        <li>컴포넌트는 <b>variant/state</b>로 지정 — "파란 버튼"이 아니라 <code>Button/primary/md</code></li>
+        <li>각 상태(hover·focus·disabled·loading·error)의 스펙을 함께 전달</li>
+        <li>인터랙션 노트: 전환 <code>150ms standard</code>, 오케스트레이션(잔디·저장 체크)만 별도 명시</li>
+      </ul>
+
+      <h3 class="ch">Dev Mode MCP 루프 (Figma가 서면)</h3>
+      <div class="tbl-wrap"><table><thead><tr><th>단계</th><th>도구</th><th>결과</th></tr></thead><tbody>
+        <tr><td>토큰 추출</td><td><code>get_variable_defs</code></td><td>Figma 변수 → 코드 토큰 대조·동기화</td></tr>
+        <tr><td>코드 생성</td><td><code>get_code</code> (선택 프레임)</td><td>프리미티브 클래스로 매핑한 React/CSS 초안</td></tr>
+        <tr><td>스냅샷</td><td><code>get_image</code></td><td>구현 대조용 레퍼런스</td></tr>
+      </tbody></table></div>
+
+      <h3 class="ch">컴포넌트 Definition of Done</h3>
+      <ul class="tick do">
+        <li>모든 variant·state 구현 + <code>:focus-visible</code> 링</li>
+        <li>키보드 조작 가능 · 스크린리더 레이블</li>
+        <li>tabular 숫자 · reduced-motion 대응</li>
+        <li>토큰만 사용(하드코딩 0) · 모바일~데스크탑 무횡스크롤</li>
+      </ul>
+    </section>
+
+    <footer>Re:Verse 퍼블리싱 & 핸드오프 명세서 · v0.1 · 디자인 시스템 v0.1 + design-tokens.json 기준. 실제 <code>.fig</code>는 Tokens Studio·html.to.design 플러그인으로 세우고, Dev Mode MCP로 코드 핸드오프.</footer>
+  </main>
+</div>
