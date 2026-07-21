@@ -1,0 +1,10 @@
+# Cloudflare Pages 보안 응답 헤더 (하드닝 감사 2026-07-21)
+# VM(nginx) 배포는 deploy/nginx-prod.conf 가 동일 헤더를 담당한다.
+# CSP는 우선 Report-Only로 관찰(깨짐 방지) → 안정화 후 Content-Security-Policy 로 승격.
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Content-Security-Policy-Report-Only: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; img-src 'self' data: blob: https://oqvdcypwwvildpqnoqbr.supabase.co; connect-src 'self' https://oqvdcypwwvildpqnoqbr.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
