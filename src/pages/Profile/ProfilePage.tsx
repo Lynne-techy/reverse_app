@@ -8,6 +8,7 @@ import type { UserProgress } from "../../api/users";
 import type { MyStatistics } from "../../api/stats";
 
 import { supabase } from "../../lib/supabase";
+import ErrorState from "../../components/ErrorState";
 
 import "./ProfilePage.css";
 
@@ -25,6 +26,9 @@ function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
 
   const [errorMessage, setErrorMessage] = useState("");
+
+  // 에러 화면의 "다시 시도"용 — 값이 바뀌면 loadProfileData를 재실행한다.
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
@@ -79,7 +83,7 @@ function ProfilePage() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [reloadKey]);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -128,9 +132,11 @@ function ProfilePage() {
           </p>
         </section>
 
-        <section className="mt-8 rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
-          <p>{errorMessage || "프로필 정보를 불러오지 못했습니다."}</p>
-        </section>
+        <ErrorState
+          className="mt-8"
+          message={errorMessage || "프로필 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요."}
+          onRetry={() => setReloadKey((k) => k + 1)}
+        />
       </main>
     );
   }
