@@ -61,9 +61,7 @@ function MainPage() {
     activityQ.isError && "활동 기록",
     recordsQ.isError && "최근 필사 기록",
   ].filter(Boolean) as string[];
-  const errorMessage = failed.length
-    ? `${failed.join(", ")} 데이터를 불러오지 못했습니다.`
-    : "";
+  const errorMessage = failed.length ? `${failed.join(", ")} 데이터를 불러오지 못했습니다.` : "";
 
   return (
     <main className="mx-auto w-full max-w-5xl px-6 py-8">
@@ -77,14 +75,12 @@ function MainPage() {
               `안녕하세요, ${userName}님 👋`
             )}
           </h1>
-          <p className="mt-2 text-lg text-slate-500">
-            오늘도 한 글자씩, 만나러 가볼까요.
-          </p>
+          <p className="mt-2 text-lg text-slate-600">오늘도 한 글자씩, 만나러 가볼까요.</p>
         </div>
 
         <button
           type="button"
-          className="rounded-2xl bg-blue-500 px-6 py-4 font-bold text-white hover:bg-blue-600"
+          className="rounded-2xl bg-blue-600 px-6 py-4 font-bold text-white hover:bg-blue-700"
         >
           ✎ 오늘 필사 시작
         </button>
@@ -92,10 +88,7 @@ function MainPage() {
 
       {/* 일부 API 실패 안내 */}
       {errorMessage && (
-        <div
-          role="alert"
-          className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600"
-        >
+        <div role="alert" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
           {errorMessage}
         </div>
       )}
@@ -107,30 +100,18 @@ function MainPage() {
 
       {/* 진척률 및 스트릭 */}
       <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-        <ProgressCard
-          progress={progressQ.data ?? null}
-          isLoading={progressQ.isPending}
-        />
-        <StreakCard
-          statistics={statsQ.data ?? null}
-          isLoading={statsQ.isPending}
-        />
+        <ProgressCard progress={progressQ.data ?? null} isLoading={progressQ.isPending} />
+        <StreakCard statistics={statsQ.data ?? null} isLoading={statsQ.isPending} />
       </div>
 
       {/* 필사 활동 잔디 */}
       <div className="mt-4">
-        <ContributionGraph
-          activity={activityQ.data ?? []}
-          isLoading={activityQ.isPending}
-        />
+        <ContributionGraph activity={activityQ.data ?? []} isLoading={activityQ.isPending} />
       </div>
 
       {/* 최근 필사 기록 */}
       <div className="mt-4">
-        <RecentRecords
-          records={recordsQ.data ?? []}
-          isLoading={recordsQ.isPending}
-        />
+        <RecentRecords records={recordsQ.data ?? []} isLoading={recordsQ.isPending} />
       </div>
     </main>
   );
