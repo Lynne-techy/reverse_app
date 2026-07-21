@@ -219,24 +219,10 @@ function PilsaPage() {
       <div className="upload-card">
         <div className="upload-title">한국어 노트</div>
 
-        <label className="upload-zone">
-          {koPreview ? (
-            <img src={koPreview} className="upload-preview" alt="업로드한 한국어 필사 사진" />
-          ) : (
-            <span>📷 사진 업로드</span>
-          )}
-
-          <input type="file" accept="image/*" hidden onChange={(e) => handlePhotoUpload(e, "ko")} />
-        </label>
-      </div>
-
-      {language === "bilingual" && (
-        <div className="upload-card">
-          <div className="upload-title">영어 노트</div>
-
+        <div className="upload-zone-holder">
           <label className="upload-zone">
-            {enPreview ? (
-              <img src={enPreview} className="upload-preview" alt="업로드한 영어 필사 사진" />
+            {koPreview ? (
+              <img src={koPreview} className="upload-preview" alt="업로드한 한국어 필사 사진" />
             ) : (
               <span>📷 사진 업로드</span>
             )}
@@ -245,9 +231,52 @@ function PilsaPage() {
               type="file"
               accept="image/*"
               hidden
-              onChange={(e) => handlePhotoUpload(e, "en")}
+              onChange={(e) => handlePhotoUpload(e, "ko")}
             />
           </label>
+          {koPreview && (
+            <button
+              type="button"
+              className="upload-remove"
+              onClick={() => setKoImage(null)}
+              aria-label="한국어 사진 삭제"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+      </div>
+
+      {language === "bilingual" && (
+        <div className="upload-card">
+          <div className="upload-title">영어 노트</div>
+
+          <div className="upload-zone-holder">
+            <label className="upload-zone">
+              {enPreview ? (
+                <img src={enPreview} className="upload-preview" alt="업로드한 영어 필사 사진" />
+              ) : (
+                <span>📷 사진 업로드</span>
+              )}
+
+              <input
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={(e) => handlePhotoUpload(e, "en")}
+              />
+            </label>
+            {enPreview && (
+              <button
+                type="button"
+                className="upload-remove"
+                onClick={() => setEnImage(null)}
+                aria-label="영어 사진 삭제"
+              >
+                ✕
+              </button>
+            )}
+          </div>
         </div>
       )}
     </div>
