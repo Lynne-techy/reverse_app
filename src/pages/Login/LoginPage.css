@@ -3,927 +3,710 @@
    ========================================================== */
 
 :root {
+  --color-parchment: #eaf4fd;
+  --color-surface: #ffffff;
 
-    --color-parchment: #EAF4FD;
-    --color-surface: #FFFFFF;
+  --color-ink: #16304a;
+  --color-subink: #5e7488;
 
-    --color-ink: #16304A;
-    --color-subink: #5E7488;
+  --color-primary: #2e90d9;
+  --color-primary-dark: #15598a;
 
-    --color-primary: #2E90D9;
-    --color-primary-dark: #15598A;
+  --color-accent: #f97e62;
 
-    --color-accent: #F97E62;
+  --color-line: #d6e8f6;
 
-    --color-line: #D6E8F6;
+  --shadow-card: 0 1px 2px rgba(30, 32, 48, 0.04), 0 8px 24px rgba(30, 32, 48, 0.06);
 
-    --shadow-card:
-        0 1px 2px rgba(30,32,48,.04),
-        0 8px 24px rgba(30,32,48,.06);
-
-    --transition: .25s ease;
+  --transition: 0.25s ease;
 }
 
-*{
-    box-sizing:border-box;
+* {
+  box-sizing: border-box;
 }
 
 html,
-body{
+body {
+  margin: 0;
 
-    margin:0;
+  background: linear-gradient(180deg, #bfe0f8 0%, #dceffc 35%, #eaf4fd 100%);
 
-    background:
-        linear-gradient(
-            180deg,
-            #BFE0F8 0%,
-            #DCEFFC 35%,
-            #EAF4FD 100%
-        );
+  font-family: "Pretendard", system-ui, sans-serif;
 
-    font-family:
-        "Pretendard",
-        system-ui,
-        sans-serif;
-
-    color:var(--color-ink);
+  color: var(--color-ink);
 }
 
 /* ==========================================================
    PAGE
    ========================================================== */
 
-.login-page{
+.login-page {
+  min-height: 100vh;
 
-    min-height:100vh;
+  display: flex;
 
-    display:flex;
+  flex-direction: column;
 
-    flex-direction:column;
-
-    overflow-x:hidden;
+  overflow-x: hidden;
 }
 
 /* ==========================================================
    HERO
    ========================================================== */
 
-.login-hero{
+.login-hero {
+  position: relative;
 
-    position:relative;
+  overflow: hidden;
 
-    overflow:hidden;
+  padding: 72px 28px 120px;
 
-    padding:
+  background: linear-gradient(158deg, #4da6e6 0%, #2a86cd 50%, #134f79 100%);
 
-        72px
-        28px
-        120px;
-
-    background:
-
-        linear-gradient(
-            158deg,
-            #4DA6E6 0%,
-            #2A86CD 50%,
-            #134F79 100%
-        );
-
-    color:white;
+  color: white;
 }
 
 /* ==========================================================
    SUN
    ========================================================== */
 
-.hero-sun{
+.hero-sun {
+  position: absolute;
 
-    position:absolute;
+  right: 55px;
+  top: 45px;
 
-    right:55px;
-    top:45px;
+  width: 120px;
+  height: 120px;
 
-    width:120px;
-    height:120px;
+  border-radius: 50%;
 
-    border-radius:50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 180, 143, 0.95),
+    rgba(255, 140, 100, 0.45),
+    transparent 75%
+  );
 
-    background:
+  filter: blur(10px);
 
-        radial-gradient(
-
-            circle,
-
-            rgba(255,180,143,.95),
-
-            rgba(255,140,100,.45),
-
-            transparent 75%
-
-        );
-
-    filter:blur(10px);
-
-    pointer-events:none;
+  pointer-events: none;
 }
 
 /* ==========================================================
    CLOUDS
    ========================================================== */
 
-.hero-cloud{
+.hero-cloud {
+  position: absolute;
 
-    position:absolute;
+  border-radius: 999px;
 
-    border-radius:999px;
+  background: rgba(255, 255, 255, 0.35);
 
-    background:
+  filter: blur(28px);
 
-        rgba(255,255,255,.35);
-
-    filter:blur(28px);
-
-    pointer-events:none;
+  pointer-events: none;
 }
 
-.hero-cloud-left{
+.hero-cloud-left {
+  width: 240px;
+  height: 100px;
 
-    width:240px;
-    height:100px;
-
-    left:-70px;
-    top:25%;
+  left: -70px;
+  top: 25%;
 }
 
-.hero-cloud-right{
+.hero-cloud-right {
+  width: 210px;
+  height: 90px;
 
-    width:210px;
-    height:90px;
-
-    right:-45px;
-    bottom:40px;
+  right: -45px;
+  bottom: 40px;
 }
 
 /* ==========================================================
    HERO CONTENT
    ========================================================== */
 
-.login-hero-content{
+.login-hero-content {
+  position: relative;
 
-    position:relative;
+  z-index: 2;
 
-    z-index:2;
+  max-width: 420px;
 
-    max-width:420px;
+  margin: 0 auto;
 
-    margin:0 auto;
-
-    text-align:center;
+  text-align: center;
 }
 
 /* ==========================================================
    LOGO
    ========================================================== */
 
-.login-logo{
+.login-logo {
+  margin: 0;
 
-    margin:0;
+  font-family: "Noto Serif KR", serif;
 
-    font-family:
-        "Noto Serif KR",
-        serif;
+  font-size: 42px;
 
-    font-size:42px;
+  font-weight: 600;
 
-    font-weight:600;
-
-    letter-spacing:-0.5px;
+  letter-spacing: -0.5px;
 }
 
-.login-logo-accent{
-
-    color:var(--color-accent);
+.login-logo-accent {
+  color: var(--color-accent);
 }
 
-.login-tagline{
+.login-tagline {
+  margin-top: 10px;
 
-    margin-top:10px;
+  color: rgba(255, 255, 255, 0.62);
 
-    color:
+  font-size: 15px;
 
-        rgba(
-            255,
-            255,
-            255,
-            .62
-        );
-
-    font-size:15px;
-
-    letter-spacing:.4px;
+  letter-spacing: 0.4px;
 }
 
 /* ==========================================================
    CARD
    ========================================================== */
 
-.login-card{
+.login-card {
+  position: relative;
 
-    position:relative;
+  z-index: 10;
 
-    z-index:10;
+  margin: -72px auto 0;
 
-    margin:
+  width: min(430px, 100%);
 
-        -72px auto
-        0;
+  background: white;
 
-    width:min(430px,100%);
+  border-radius: 32px 32px 0 0;
 
-    background:white;
+  box-shadow: var(--shadow-card);
 
-    border-radius:
+  padding: 34px 26px 42px;
 
-        32px
-        32px
-        0
-        0;
-
-    box-shadow:var(--shadow-card);
-
-    padding:
-
-        34px
-        26px
-        42px;
-
-    flex:1;
+  flex: 1;
 }
 
-@media (min-width:480px){
+@media (min-width: 480px) {
+  .login-card {
+    margin-top: -60px;
 
-    .login-card{
-
-        margin-top:-60px;
-
-        border-radius:32px;
-    }
-
+    border-radius: 32px;
+  }
 }
 
 /* ==========================================================
    HEADER
    ========================================================== */
 
-.login-card-header{
+.login-card-header {
+  text-align: center;
 
-    text-align:center;
-
-    margin-bottom:28px;
+  margin-bottom: 28px;
 }
 
-.login-card-header h2{
+.login-card-header h2 {
+  margin: 0;
 
-    margin:0;
+  font-size: 24px;
 
-    font-size:24px;
-
-    font-weight:700;
+  font-weight: 700;
 }
 
-.login-card-header p{
+.login-card-header p {
+  margin-top: 8px;
 
-    margin-top:8px;
+  color: var(--color-subink);
 
-    color:var(--color-subink);
+  font-size: 14px;
 
-    font-size:14px;
-
-    line-height:1.5;
+  line-height: 1.5;
 }
 
 /* ==========================================================
    ERROR
    ========================================================== */
 
-.login-error{
+.login-error {
+  margin-bottom: 20px;
 
-    margin-bottom:20px;
+  padding: 14px;
 
-    padding:14px;
+  border-radius: 14px;
 
-    border-radius:14px;
+  background: #fdecea;
 
-    background:#FDECEA;
+  color: #b3261e;
 
-    color:#B3261E;
-
-    font-size:14px;
+  font-size: 14px;
 }
 
 /* ==========================================================
    SOCIAL LOGIN
    ========================================================== */
 
-.social-buttons{
+.social-buttons {
+  display: flex;
 
-    display:flex;
+  flex-direction: column;
 
-    flex-direction:column;
+  gap: 14px;
 
-    gap:14px;
-
-    margin-bottom:26px;
+  margin-bottom: 26px;
 }
 
 /* ==========================================================
    BUTTONS
    ========================================================== */
 
-.btn{
+.btn {
+  width: 100%;
 
-    width:100%;
+  height: 56px;
 
-    height:56px;
+  border: none;
 
-    border:none;
+  border-radius: 18px;
 
-    border-radius:18px;
+  cursor: pointer;
 
-    cursor:pointer;
+  font-size: 15px;
 
-    font-size:15px;
+  font-weight: 600;
 
-    font-weight:600;
+  display: flex;
 
-    display:flex;
+  align-items: center;
 
-    align-items:center;
+  justify-content: center;
 
-    justify-content:center;
+  gap: 10px;
 
-    gap:10px;
-
-    transition:
-        transform .22s ease,
-        box-shadow .22s ease,
-        background .22s ease,
-        opacity .22s ease;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    background 0.22s ease,
+    opacity 0.22s ease;
 }
 
-.btn:hover:not(:disabled){
-
-    transform:translateY(-2px);
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
 }
 
-.btn:active:not(:disabled){
-
-    transform:translateY(0);
+.btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
-.btn:disabled{
+.btn:disabled {
+  opacity: 0.65;
 
-    opacity:.65;
-
-    cursor:not-allowed;
+  cursor: not-allowed;
 }
 
-.social-icon{
-
-    font-size:18px;
+.social-icon {
+  font-size: 18px;
 }
 
 /* ==========================================================
    KAKAO
    ========================================================== */
 
-.btn-kakao{
+.btn-kakao {
+  background: #fee500;
 
-    background:#FEE500;
+  color: #191600;
 
-    color:#191600;
-
-    box-shadow:
-
-        0 5px 18px rgba(254,229,0,.25);
+  box-shadow: 0 5px 18px rgba(254, 229, 0, 0.25);
 }
 
-.btn-kakao:hover{
-
-    box-shadow:
-
-        0 10px 24px rgba(254,229,0,.32);
+.btn-kakao:hover {
+  box-shadow: 0 10px 24px rgba(254, 229, 0, 0.32);
 }
 
 /* ==========================================================
    GOOGLE
    ========================================================== */
 
-.btn-google{
+.btn-google {
+  background: white;
 
-    background:white;
+  color: var(--color-ink);
 
-    color:var(--color-ink);
+  border: 1px solid var(--color-line);
 
-    border:1px solid var(--color-line);
-
-    box-shadow:
-
-        0 2px 8px rgba(30,32,48,.05);
+  box-shadow: 0 2px 8px rgba(30, 32, 48, 0.05);
 }
 
-.btn-google:hover{
-
-    border-color:#bfd8ef;
+.btn-google:hover {
+  border-color: #bfd8ef;
 }
 
 /* ==========================================================
    PRIMARY LOGIN BUTTON
    ========================================================== */
 
-.btn-primary{
+.btn-primary {
+  margin-top: 10px;
 
-    margin-top:10px;
+  background: linear-gradient(135deg, #2e90d9, #15598a);
 
-    background:
+  color: white;
 
-        linear-gradient(
-            135deg,
-            #2E90D9,
-            #15598A
-        );
-
-    color:white;
-
-    box-shadow:
-
-        0 10px 24px rgba(46,144,217,.25);
+  box-shadow: 0 10px 24px rgba(46, 144, 217, 0.25);
 }
 
-.btn-primary:hover:not(:disabled){
-
-    box-shadow:
-
-        0 14px 30px rgba(46,144,217,.35);
+.btn-primary:hover:not(:disabled) {
+  box-shadow: 0 14px 30px rgba(46, 144, 217, 0.35);
 }
 
 /* ==========================================================
    DIVIDER
    ========================================================== */
 
-.login-divider{
+.login-divider {
+  display: flex;
 
-    display:flex;
+  align-items: center;
 
-    align-items:center;
+  gap: 16px;
 
-    gap:16px;
-
-    margin:28px 0;
+  margin: 28px 0;
 }
 
-.login-divider span{
+.login-divider span {
+  flex: 1;
 
-    flex:1;
+  height: 1px;
 
-    height:1px;
-
-    background:var(--color-line);
+  background: var(--color-line);
 }
 
-.login-divider p{
+.login-divider p {
+  margin: 0;
 
-    margin:0;
+  color: var(--color-subink);
 
-    color:var(--color-subink);
-
-    font-size:13px;
+  font-size: 13px;
 }
 
 /* ==========================================================
    FORM
    ========================================================== */
 
-.login-form{
+.login-form {
+  display: flex;
 
-    display:flex;
+  flex-direction: column;
 
-    flex-direction:column;
-
-    gap:18px;
+  gap: 18px;
 }
 
-.form-group{
+.form-group {
+  display: flex;
 
-    display:flex;
+  flex-direction: column;
 
-    flex-direction:column;
-
-    gap:8px;
+  gap: 8px;
 }
 
-.form-group label{
+.form-group label {
+  font-size: 13px;
 
-    font-size:13px;
+  font-weight: 600;
 
-    font-weight:600;
-
-    color:var(--color-subink);
+  color: var(--color-subink);
 }
 
-.form-group input{
+.form-group input {
+  height: 54px;
 
-    height:54px;
+  padding: 0 16px;
 
-    padding:0 16px;
+  border-radius: 16px;
 
-    border-radius:16px;
+  border: 1px solid var(--color-line);
 
-    border:1px solid var(--color-line);
+  background: white;
 
-    background:white;
+  font-size: 15px;
 
-    font-size:15px;
+  color: var(--color-ink);
 
-    color:var(--color-ink);
+  outline: none;
 
-    outline:none;
-
-    transition:
-        border-color .2s ease,
-        box-shadow .2s ease,
-        transform .2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 }
 
-.form-group input::placeholder{
-
-    color:#9fb1c0;
+.form-group input::placeholder {
+  color: #5b6b7a;
 }
 
-.form-group input:focus{
+.form-group input:focus {
+  border-color: #4f8ef7;
 
-    border-color:#4F8EF7;
+  box-shadow: 0 0 0 4px rgba(79, 142, 247, 0.14);
 
-    box-shadow:
-
-        0 0 0 4px rgba(79,142,247,.14);
-
-    transform:translateY(-1px);
+  transform: translateY(-1px);
 }
 
 /* ==========================================================
    CHECKBOX
    ========================================================== */
 
-.remember-me{
+.remember-me {
+  display: flex;
 
-    display:flex;
+  align-items: center;
 
-    align-items:center;
+  gap: 10px;
 
-    gap:10px;
+  margin-top: -4px;
 
-    margin-top:-4px;
+  font-size: 13px;
 
-    font-size:13px;
+  color: var(--color-subink);
 
-    color:var(--color-subink);
-
-    cursor:pointer;
+  cursor: pointer;
 }
 
-.remember-me input{
+.remember-me input {
+  width: 18px;
 
-    width:18px;
+  height: 18px;
 
-    height:18px;
-
-    accent-color:#2E90D9;
+  accent-color: #2e90d9;
 }
 
 /* ==========================================================
    TERMS
    ========================================================== */
 
-.login-terms{
+.login-terms {
+  margin-top: 28px;
 
-    margin-top:28px;
+  text-align: center;
 
-    text-align:center;
+  font-size: 11px;
 
-    font-size:11px;
+  line-height: 1.6;
 
-    line-height:1.6;
-
-    color:rgba(94,116,136,.65);
+  color: rgba(94, 116, 136, 0.65);
 }
 
 /* ==========================================================
    RESPONSIVE
    ========================================================== */
 
-@media (max-width:480px){
+@media (max-width: 480px) {
+  .login-hero {
+    padding: 56px 20px 105px;
+  }
 
-    .login-hero{
+  .login-logo {
+    font-size: 36px;
+  }
 
-        padding:
-            56px
-            20px
-            105px;
-    }
+  .login-card {
+    padding: 28px 20px 36px;
+  }
 
-    .login-logo{
+  .login-card-header h2 {
+    font-size: 22px;
+  }
 
-        font-size:36px;
-    }
-
-    .login-card{
-
-        padding:
-            28px
-            20px
-            36px;
-    }
-
-    .login-card-header h2{
-
-        font-size:22px;
-    }
-
-    .btn{
-
-        height:54px;
-    }
-
+  .btn {
+    height: 54px;
+  }
 }
 
 /* ==========================================================
    DESKTOP
    ========================================================== */
 
-@media (min-width:768px){
+@media (min-width: 768px) {
+  .login-page {
+    justify-content: center;
+  }
 
-    .login-page{
-
-        justify-content:center;
-    }
-
-    .login-card{
-
-        margin-bottom:50px;
-    }
-
+  .login-card {
+    margin-bottom: 50px;
+  }
 }
 
 /* ==========================================================
    SUBTLE ANIMATIONS
    ========================================================== */
 
-.login-card{
-
-    animation:
-        cardFade .45s ease;
+.login-card {
+  animation: cardFade 0.45s ease;
 }
 
-.login-hero-content{
-
-    animation:
-        heroFade .55s ease;
+.login-hero-content {
+  animation: heroFade 0.55s ease;
 }
 
-@keyframes cardFade{
+@keyframes cardFade {
+  from {
+    opacity: 0;
 
-    from{
+    transform: translateY(18px);
+  }
 
-        opacity:0;
+  to {
+    opacity: 1;
 
-        transform:
-            translateY(18px);
-    }
-
-    to{
-
-        opacity:1;
-
-        transform:none;
-    }
-
+    transform: none;
+  }
 }
 
-@keyframes heroFade{
+@keyframes heroFade {
+  from {
+    opacity: 0;
 
-    from{
+    transform: translateY(-10px);
+  }
 
-        opacity:0;
+  to {
+    opacity: 1;
 
-        transform:
-            translateY(-10px);
-    }
-
-    to{
-
-        opacity:1;
-
-        transform:none;
-    }
-
+    transform: none;
+  }
 }
 
 /* ==========================================================
 ONBOARDING
 ========================================================== */
 
-.onboarding-screen{
+.onboarding-screen {
+  min-height: 100vh;
 
+  position: relative;
 
-min-height:100vh;
+  overflow: hidden;
 
-position:relative;
+  display: flex;
 
-overflow:hidden;
+  flex-direction: column;
 
-display:flex;
+  justify-content: center;
 
-flex-direction:column;
+  align-items: center;
 
-justify-content:center;
+  padding: 48px 28px;
 
-align-items:center;
+  background: linear-gradient(158deg, #4da6e6 0%, #2a86cd 50%, #134f79 100%);
 
-padding:48px 28px;
-
-background:
-    linear-gradient(
-        158deg,
-        #4DA6E6 0%,
-        #2A86CD 50%,
-        #134F79 100%
-    );
-
-color:white;
-
-
+  color: white;
 }
 
-.onboarding-content{
+.onboarding-content {
+  width: 100%;
+  max-width: 420px;
 
+  text-align: center;
 
-width:100%;
-max-width:420px;
-
-text-align:center;
-
-z-index:2;
-
-
+  z-index: 2;
 }
 
-.onboarding-body{
-
-
-margin-top:90px;
-
-
+.onboarding-body {
+  margin-top: 90px;
 }
 
-.onboarding-icon{
+.onboarding-icon {
+  width: 112px;
+  height: 112px;
 
+  margin: 0 auto 32px;
 
-width:112px;
-height:112px;
+  border-radius: 28px;
 
-margin:0 auto 32px;
+  background: rgba(255, 255, 255, 0.1);
 
-border-radius:28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-background:rgba(255,255,255,.10);
-
-display:flex;
-align-items:center;
-justify-content:center;
-
-font-size:64px;
-
-
+  font-size: 64px;
 }
 
-.onboarding-title{
+.onboarding-title {
+  margin: 0;
 
+  font-size: 30px;
+  font-weight: 600;
 
-margin:0;
-
-font-size:30px;
-font-weight:600;
-
-line-height:1.4;
-
-
+  line-height: 1.4;
 }
 
-.onboarding-description{
+.onboarding-description {
+  max-width: 300px;
 
+  margin: 16px auto 0;
 
-max-width:300px;
+  color: rgba(255, 255, 255, 0.7);
 
-margin:
-    16px auto
-    0;
-
-color:
-    rgba(
-        255,
-        255,
-        255,
-        .70
-    );
-
-line-height:1.7;
-
-
+  line-height: 1.7;
 }
 
-.onboarding-dots{
+.onboarding-dots {
+  display: flex;
 
+  justify-content: center;
 
-display:flex;
+  gap: 8px;
 
-justify-content:center;
-
-gap:8px;
-
-margin-top:48px;
-margin-bottom:32px;
-
-
+  margin-top: 48px;
+  margin-bottom: 32px;
 }
 
-.dot{
+.dot {
+  width: 6px;
+  height: 6px;
 
+  border-radius: 999px;
 
-width:6px;
-height:6px;
+  background: rgba(255, 255, 255, 0.25);
 
-border-radius:999px;
-
-background:
-    rgba(
-        255,
-        255,
-        255,
-        .25
-    );
-
-transition:.25s ease;
-
-
+  transition: 0.25s ease;
 }
 
-.dot.active{
+.dot.active {
+  width: 28px;
 
-
-width:28px;
-
-background:
-    var(--color-accent);
-
-
+  background: var(--color-accent);
 }
 
-.btn-onboarding-next{
+.btn-onboarding-next {
+  width: 100%;
 
+  background: white;
 
-width:100%;
+  color: var(--color-primary-dark);
 
-background:white;
-
-color:
-    var(--color-primary-dark);
-
-font-weight:700;
-
-
+  font-weight: 700;
 }
 
-.onboarding-skip{
+.onboarding-skip {
+  margin-top: 16px;
 
+  background: none;
 
-margin-top:16px;
+  border: none;
 
-background:none;
+  color: rgba(255, 255, 255, 0.55);
 
-border:none;
+  cursor: pointer;
 
-color:
-    rgba(
-        255,
-        255,
-        255,
-        .55
-    );
-
-cursor:pointer;
-
-font-size:14px;
-
-
+  font-size: 14px;
 }

@@ -42,7 +42,7 @@ function Sidebar() {
           Re<span className="text-accent">:</span>Verse
         </h1>
 
-        <p className="mt-1 text-xs text-white/50">내가 적은 만큼 만나는 하나님</p>
+        <p className="mt-1 text-xs text-white/75">내가 적은 만큼 만나는 하나님</p>
       </div>
 
       <nav aria-label="주 메뉴" className="flex flex-1 flex-col gap-1">
@@ -56,7 +56,7 @@ function Sidebar() {
                 "text-sm no-underline transition",
                 isActive
                   ? "bg-white/15 font-semibold text-white"
-                  : "text-white/65 hover:bg-white/10 hover:text-white",
+                  : "text-white/75 hover:bg-white/10 hover:text-white",
               ].join(" ")
             }
           >
