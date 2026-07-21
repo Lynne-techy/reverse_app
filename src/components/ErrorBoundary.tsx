@@ -49,7 +49,7 @@ class ErrorBoundary extends Component<Props, State> {
           <h1 style={{ fontSize: 22, fontWeight: 700, margin: "0 0 8px" }}>
             일시적인 오류가 발생했어요
           </h1>
-          <p style={{ color: "#8b95a1", fontSize: 14, margin: "0 0 20px" }}>
+          <p style={{ color: "#5b6b7a", fontSize: 14, margin: "0 0 20px" }}>
             잠시 후 다시 시도해 주세요.
           </p>
           <button

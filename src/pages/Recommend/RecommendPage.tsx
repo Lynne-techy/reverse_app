@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import Skeleton from "../../components/Skeleton";
+import ErrorState from "../../components/ErrorState";
 import { getRecommendations } from "../../api/recommend";
 import type { Verse } from "../../api/verses";
 import { EMOTIONS, type EmotionCode } from "../../data/emotions";
@@ -49,6 +50,10 @@ function RecommendPage() {
 
   const heroVerse = verses?.[0] ?? null;
   const restVerses = verses?.slice(1) ?? [];
+  // verses는 첫 성공/placeholder 전까진 undefined. keepPreviousData 덕에 에러가 나도
+  // 이전 감정의 추천이 남아 있으면 그대로 보여준다(전면 에러는 "보여줄 게 아예 없을 때"만).
+  const hasData = verses !== undefined;
+  const showFullError = isError && !hasData;
 
   return (
     <main className="mx-auto w-full max-w-6xl px-6 py-8">
@@ -88,18 +93,35 @@ function RecommendPage() {
         </div>
       </section>
 
-      {/* 로드 실패 안내 */}
-      {isError && (
-        <div role="alert" className="mt-8 rounded-2xl bg-red-50 px-5 py-4 text-sm text-red-600">
-          추천 말씀을 불러오지 못했습니다.
-          <button type="button" onClick={() => refetch()} className="ml-2 font-semibold underline">
+      {/* 첫 로드 실패(보여줄 데이터 없음) → 공통 에러 상태 화면 */}
+      {showFullError && (
+        <ErrorState
+          className="mt-8"
+          message="추천 말씀을 불러오지 못했어요. 잠시 후 다시 시도해 주세요."
+          onRetry={() => refetch()}
+        />
+      )}
+
+      {/* 재요청·감정 전환은 실패했지만 이전 추천이 남아 있으면
+          → 콘텐츠를 버리지 않고 유지 + 비파괴적 인라인 배너 */}
+      {isError && !showFullError && (
+        <div
+          role="alert"
+          className="mt-6 flex items-center gap-3 rounded-2xl bg-red-50 px-5 py-3 text-sm text-red-600"
+        >
+          <span>새 말씀을 불러오지 못했어요 — 이전 추천을 그대로 보여드릴게요.</span>
+          <button
+            type="button"
+            onClick={() => refetch()}
+            className="ml-auto shrink-0 font-semibold underline"
+          >
             다시 시도
           </button>
         </div>
       )}
 
       {/* 히어로 추천 카드 (6개 중 첫 구절 강조) */}
-      {!isError && (
+      {!showFullError && (
         <section className="mt-8 overflow-hidden rounded-3xl bg-gradient-to-br from-brand to-blue-700 text-white shadow-lg shadow-blue-100">
           <div className="p-7 md:p-10">
             <div className="flex items-center justify-between gap-4">
@@ -146,8 +168,8 @@ function RecommendPage() {
         </section>
       )}
 
-      {/* 나머지 5개 구절 */}
-      {!isError && (
+      {/* 나머지 5개 구절 — 로딩 중이거나 결과가 있을 때만(빈 결과 dangling 섹션 방지) */}
+      {!showFullError && (isPending || restVerses.length > 0) && (
         <section className="mt-10">
           <div className="flex items-center justify-between gap-4">
             <div>

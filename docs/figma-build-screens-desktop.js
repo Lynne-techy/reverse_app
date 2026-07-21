@@ -3,7 +3,7 @@
  * ---------------------------------------------------------------------
  * 실제 프론트 레포 라우트를 그대로 반영:
  *   온보딩(로그인 이전) · 로그인 · 인증 콜백(로그인 처리 중) · 홈(mainpage)
- *   · 필사 5단계(범위·언어·사진·Key Verse·QT) + 저장 성공/실패 · 히트맵 · 추천 · 프로필
+ *   · 필사 5단계(범위·언어·사진·Key Verse·QT) + 저장 성공/실패 · 히트맵 · 추천 · 프로필 · 에러(불러오기 실패)
  * 각 화면을 모바일(390) + 데스크탑(1280, 다크 사이드바) 2벌로 생성.
  * 컴포넌트 인스턴스(01 Components) + 변수 바인딩으로 조합.
  * 선행: figma-build-components.js 실행(14종 존재).
@@ -364,6 +364,19 @@
     return frame;
   }
 
+  /* ---------- 에러(불러오기 실패) — 공통 에러 상태 화면 ---------- */
+  async function errorScreen(w, h, big) {
+    const frame = figma.createFrame(); frame.name = (big ? "D · " : "M · ") + "에러(불러오기 실패)"; frame.resize(w, h); setFill(frame, "surface"); frame.clipsContent = true;
+    const col = AL("VERTICAL", { itemSpacing: 16 }); col.counterAxisAlignItems = "CENTER"; frame.appendChild(col);
+    const cw = Math.min(w - 48, 360); col.layoutSizingHorizontal = "FIXED"; col.resize(cw, 10); col.x = (w - cw) / 2; col.y = big ? 230 : 250;
+    const badge = AL("HORIZONTAL", { paddingTop: 16, paddingBottom: 16, paddingLeft: 20, paddingRight: 20 }); badge.cornerRadius = 999; setFill(badge, "fill"); badge.appendChild(T("🌧️", "Regular", 34, "ink")); col.appendChild(badge);
+    const tt = T("잠시 문제가 생겼어요", "Bold", big ? 26 : 22, "ink"); col.appendChild(tt); tt.textAlignHorizontal = "CENTER"; fillText(tt);
+    const dd = T("말씀을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.", "Regular", 14, "body", 160); col.appendChild(dd); dd.textAlignHorizontal = "CENTER"; fillText(dd);
+    const retry = await ov(instV("Button", "Style=primary, Size=lg"), ["다시 시도"]); col.appendChild(retry); FILL(retry);
+    const home = await ov(instV("Button", "Style=secondary, Size=lg"), ["홈으로"]); col.appendChild(home); FILL(home);
+    return frame;
+  }
+
   /* ---------- 전용 페이지(03 Desktop)를 비우고 그 위에 생성 ---------- */
   let sp = figma.root.children.find((p) => p.name === SPAGE);
   if (!sp) { sp = figma.createPage(); sp.name = SPAGE; }
@@ -395,6 +408,7 @@
   await build("히트맵", async () => { const s = desktop("히트맵", "히트맵"); await pageHeatmap(s.main, true); return s.frame; });
   await build("추천", async () => { const s = desktop("추천", "추천"); await pageRecommend(s.main, true); return s.frame; });
   await build("프로필", async () => { const s = desktop("프로필", "프로필"); await pageProfile(s.main, true); return s.frame; });
+  await build("에러", async () => await errorScreen(DW, DH, true));
 
   if (errors.length) { const et = T("⚠ 빌드 에러 " + errors.length + "건\n- " + errors.join("\n- "), "Semi Bold", 15, "danger", 150); et.textAutoResize = "WIDTH_AND_HEIGHT"; board.insertChild(0, et); }
   await figma.setCurrentPageAsync(sp);
