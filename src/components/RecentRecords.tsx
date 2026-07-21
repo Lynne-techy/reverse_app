@@ -42,48 +42,31 @@ interface RecentRecordsProps {
   isLoading: boolean;
 }
 
-function RecentRecords({
-  records,
-  isLoading,
-}: RecentRecordsProps) {
+function RecentRecords({ records, isLoading }: RecentRecordsProps) {
   if (isLoading) {
-    return (
-      <section className="rounded-2xl bg-white p-6">
-        최근 기록을 불러오는 중...
-      </section>
-    );
+    return <section className="rounded-2xl bg-white p-6">최근 기록을 불러오는 중...</section>;
   }
 
   return (
     <section className="rounded-2xl bg-white p-6 shadow-sm">
-      <h2 className="font-bold text-slate-800">
-        최근 필사 기록
-      </h2>
+      <h2 className="font-bold text-slate-800">최근 필사 기록</h2>
 
       {records.length === 0 ? (
-        <p className="mt-4 text-sm text-slate-500">
-          아직 필사 기록이 없습니다.
-        </p>
+        <p className="mt-4 text-sm text-slate-500">아직 필사 기록이 없습니다.</p>
       ) : (
         <ul className="record-list">
           {records.map((record) => (
-            <li
-              key={record.id}
-              className="record-card"
-            >
+            <li key={record.id} className="record-card">
               <p className="font-semibold text-slate-800">
                 {record.bookNo}권 {record.chapter}장
               </p>
 
               <p className="mt-1 text-sm text-slate-500">
-                {record.startVerseNo}절 ~{" "}
-                {record.endVerseNo}절
+                {record.startVerseNo}절 ~ {record.endVerseNo}절
               </p>
 
               {record.clientDate && (
-                <p className="mt-1 text-xs text-slate-400">
-                  {record.clientDate}
-                </p>
+                <p className="mt-1 text-xs text-slate-500">{record.clientDate}</p>
               )}
             </li>
           ))}

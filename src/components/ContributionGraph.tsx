@@ -13,7 +13,20 @@ const LEVEL_CLASS: Record<JandiLevel, string> = {
 };
 
 const WEEKDAY_LABELS = ["", "월", "", "수", "", "금", ""];
-const MONTHS = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
+const MONTHS = [
+  "1월",
+  "2월",
+  "3월",
+  "4월",
+  "5월",
+  "6월",
+  "7월",
+  "8월",
+  "9월",
+  "10월",
+  "11월",
+  "12월",
+];
 
 function formatDate(d: Date): string {
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -50,7 +63,7 @@ export default function ContributionGraph() {
       <div className="mb-5 flex items-end justify-between">
         <div>
           <h2 className="text-lg font-bold text-gray-900">필사 잔디밭</h2>
-          <p className="mt-1 text-sm text-gray-500">최근 1년 동안 {totalDays}일을 적었어요.</p>
+          <p className="mt-1 text-sm text-gray-600">최근 1년 동안 {totalDays}일을 적었어요.</p>
         </div>
       </div>
 
@@ -59,7 +72,7 @@ export default function ContributionGraph() {
           {/* 월 라벨 */}
           <div className="flex pl-7">
             {labels.map((label, i) => (
-              <div key={i} className="w-[15px] shrink-0 text-[10px] text-gray-400">
+              <div key={i} className="w-[15px] shrink-0 text-[10px] text-gray-600">
                 {label}
               </div>
             ))}
@@ -71,7 +84,7 @@ export default function ContributionGraph() {
               {WEEKDAY_LABELS.map((label, i) => (
                 <div
                   key={i}
-                  className="flex h-[15px] w-6 items-center justify-end pr-1 text-[10px] text-gray-400"
+                  className="flex h-[15px] w-6 items-center justify-end pr-1 text-[10px] text-gray-600"
                 >
                   {label}
                 </div>
@@ -102,7 +115,7 @@ export default function ContributionGraph() {
       </div>
 
       {/* 범례 */}
-      <div className="mt-4 flex items-center justify-end gap-1.5 text-[11px] text-gray-400">
+      <div className="mt-4 flex items-center justify-end gap-1.5 text-[11px] text-gray-600">
         <span>적게</span>
         {([0, 1, 2, 3, 4] as JandiLevel[]).map((level) => (
           <span key={level} className={`h-3 w-3 rounded-[3px] ${LEVEL_CLASS[level]}`} />
