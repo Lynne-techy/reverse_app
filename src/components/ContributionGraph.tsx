@@ -1,7 +1,15 @@
 import { useMemo } from "react";
-import { buildContributionWeeks, type JandiLevel, type Week } from "../data/dummy";
+import { buildWeeksFromActivity } from "../lib/contribution";
+import type { JandiLevel, Week } from "../data/dummy";
+import type { DailyActivity } from "../api/stats";
+import Skeleton from "./Skeleton";
 
 const WEEKS = 53;
+
+interface ContributionGraphProps {
+  activity: DailyActivity[];
+  isLoading?: boolean;
+}
 
 /** 레벨 → Tailwind 클래스 (literal로 적어야 Tailwind가 스캔함) */
 const LEVEL_CLASS: Record<JandiLevel, string> = {
@@ -49,14 +57,27 @@ function monthLabels(weeks: Week[]): (string | null)[] {
   });
 }
 
-export default function ContributionGraph() {
-  const weeks = useMemo(() => buildContributionWeeks(new Date(), WEEKS), []);
+export default function ContributionGraph({ activity, isLoading = false }: ContributionGraphProps) {
+  const weeks = useMemo(() => buildWeeksFromActivity(activity, new Date(), WEEKS), [activity]);
   const labels = useMemo(() => monthLabels(weeks), [weeks]);
 
   const totalDays = weeks.reduce(
     (sum, week) => sum + week.filter((c) => c !== null && c.count > 0).length,
     0,
   );
+
+  if (isLoading) {
+    return (
+      <section
+        role="status"
+        aria-label="필사 잔디밭 불러오는 중"
+        className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm sm:p-7"
+      >
+        <h2 className="mb-5 text-lg font-bold text-gray-900">필사 잔디밭</h2>
+        <Skeleton height={140} radius={12} />
+      </section>
+    );
+  }
 
   return (
     <section className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm sm:p-7">
