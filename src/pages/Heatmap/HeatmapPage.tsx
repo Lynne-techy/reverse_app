@@ -15,10 +15,13 @@ interface HeatmapProps {
 
 
   startDate?: Date | string;
+
+  // 카드 상단에 표시할 제목. 디자인 시안(index.html)의 "최근 6개월"과 동일한 자리.
+  title?: string;
 }
 
 const DAY_MS = 24 * 60 * 60 * 1000;
-const WEEKDAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""]; // GitHub shows only these 3
+const WEEKDAY_LABELS = ["", "월", "", "수", "", "금", ""]; // GitHub식 히트맵처럼 3개만 표기
 
 
 
@@ -72,14 +75,13 @@ function chunkIntoWeeks(days: HeatmapDay[]): HeatmapDay[][] {
 }
 
 function formatDateLabel(date: Date): string {
-  return date.toLocaleDateString(undefined, {
-    month: "short",
+  return date.toLocaleDateString("ko-KR", {
+    month: "long",
     day: "numeric",
-    year: "numeric",
   });
 }
 
-function Heatmap({ activity = [], startDate }: HeatmapProps) {
+function Heatmap({ activity = [], startDate, title = "최근 6개월" }: HeatmapProps) {
   const days = buildCalendarDays(activity, startDate);
   const weeks = chunkIntoWeeks(days);
 
@@ -90,13 +92,14 @@ function Heatmap({ activity = [], startDate }: HeatmapProps) {
     const month = firstDay.getMonth();
     if (month !== lastLabeledMonth) {
       lastLabeledMonth = month;
-      return firstDay.toLocaleDateString(undefined, { month: "short" });
+      return firstDay.toLocaleDateString("ko-KR", { month: "short" });
     }
     return "";
   });
 
   return (
     <div className="heatmap-wrapper">
+      {title ? <div className="heatmap-title">{title}</div> : null}
       <div className="heatmap-scroll">
         {/* Month labels row, one per week column */}
         <div className="heatmap-months" style={{ gridTemplateColumns: `repeat(${weeks.length}, 1fr)` }}>
@@ -133,13 +136,13 @@ function Heatmap({ activity = [], startDate }: HeatmapProps) {
                       role="img"
                       aria-label={
                         hasData
-                          ? `${day.count} pilsa on ${formatDateLabel(day.date)}`
-                          : `No data for ${formatDateLabel(day.date)}`
+                          ? `${formatDateLabel(day.date)} ${day.count}회 필사`
+                          : `${formatDateLabel(day.date)} 기록 없음`
                       }
                       title={
                         hasData
-                          ? `${day.count} pilsa · ${formatDateLabel(day.date)}`
-                          : formatDateLabel(day.date)
+                          ? `${formatDateLabel(day.date)} · ${day.count}회 필사`
+                          : `${formatDateLabel(day.date)} · 기록 없음`
                       }
                     />
                   );
@@ -152,13 +155,13 @@ function Heatmap({ activity = [], startDate }: HeatmapProps) {
 
      
       <div className="heatmap-legend">
-        <span>Less</span>
+        <span>적음</span>
         <div className="heatmap-cell level-0" />
         <div className="heatmap-cell level-1" />
         <div className="heatmap-cell level-2" />
         <div className="heatmap-cell level-3" />
         <div className="heatmap-cell level-4" />
-        <span>More</span>
+        <span>많음</span>
       </div>
     </div>
   );
