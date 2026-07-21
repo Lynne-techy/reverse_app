@@ -1,170 +1,48 @@
-import "./HeatmapPage.css";
+import Heatmap from "../../components/Heatmap";
+import StatTile from "../../components/StatTile";
+import StreakStartCard from "../../components/StreakStartCard";
+import { dummyStatistics, heatmapActivity } from "../../data/dummy";
 
+function HeatmapPage() {
+  // TODO(API 연동): dummyStatistics → getMyStatistics(), heatmapActivity → getActivity(from, to)
+  const statistics = dummyStatistics;
+  const activity = heatmapActivity;
 
-type HeatmapLevel = "level-0" | "level-1" | "level-2" | "level-3" | "level-4";
-
-
-interface HeatmapDay {
-  date: Date;
-  count: number | null; // null = no data for this cell (padding)
-}
-
-interface HeatmapProps {
-  // 임시방편: prop이 없어도 크래시하지 않도록 optional + 기본값([]) 처리.
-  activity?: number[];
-
-
-  startDate?: Date | string;
-
-  // 카드 상단에 표시할 제목. 디자인 시안(index.html)의 "최근 6개월"과 동일한 자리.
-  title?: string;
-}
-
-const DAY_MS = 24 * 60 * 60 * 1000;
-const WEEKDAY_LABELS = ["", "월", "", "수", "", "금", ""]; // GitHub식 히트맵처럼 3개만 표기
-
-
-
-const getLevel = (count: number): HeatmapLevel => {
-  if (count === 0) return "level-0";
-  if (count <= 2) return "level-1";
-  if (count <= 5) return "level-2";
-  if (count <= 8) return "level-3";
-  return "level-4";
-};
-
-const startOfDay = (date: Date) => {
-  const copy = new Date(date);
-  copy.setHours(0, 0, 0, 0);
-  return copy;
-};
-
-
-function buildCalendarDays(activity: number[], startDate?: Date | string): HeatmapDay[] {
-  const firstDataDate = startDate
-    ? startOfDay(new Date(startDate))
-    : startOfDay(new Date(Date.now() - (activity.length - 1) * DAY_MS));
-
-  const lastDataDate = new Date(firstDataDate.getTime() + (activity.length - 1) * DAY_MS);
-
-  
-  const gridStart = new Date(firstDataDate);
-  gridStart.setDate(gridStart.getDate() - gridStart.getDay());
-
- 
-  const gridEnd = new Date(lastDataDate);
-  gridEnd.setDate(gridEnd.getDate() + (6 - gridEnd.getDay()));
-
-  const days: HeatmapDay[] = [];
-  for (let t = gridStart.getTime(); t <= gridEnd.getTime(); t += DAY_MS) {
-    const date = new Date(t);
-    const dayIndex = Math.round((date.getTime() - firstDataDate.getTime()) / DAY_MS);
-    const isWithinData = dayIndex >= 0 && dayIndex < activity.length;
-    days.push({ date, count: isWithinData ? activity[dayIndex] : null });
-  }
-  return days;
-}
-
-
-function chunkIntoWeeks(days: HeatmapDay[]): HeatmapDay[][] {
-  const weeks: HeatmapDay[][] = [];
-  for (let i = 0; i < days.length; i += 7) {
-    weeks.push(days.slice(i, i + 7));
-  }
-  return weeks;
-}
-
-function formatDateLabel(date: Date): string {
-  return date.toLocaleDateString("ko-KR", {
-    month: "long",
-    day: "numeric",
-  });
-}
-
-function Heatmap({ activity = [], startDate, title = "최근 6개월" }: HeatmapProps) {
-  const days = buildCalendarDays(activity, startDate);
-  const weeks = chunkIntoWeeks(days);
-
-  
-  let lastLabeledMonth = -1;
-  const monthLabels = weeks.map((week) => {
-    const firstDay = week[0].date;
-    const month = firstDay.getMonth();
-    if (month !== lastLabeledMonth) {
-      lastLabeledMonth = month;
-      return firstDay.toLocaleDateString("ko-KR", { month: "short" });
-    }
-    return "";
-  });
+  // "기록한 날"은 서버 필드가 아니라 activity에서 파생 — 기록이 1회 이상인 날 수.
+  const recordedDays = activity.filter((count) => count > 0).length;
 
   return (
-    <div className="heatmap-wrapper">
-      {title ? <div className="heatmap-title">{title}</div> : null}
-      <div className="heatmap-scroll">
-        {/* Month labels row, one per week column */}
-        <div className="heatmap-months" style={{ gridTemplateColumns: `repeat(${weeks.length}, 1fr)` }}>
-          {monthLabels.map((label, i) => (
-            <span key={i} className="heatmap-month-label">
-              {label}
-            </span>
-          ))}
-        </div>
+    <main className="mx-auto w-full max-w-5xl px-6 py-8">
+      {/* (1)(2) 제목 · 부제 */}
+      <h1 className="text-3xl font-bold text-slate-800">나의 필사 기록</h1>
+      <p className="mt-2 text-slate-600">최근 1년간 하루하루 채워온 기록이에요.</p>
 
-        <div className="heatmap-body">
-          {/* Weekday labels down the left side */}
-          <div className="heatmap-weekdays">
-            {WEEKDAY_LABELS.map((label, i) => (
-              <span key={i} className="heatmap-weekday-label">
-                {label}
-              </span>
-            ))}
-          </div>
-
-        
-          <div className="heatmap-grid">
-            {weeks.map((week, weekIndex) => (
-              <div className="heatmap-week" key={weekIndex}>
-                {week.map((day) => {
-                
-                  const hasData = day.count !== null;
-                  const level = hasData ? getLevel(day.count as number) : null;
-
-                  return (
-                    <div
-                      key={day.date.toISOString()}
-                      className={`heatmap-cell ${level ?? "level-empty"}`}
-                      role="img"
-                      aria-label={
-                        hasData
-                          ? `${formatDateLabel(day.date)} ${day.count}회 필사`
-                          : `${formatDateLabel(day.date)} 기록 없음`
-                      }
-                      title={
-                        hasData
-                          ? `${formatDateLabel(day.date)} · ${day.count}회 필사`
-                          : `${formatDateLabel(day.date)} · 기록 없음`
-                      }
-                    />
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        </div>
+      {/* (3)(4) 부제 아래 간격 + 스탯 카드 3종 */}
+      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <StatTile
+          label="🔥 현재 연속 필사"
+          value={`${statistics.currentStreak}일`}
+          caption="오늘까지 이어지는 중"
+        />
+        <StatTile
+          label="최장 연속 필사"
+          value={`${statistics.longestStreak}일`}
+          caption="개인 기록"
+        />
+        <StatTile label="기록한 날" value={`${recordedDays}일`} caption="지난 1년" />
       </div>
 
-     
-      <div className="heatmap-legend">
-        <span>적음</span>
-        <div className="heatmap-cell level-0" />
-        <div className="heatmap-cell level-1" />
-        <div className="heatmap-cell level-2" />
-        <div className="heatmap-cell level-3" />
-        <div className="heatmap-cell level-4" />
-        <span>많음</span>
+      {/* (5) 잔디 — 위아래 카드와 좌우 경계를 맞추기 위해 별도 wrapper 없이 카드 자신으로 정렬 */}
+      <div className="mt-4">
+        <Heatmap activity={activity} title="최근 1년" />
       </div>
-    </div>
+
+      {/* (6) 가로로 꽉 채운 연속 시작 카드 */}
+      <div className="mt-4">
+        <StreakStartCard statistics={statistics} />
+      </div>
+    </main>
   );
 }
 
-export default Heatmap;
+export default HeatmapPage;
