@@ -1,38 +1,5 @@
 import { NavLink } from "react-router-dom";
-
-type MenuItem = {
-  label: string;
-  path: string;
-  icon: string;
-};
-
-const menuItems: MenuItem[] = [
-  {
-    label: "홈",
-    path: "/mainpage",
-    icon: "⌂",
-  },
-  {
-    label: "필사",
-    path: "/pilsa",
-    icon: "✎",
-  },
-  {
-    label: "히트맵",
-    path: "/heatmap",
-    icon: "▦",
-  },
-  {
-    label: "추천",
-    path: "/recommend",
-    icon: "♡",
-  },
-  {
-    label: "프로필",
-    path: "/profile",
-    icon: "○",
-  },
-];
+import { NAV_ITEMS } from "../config/nav";
 
 function Sidebar() {
   return (
@@ -46,7 +13,7 @@ function Sidebar() {
       </div>
 
       <nav aria-label="주 메뉴" className="flex flex-1 flex-col gap-1">
-        {menuItems.map((menu) => (
+        {NAV_ITEMS.map((menu) => (
           <NavLink
             key={menu.path}
             to={menu.path}
