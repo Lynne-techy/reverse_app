@@ -8,7 +8,7 @@
   --primary-dark: #1e6fb1;
 
   --text-main: #17324a;
-  --text-sub: #62788d;
+  --text-sub: #4e6072;
 
   --card-bg: #ffffff;
   --line: #d6e7f6;
@@ -60,7 +60,7 @@
 
   background: rgba(47, 143, 216, 0.12);
 
-  color: var(--primary);
+  color: var(--primary-dark);
 
   font-size: 12px;
   font-weight: 700;
