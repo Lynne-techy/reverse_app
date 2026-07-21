@@ -42,12 +42,10 @@ function Sidebar() {
           Re<span className="text-accent">:</span>Verse
         </h1>
 
-        <p className="mt-1 text-xs text-white/50">
-          내가 적은 만큼 만나는 하나님
-        </p>
+        <p className="mt-1 text-xs text-white/50">내가 적은 만큼 만나는 하나님</p>
       </div>
 
-     <nav className="flex flex-1 flex-col gap-1">
+      <nav aria-label="주 메뉴" className="flex flex-1 flex-col gap-1">
         {menuItems.map((menu) => (
           <NavLink
             key={menu.path}
@@ -62,7 +60,7 @@ function Sidebar() {
               ].join(" ")
             }
           >
-            <span className="w-6 text-center text-lg">
+            <span aria-hidden="true" className="w-6 text-center text-lg">
               {menu.icon}
             </span>
 
@@ -73,9 +71,7 @@ function Sidebar() {
 
       <div className="rounded-xl bg-white/10 p-4 text-xs text-white/60">
         <strong className="text-white/90">Re:Verse</strong>
-        <p className="mb-0 mt-1">
-          오늘도 한 글자씩 기록해요.
-        </p>
+        <p className="mb-0 mt-1">오늘도 한 글자씩 기록해요.</p>
       </div>
     </aside>
   );
