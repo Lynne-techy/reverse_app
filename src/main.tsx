@@ -1,11 +1,11 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { QueryClientProvider } from "@tanstack/react-query";
 import App from "./App.tsx";
 import { AuthProvider } from "./auth/AuthContext";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { queryClient } from "./lib/queryClient";
 import "./styles/index.css";
+// React Query(QueryClientProvider)는 인증 화면에서만 필요 → MainLayout(지연 로드)로 이동.
+// 로그인/온보딩/콜백 초기 번들에서 @tanstack/react-query 제외(미사용 JS 감축).
 
 // Pretendard를 렌더 비차단으로 로드: 초기 페인트는 폴백(system-ui/Noto Sans KR)으로 즉시,
 // 폰트가 준비되면 스왑된다(FOUT). CSS @import(렌더 차단)와 서드파티 크리티컬 체인을 제거.
@@ -24,11 +24,9 @@ if (import.meta.env.VITE_SENTRY_DSN) {
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <AuthProvider>
-          <App />
-        </AuthProvider>
-      </QueryClientProvider>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </ErrorBoundary>
   </StrictMode>,
 );

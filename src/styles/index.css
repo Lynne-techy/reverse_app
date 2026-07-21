@@ -2,6 +2,17 @@
    main.tsx에서 런타임 <link> 주입으로 로드한다(비차단, 폴백 폰트로 즉시 페인트). */
 @import "tailwindcss";
 
+/* CLS 완화: Pretendard 로드 전 폴백을 Pretendard 치수(ascent/descent/size)에 맞춰
+   보정 → 폰트 스왑 시 리플로우(레이아웃 이동) 최소화. 로컬 시스템 폰트 사용(다운로드 0). */
+@font-face {
+  font-family: "Pretendard-fallback";
+  src: local("Apple SD Gothic Neo"), local("Malgun Gothic"), local("Noto Sans KR");
+  size-adjust: 100.13%;
+  ascent-override: 92.55%;
+  descent-override: 24.65%;
+  line-gap-override: 0%;
+}
+
 @theme {
   /* 브랜드 */
   --color-brand: #2663ec;
@@ -17,8 +28,8 @@
 
   /* 폰트 */
   --font-sans:
-    "Pretendard Variable", Pretendard, system-ui, -apple-system, "Segoe UI", Roboto,
-    "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    "Pretendard Variable", Pretendard, "Pretendard-fallback", system-ui, -apple-system, "Segoe UI",
+    Roboto, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
 }
 
 html {
