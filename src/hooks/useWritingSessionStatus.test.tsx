@@ -21,12 +21,14 @@ function makeWrapper() {
 
 const baseSession: api.WritingSession = {
   id: "s1",
+  userId: "u1",
   bookNo: 19,
   chapter: 23,
   startVerseNo: 1,
   endVerseNo: 6,
   keyVerseId: 9,
   language: "ko",
+  objectKey: "u1/s1.jpg",
   status: "processing",
   recognizedText: null,
   similarityScore: null,

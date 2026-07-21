@@ -40,12 +40,14 @@ export function isTerminalStatus(status: WritingSessionStatus): boolean {
 
 export interface WritingSession {
   id: string;
+  userId: string;
   bookNo: number;
   chapter: number;
   startVerseNo: number;
   endVerseNo: number;
   keyVerseId: number | null;
   language: "ko" | "en";
+  objectKey: string;
   status: WritingSessionStatus;
   recognizedText: string | null;
   similarityScore: number | null;
