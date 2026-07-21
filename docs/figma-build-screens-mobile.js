@@ -2,7 +2,8 @@
  * Re:Verse — Figma 화면 전개도(하이파이) 생성 스크립트 (Scripter)
  * ---------------------------------------------------------------------
  * 실제 프론트 레포 라우트를 그대로 반영:
- *   온보딩(로그인 이전) · 로그인 · 홈(mainpage) · 필사 · 히트맵 · 추천 · 프로필
+ *   온보딩(로그인 이전) · 로그인 · 인증 콜백(로그인 처리 중) · 홈(mainpage)
+ *   · 필사 5단계(범위·언어·사진·Key Verse·QT) + 저장 성공/실패 · 히트맵 · 추천 · 프로필
  * 각 화면을 모바일(390) + 데스크탑(1280, 다크 사이드바) 2벌로 생성.
  * 컴포넌트 인스턴스(01 Components) + 변수 바인딩으로 조합.
  * 선행: figma-build-components.js 실행(14종 존재).
@@ -110,26 +111,86 @@
     }
   }
 
-  async function pagePilsa(box, wide) {
+  /* ---------- 필사 5단계 플로우(범위·언어·사진·Key Verse·QT) + 저장 성공/실패 상태 ----------
+     실제 PilsaPage.tsx의 step 1~5 마법사 + saveStatus(success/error)를 프레임별로 충실히 반영. */
+  const PSTEPS = ["범위 선택", "언어 선택", "사진 업로드", "Key Verse", "QT"];
+  function dcol(s) { const col = AL("VERTICAL", { itemSpacing: 14 }); s.main.appendChild(col); col.layoutSizingHorizontal = "FIXED"; col.resize(560, 10); return col; }
+  function backBtn() {
+    const b = AL("HORIZONTAL", { itemSpacing: 6, paddingTop: 7, paddingBottom: 7, paddingLeft: 10, paddingRight: 12 });
+    b.counterAxisAlignItems = "CENTER"; b.cornerRadius = 999; setFill(b, "surface"); setStroke(b, "border", 1);
+    b.appendChild(T("←", "Bold", 15, "ink")); b.appendChild(T("나가기", "Medium", 12, "body"));
+    return b;
+  }
+  function pHead(box, wide) {
+    box.appendChild(backBtn());
     box.appendChild(tag("DAILY PILSA", "primary-soft", "primary-deep"));
     box.appendChild(T("성경 필사", "Bold", wide ? 30 : 24, "ink"));
     box.appendChild(T("한 글자씩 적으며 말씀을 마음에 새겨보세요.", "Regular", 13, "sub"));
-    box.appendChild(instC("Steps"));
-    const c1 = cardBox(16); box.appendChild(c1); FILL(c1);
-    c1.appendChild(eyebrow("① 성경 선택")); const sel = instC("Select"); c1.appendChild(sel); FILL(sel);
-    const c2 = cardBox(16); box.appendChild(c2); FILL(c2);
-    c2.appendChild(eyebrow("③ 절 범위"));
-    const vr = rowAL(c2, 8, "CENTER");
-    const i1 = instV("Input", "State=default"); vr.appendChild(i1); FILL(i1);
-    vr.appendChild(T("~", "Medium", 14, "sub"));
-    const i2 = instV("Input", "State=default"); vr.appendChild(i2); FILL(i2);
-    const rng = AL("VERTICAL", { itemSpacing: 4, paddingTop: 16, paddingBottom: 16, paddingLeft: 18, paddingRight: 18 }); radiusVar(rng, "radius/xl"); setFill(rng, "primary-soft");
-    box.appendChild(rng); FILL(rng);
-    rng.appendChild(T("선택한 범위", "Medium", 11, "primary-deep"));
-    rng.appendChild(T("시편 23:1-6", "Extra Bold", 22, "primary-deep"));
-    const acts = rowAL(box, 10); acts.primaryAxisAlignItems = "SPACE_BETWEEN";
-    acts.appendChild(await ov(instV("Button", "Style=secondary, Size=md"), ["이전"]));
-    const next = await ov(instV("Button", "Style=primary, Size=md"), ["다음"]); acts.appendChild(next);
+  }
+  function pProg(box, active, wide) {
+    const r = rowAL(box, wide ? 10 : 6, "MIN");
+    PSTEPS.forEach((label, i) => {
+      const it = AL("VERTICAL", { itemSpacing: 6 }); r.appendChild(it); FILL(it); it.counterAxisAlignItems = "CENTER";
+      const bar = figma.createRectangle(); bar.resize(40, 4); bar.cornerRadius = 999; setFill(bar, (i + 1 <= active) ? "primary" : "fill"); it.appendChild(bar); bar.layoutSizingHorizontal = "FILL";
+      it.appendChild(T(label, (i + 1 === active) ? "Bold" : "Medium", wide ? 12 : 10, (i + 1 === active) ? "primary" : "sub"));
+    });
+  }
+  async function pActs(box, step) {
+    const a = rowAL(box, 10); a.primaryAxisAlignItems = (step > 1) ? "SPACE_BETWEEN" : "MAX";
+    if (step > 1) a.appendChild(await ov(instV("Button", "Style=secondary, Size=md"), ["이전"]));
+    a.appendChild(await ov(instV("Button", "Style=primary, Size=md"), [step < 5 ? "다음" : "저장하기"]));
+    return a;
+  }
+  async function pStepRange(box) {
+    const c1 = cardBox(16); box.appendChild(c1); FILL(c1); c1.appendChild(eyebrow("① 성경 선택")); const sel = await ov(instC("Select"), ["시편"]); c1.appendChild(sel); FILL(sel);
+    const c2 = cardBox(16); box.appendChild(c2); FILL(c2); c2.appendChild(eyebrow("② 장 선택")); const ip = await ov(instV("Input", "State=default"), ["23"]); c2.appendChild(ip); FILL(ip);
+    const c3 = cardBox(16); box.appendChild(c3); FILL(c3); c3.appendChild(eyebrow("③ 절 범위")); const vr = rowAL(c3, 8, "CENTER"); const i1 = await ov(instV("Input", "State=default"), ["1"]); vr.appendChild(i1); FILL(i1); vr.appendChild(T("~", "Medium", 14, "sub")); const i2 = await ov(instV("Input", "State=default"), ["6"]); vr.appendChild(i2); FILL(i2);
+    const rng = AL("VERTICAL", { itemSpacing: 4, paddingTop: 16, paddingBottom: 16, paddingLeft: 18, paddingRight: 18 }); radiusVar(rng, "radius/xl"); setFill(rng, "primary-soft"); box.appendChild(rng); FILL(rng); rng.appendChild(T("선택한 범위", "Medium", 11, "primary-deep")); rng.appendChild(T("시편 23:1-6", "Extra Bold", 22, "primary-deep"));
+  }
+  async function pStepLang(box) {
+    function langCard(flag, title, desc, sel) {
+      const c = AL("HORIZONTAL", { itemSpacing: 14, paddingTop: 16, paddingBottom: 16, paddingLeft: 16, paddingRight: 16 }); c.counterAxisAlignItems = "CENTER"; radiusVar(c, "radius/xl"); setFill(c, sel ? "primary-soft" : "bg"); setStroke(c, sel ? "primary" : "border", sel ? 2 : 1);
+      const ic = AL("VERTICAL", { paddingTop: 8, paddingBottom: 8, paddingLeft: 10, paddingRight: 10 }); radiusVar(ic, "radius/lg"); setFill(ic, "fill"); ic.appendChild(T(flag, "Regular", 22, "ink")); c.appendChild(ic);
+      const tx = AL("VERTICAL", { itemSpacing: 2 }); c.appendChild(tx); FILL(tx); tx.appendChild(T(title, "Bold", 15, "ink")); tx.appendChild(T(desc, "Regular", 12, "sub"));
+      if (sel) c.appendChild(T("✓", "Bold", 16, "primary"));
+      return c;
+    }
+    const k = langCard("🇰🇷", "한국어", "우리말 성경으로 필사", true); box.appendChild(k); FILL(k);
+    const e = langCard("🇺🇸", "English", "NIV / ESV 필사", false); box.appendChild(e); FILL(e);
+  }
+  async function pStepPhoto(box) {
+    const up = cardBox(16); box.appendChild(up); FILL(up); up.appendChild(T("한국어 노트", "Bold", 13, "ink"));
+    const zone = AL("VERTICAL", { itemSpacing: 8, paddingTop: 44, paddingBottom: 44, paddingLeft: 16, paddingRight: 16 }); zone.counterAxisAlignItems = "CENTER"; radiusVar(zone, "radius/lg"); setFill(zone, "surface"); setStroke(zone, "border-strong", 1.5); up.appendChild(zone); FILL(zone); zone.appendChild(T("📷", "Regular", 30, "ink")); zone.appendChild(T("사진 업로드", "Medium", 13, "sub"));
+  }
+  async function pStepKey(box) {
+    const c = cardBox(16); box.appendChild(c); FILL(c); c.appendChild(T("마음에 남은 말씀", "Bold", 13, "ink")); const list = AL("VERTICAL", { itemSpacing: 8 }); c.appendChild(list); FILL(list);
+    ["시편 23:1", "시편 23:2", "시편 23:3", "시편 23:4", "시편 23:5", "시편 23:6"].forEach((v, i) => { const opt = AL("HORIZONTAL", { paddingTop: 12, paddingBottom: 12, paddingLeft: 14, paddingRight: 14 }); radiusVar(opt, "radius/lg"); const s = (i === 0); setFill(opt, s ? "primary-soft" : "surface"); setStroke(opt, s ? "primary" : "border", s ? 1.5 : 1); opt.appendChild(T(v, s ? "Bold" : "Medium", 13, s ? "primary-deep" : "body")); list.appendChild(opt); FILL(opt); });
+    const rng = AL("VERTICAL", { itemSpacing: 4, paddingTop: 16, paddingBottom: 16, paddingLeft: 18, paddingRight: 18 }); radiusVar(rng, "radius/xl"); setFill(rng, "primary-soft"); box.appendChild(rng); FILL(rng); rng.appendChild(T("선택한 Key Verse", "Medium", 11, "primary-deep")); rng.appendChild(T("시편 23:1", "Extra Bold", 20, "primary-deep"));
+  }
+  async function pStepQt(box) {
+    const c = cardBox(16); box.appendChild(c); FILL(c); c.appendChild(T("QT 묵상 기록", "Bold", 13, "ink")); const ta = AL("VERTICAL", { paddingTop: 14, paddingBottom: 52, paddingLeft: 14, paddingRight: 14 }); radiusVar(ta, "radius/lg"); setFill(ta, "surface"); setStroke(ta, "border", 1); c.appendChild(ta); FILL(ta); const ph = T("오늘 말씀을 통해 느낀 점, 결단한 내용, 감사한 점 등을 자유롭게 적어보세요.", "Regular", 13, "sub", 150); ta.appendChild(ph); fillText(ph);
+    const sum = AL("VERTICAL", { itemSpacing: 10, paddingTop: 16, paddingBottom: 16, paddingLeft: 16, paddingRight: 16 }); radiusVar(sum, "radius/xl"); setFill(sum, "primary-soft"); box.appendChild(sum); FILL(sum); sum.appendChild(T("오늘의 필사 요약", "Bold", 13, "primary-deep"));
+    [["범위", "시편 23:1-6"], ["언어", "한국어"], ["Key Verse", "시편 23:1"]].forEach((kv) => { const r = rowAL(sum, 8); r.primaryAxisAlignItems = "SPACE_BETWEEN"; r.appendChild(T(kv[0], "Regular", 12, "body")); r.appendChild(T(kv[1], "Bold", 12, "ink")); });
+  }
+  async function pSuccess(frame, box, wide) {
+    pHead(box, wide); pProg(box, 5, wide);
+    const scrim = figma.createRectangle(); scrim.resize(frame.width, frame.height); scrim.fills = [{ type: "SOLID", color: { r: .09, g: .2, b: .29 }, opacity: .45 }]; frame.appendChild(scrim); scrim.x = 0; scrim.y = 0;
+    const card = AL("VERTICAL", { itemSpacing: 12, paddingTop: 28, paddingBottom: 28, paddingLeft: 26, paddingRight: 26 }); card.counterAxisAlignItems = "CENTER"; radiusVar(card, "radius/xl"); setFill(card, "bg"); card.effects = [{ type: "DROP_SHADOW", color: { r: .09, g: .2, b: .29, a: .18 }, offset: { x: 0, y: 16 }, radius: 40, spread: 0, visible: true, blendMode: "NORMAL" }];
+    frame.appendChild(card); card.layoutSizingHorizontal = "FIXED"; card.resize(300, 10); card.x = (frame.width - 300) / 2; card.y = frame.height / 2 - 150;
+    const badge = AL("HORIZONTAL", { paddingTop: 14, paddingBottom: 14, paddingLeft: 18, paddingRight: 18 }); badge.cornerRadius = 999; setFill(badge, "#03B26C"); badge.appendChild(T("✓", "Bold", 26, "#FFFFFF")); card.appendChild(badge);
+    const h = T("필사 기록을 저장했어요", "Bold", 19, "ink"); card.appendChild(h); h.textAlignHorizontal = "CENTER"; fillText(h);
+    const p = T("시편 23:1-6 · 오늘도 한 걸음", "Regular", 13, "sub"); card.appendChild(p); p.textAlignHorizontal = "CENTER"; fillText(p);
+    const ok = await ov(instV("Button", "Style=primary, Size=md"), ["확인"]); card.appendChild(ok); FILL(ok);
+  }
+  async function pError(box, wide) {
+    pHead(box, wide); pProg(box, 5, wide);
+    const ban = AL("HORIZONTAL", { itemSpacing: 10, paddingTop: 12, paddingBottom: 12, paddingLeft: 14, paddingRight: 14 }); ban.counterAxisAlignItems = "CENTER"; radiusVar(ban, "radius/lg"); setFill(ban, "#FDECEE"); setStroke(ban, "#F4A6AE", 1);
+    const ic = AL("HORIZONTAL", { paddingTop: 1, paddingBottom: 1, paddingLeft: 8, paddingRight: 8 }); ic.cornerRadius = 999; setFill(ic, "#F04452"); ic.appendChild(T("!", "Bold", 13, "#FFFFFF")); ban.appendChild(ic);
+    const msg = T("필사 기록을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.", "Medium", 12, "#B4232E"); ban.appendChild(msg); fillText(msg);
+    ban.appendChild(T("다시 시도", "Bold", 12, "#F04452"));
+    box.appendChild(ban); FILL(ban);
+    const c = cardBox(16); box.appendChild(c); FILL(c); c.appendChild(T("QT 묵상 기록", "Bold", 13, "ink")); const ta = AL("VERTICAL", { paddingTop: 14, paddingBottom: 40, paddingLeft: 14, paddingRight: 14 }); radiusVar(ta, "radius/lg"); setFill(ta, "surface"); setStroke(ta, "border", 1); c.appendChild(ta); FILL(ta); const ph = T("오늘도 한 걸음, 감사합니다.", "Regular", 13, "body"); ta.appendChild(ph); fillText(ph);
+    const a = rowAL(box, 10); a.primaryAxisAlignItems = "SPACE_BETWEEN"; a.appendChild(await ov(instV("Button", "Style=secondary, Size=md"), ["이전"])); a.appendChild(await ov(instV("Button", "Style=primary, Size=md"), ["저장하기"]));
   }
 
   async function pageHeatmap(box, wide) {
@@ -284,6 +345,25 @@
     return frame;
   }
 
+  /* ---------- 인증 콜백(로그인 처리 중) — 구글 OAuth 리다이렉트 랜딩(/auth/callback) ---------- */
+  function spinner(sz) {
+    const box = figma.createFrame(); box.name = "Spinner"; box.resize(sz, sz); box.fills = []; box.clipsContent = false;
+    const track = figma.createEllipse(); track.resize(sz, sz); track.fills = []; setStroke(track, "primary-soft", 5); box.appendChild(track);
+    const arc = figma.createEllipse(); arc.resize(sz, sz); arc.fills = [fillOf("primary")]; arc.arcData = { startingAngle: -Math.PI / 2, endingAngle: Math.PI, innerRadius: (sz - 10) / sz }; box.appendChild(arc);
+    return box;
+  }
+  function callback(w, h, big) {
+    const frame = figma.createFrame(); frame.name = (big ? "D · " : "M · ") + "인증 콜백(로그인 처리 중)"; frame.resize(w, h); frame.fills = [GRAD_SKY]; frame.clipsContent = true;
+    const col = AL("VERTICAL", { itemSpacing: 16 }); col.counterAxisAlignItems = "CENTER"; frame.appendChild(col);
+    const cw = Math.min(w - 48, 340); col.layoutSizingHorizontal = "FIXED"; col.resize(cw, 10); col.x = (w - cw) / 2; col.y = big ? 250 : 280;
+    col.appendChild(wordmark(big ? 40 : 34, false));
+    col.appendChild(spinner(big ? 52 : 46));
+    const tt = T("로그인 처리 중…", "Bold", big ? 24 : 20, "ink"); col.appendChild(tt); tt.textAlignHorizontal = "CENTER"; fillText(tt);
+    const dd = T("구글 계정을 확인하고 있어요. 잠시만 기다려 주세요.", "Regular", 14, "body", 160); col.appendChild(dd); dd.textAlignHorizontal = "CENTER"; fillText(dd);
+    const note = tag("응답이 지연되면 로그인 화면으로 돌아가요", "primary-soft", "primary-deep"); col.appendChild(note);
+    return frame;
+  }
+
   /* ---------- 전용 페이지(03 Mobile)를 비우고 그 위에 생성 ---------- */
   let sp = figma.root.children.find((p) => p.name === SPAGE);
   if (!sp) { sp = figma.createPage(); sp.name = SPAGE; }
@@ -303,8 +383,15 @@
 
   await build("온보딩", async () => { const o = onboarding(MW, MH, false); await onboardingFill(o, false); return o.frame; });
   await build("로그인", async () => await login(MW, MH, false));
+  await build("인증 콜백", async () => callback(MW, MH, false));
   await build("홈", async () => { const s = mobile("홈", { tab: true }); await pageHome(s.content, false); mobileTab(s.frame); return s.frame; });
-  await build("필사", async () => { const s = mobile("필사"); await pagePilsa(s.content, false); return s.frame; });
+  await build("필사 ① 범위", async () => { const s = mobile("필사 ① 범위"); pHead(s.content, false); pProg(s.content, 1, false); await pStepRange(s.content); await pActs(s.content, 1); return s.frame; });
+  await build("필사 ② 언어", async () => { const s = mobile("필사 ② 언어"); pHead(s.content, false); pProg(s.content, 2, false); await pStepLang(s.content); await pActs(s.content, 2); return s.frame; });
+  await build("필사 ③ 사진", async () => { const s = mobile("필사 ③ 사진"); pHead(s.content, false); pProg(s.content, 3, false); await pStepPhoto(s.content); await pActs(s.content, 3); return s.frame; });
+  await build("필사 ④ Key Verse", async () => { const s = mobile("필사 ④ Key Verse"); pHead(s.content, false); pProg(s.content, 4, false); await pStepKey(s.content); await pActs(s.content, 4); return s.frame; });
+  await build("필사 ⑤ QT", async () => { const s = mobile("필사 ⑤ QT"); pHead(s.content, false); pProg(s.content, 5, false); await pStepQt(s.content); await pActs(s.content, 5); return s.frame; });
+  await build("필사 저장 완료", async () => { const s = mobile("필사 저장 완료"); await pSuccess(s.frame, s.content, false); return s.frame; });
+  await build("필사 저장 실패", async () => { const s = mobile("필사 저장 실패"); await pError(s.content, false); return s.frame; });
   await build("히트맵", async () => { const s = mobile("히트맵", { tab: true }); await pageHeatmap(s.content, false); mobileTab(s.frame); return s.frame; });
   await build("추천", async () => { const s = mobile("추천", { tab: true }); await pageRecommend(s.content, false); mobileTab(s.frame); return s.frame; });
   await build("프로필", async () => { const s = mobile("프로필", { tab: true }); await pageProfile(s.content, false); mobileTab(s.frame); return s.frame; });
