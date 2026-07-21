@@ -1,4 +1,5 @@
 import type { Verse } from "../api/verses";
+import { formatVerseRef } from "../lib/verseRef";
 
 interface TodayVerseProps {
   verse: Verse | null;
@@ -22,9 +23,7 @@ function TodayVerse({ verse, isLoading }: TodayVerseProps) {
 
       <p className="mt-4 text-xl leading-relaxed text-slate-800">{verse.text}</p>
 
-      <p className="mt-3 text-right text-sm text-slate-500">
-        {verse.bookName} {verse.chapter}:{verse.verseNo}
-      </p>
+      <p className="mt-3 text-right text-sm text-slate-500">{formatVerseRef(verse)}</p>
     </section>
   );
 }
