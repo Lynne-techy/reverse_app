@@ -64,7 +64,15 @@ export default function App() {
             <Route element={<MainLayout />}>
               <Route path="/mainpage" element={<MainPage />} />
               <Route path="/pilsa" element={<PilsaPage />} />
-              <Route path="/heatmap" element={<HeatmapPage activity={heatmapActivity} />} />
+              <Route
+                path="/heatmap"
+                element={
+                  // 다른 페이지와 동일한 반응형 컨테이너로 감싼다(페이지별 폭/여백 일관).
+                  <main className="mx-auto w-full max-w-5xl px-6 py-8">
+                    <HeatmapPage activity={heatmapActivity} />
+                  </main>
+                }
+              />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/recommend" element={<RecommendPage />} />
             </Route>
