@@ -1,4 +1,5 @@
 import { useQueries } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 import TodayVerse from "../../components/TodayVerse";
 import ProgressCard from "../../components/ProgressCard";
@@ -34,6 +35,7 @@ function getActivityDateRange() {
 }
 
 function MainPage() {
+  const navigate = useNavigate();
   const today = formatLocalDate(new Date());
   const { from, to } = getActivityDateRange();
 
@@ -80,7 +82,8 @@ function MainPage() {
 
         <button
           type="button"
-          className="rounded-2xl bg-blue-600 px-6 py-4 font-bold text-white hover:bg-blue-700"
+          onClick={() => navigate("/pilsa")}
+          className="whitespace-nowrap rounded-2xl bg-blue-600 px-8 py-5 text-lg font-bold text-white shadow-md transition hover:bg-blue-700 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
         >
           ✎ 오늘 필사 시작
         </button>
