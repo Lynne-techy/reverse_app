@@ -131,6 +131,22 @@ function PilsaPage() {
 
   const result = polledSession && isTerminalStatus(polledSession.status) ? polledSession : null;
 
+  // 핫패치(디버그): 검사 실패/불통과의 원인을 브라우저 콘솔에 노출한다(현재 UI는 이유를 안 보여줌).
+  useEffect(() => {
+    if (!result) return;
+    if (result.status === "failed") {
+      console.error("[pilsa] 검사 실패 — 세션 상세:", result);
+    } else if (result.passed !== true) {
+      console.warn("[pilsa] 통과 못함 — 유사도/판독 결과:", {
+        sessionId: result.id,
+        status: result.status,
+        passed: result.passed,
+        similarityScore: result.similarityScore,
+        recognizedText: result.recognizedText,
+      });
+    }
+  }, [result]);
+
   const isBusy = stepStatus === "loading" || isChecking;
 
   const rangeLabel = `${bookName(bookNo)} ${chapter}:${startVerse}${
@@ -194,7 +210,8 @@ function PilsaPage() {
       setImageUploaded(false);
       setStepStatus("idle");
       nextStep(); // 성공 시에만 3단계로.
-    } catch {
+    } catch (err) {
+      console.error("[pilsa] 업로드 준비(createUploadUrl) 실패:", err);
       setStepError("업로드 준비에 실패했어요. 잠시 후 다시 시도해 주세요.");
       setStepStatus("error");
     }
@@ -230,7 +247,8 @@ function PilsaPage() {
       setImageUploaded(true);
       setStepStatus("idle");
       nextStep();
-    } catch {
+    } catch (err) {
+      console.error("[pilsa] 이미지 업로드(uploadImageToStorage) 실패:", err);
       setStepError("이미지 업로드에 실패했어요. 잠시 후 다시 시도해 주세요.");
       setStepStatus("error");
     }
@@ -268,7 +286,8 @@ function PilsaPage() {
 
       setSubmitted(true); // useWritingSessionStatus가 enabled되어 폴링 시작.
       setStepStatus("idle");
-    } catch {
+    } catch (err) {
+      console.error("[pilsa] 저장(completeWritingSession) 실패:", err);
       setStepError("필사 기록을 저장하지 못했어요. 잠시 후 다시 시도해 주세요.");
       setStepStatus("error");
     }
