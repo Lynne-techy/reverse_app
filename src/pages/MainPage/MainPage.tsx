@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import TodayVerse from "../../components/TodayVerse";
 import ProgressCard from "../../components/ProgressCard";
 import StreakCard from "../../components/StreakCard";
+import CompletedCard from "../../components/CompletedCard";
 import ContributionGraph from "../../components/ContributionGraph";
 import RecentRecords from "../../components/RecentRecords";
 import Skeleton from "../../components/Skeleton";
@@ -23,6 +24,7 @@ function formatLocalDate(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
+
   return `${year}-${month}-${day}`;
 }
 
@@ -30,8 +32,13 @@ function formatLocalDate(date: Date): string {
 function getActivityDateRange() {
   const today = new Date();
   const startDate = new Date(today);
+
   startDate.setDate(today.getDate() - 364);
-  return { from: formatLocalDate(startDate), to: formatLocalDate(today) };
+
+  return {
+    from: formatLocalDate(startDate),
+    to: formatLocalDate(today),
+  };
 }
 
 function MainPage() {
@@ -63,58 +70,89 @@ function MainPage() {
     activityQ.isError && "활동 기록",
     recordsQ.isError && "최근 필사 기록",
   ].filter(Boolean) as string[];
-  const errorMessage = failed.length ? `${failed.join(", ")} 데이터를 불러오지 못했습니다.` : "";
+
+  const errorMessage = failed.length
+    ? `${failed.join(", ")} 데이터를 불러오지 못했습니다.`
+    : "";
 
   return (
-    <main className="w-full px-6 py-8">
+    <main className="home-page">
       {/* 인사 영역 */}
-      <section className="flex items-center justify-between rounded-2xl bg-blue-50 px-7 py-6">
-        <div>
-          <h1 className="text-3xl font-bold text-slate-800">
+      <section className="home-hero">
+        <div className="home-hero__copy">
+          <h1 className="home-hero__title">
             {profileQ.isPending ? (
-              <Skeleton width={240} height={30} radius={8} />
+              <Skeleton width={260} height={42} radius={10} />
             ) : (
-              `안녕하세요, ${userName}님 👋`
+              <>
+                안녕하세요, {userName}님 <span aria-hidden="true">👋</span>
+              </>
             )}
           </h1>
-          <p className="mt-2 text-lg text-slate-600">오늘도 한 글자씩, 만나러 가볼까요.</p>
+
+          <p className="home-hero__description">
+            오늘도 한 글자씩, 만나러 가볼까요.
+          </p>
+        </div>
+
+        <div className="home-hero__branch" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+          <span />
         </div>
 
         <button
           type="button"
           onClick={() => navigate("/pilsa")}
-          className="whitespace-nowrap rounded-2xl bg-blue-600 px-8 py-5 text-lg font-bold text-white shadow-md transition hover:bg-blue-700 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          className="home-primary-button"
         >
-          ✎ 오늘 필사 시작
+          <span aria-hidden="true">✎</span>
+          오늘 필사 시작
         </button>
       </section>
 
       {/* 일부 API 실패 안내 */}
       {errorMessage && (
-        <div role="alert" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
+        <div role="alert" className="home-error-message">
           {errorMessage}
         </div>
       )}
 
       {/* 오늘의 말씀 */}
-      <div className="mt-6">
-        <TodayVerse verse={verseQ.data ?? null} isLoading={verseQ.isPending} />
-      </div>
+      <TodayVerse verse={verseQ.data ?? null} isLoading={verseQ.isPending} />
 
       {/* 진척률 및 스트릭 */}
-      <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-        <ProgressCard progress={progressQ.data ?? null} isLoading={progressQ.isPending} />
-        <StreakCard statistics={statsQ.data ?? null} isLoading={statsQ.isPending} />
+      <div className="home-summary-grid">
+        <ProgressCard
+          progress={progressQ.data ?? null}
+          isLoading={progressQ.isPending}
+        />
+
+        <StreakCard
+          statistics={statsQ.data ?? null}
+          isLoading={statsQ.isPending}
+        />
+
+        <CompletedCard
+          progress={progressQ.data ?? null}
+          statistics={statsQ.data ?? null}
+          isLoading={progressQ.isPending || statsQ.isPending}
+        />
       </div>
 
-      {/* 필사 활동 잔디 */}
-      <div className="mt-4">
-        <ContributionGraph activity={activityQ.data ?? []} isLoading={activityQ.isPending} />
-      </div>
+      <div className="home-dashboard-grid">
+        {/* 필사 활동 잔디 */}
+        <ContributionGraph
+          activity={activityQ.data ?? []}
+          isLoading={activityQ.isPending}
+        />
 
-      {/* 최근 필사 기록 */}
-      <div className="mt-4">
-        <RecentRecords records={recordsQ.data ?? []} isLoading={recordsQ.isPending} />
+        {/* 최근 필사 기록 */}
+        <RecentRecords
+          records={recordsQ.data ?? []}
+          isLoading={recordsQ.isPending}
+        />
       </div>
     </main>
   );

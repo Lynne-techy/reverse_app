@@ -25,6 +25,7 @@
 // }
 
 import type { MyStatistics } from "../api/stats";
+import { Flame, CalendarRange } from 'lucide-react';
 
 interface StreakCardProps {
   statistics: MyStatistics | null;
@@ -37,7 +38,7 @@ function StreakCard({
 }: StreakCardProps) {
   if (isLoading) {
     return (
-      <section className="rounded-2xl bg-white p-6">
+      <section className="home-card home-stat-card home-stat-card--mint home-card--loading">
         스트릭을 불러오는 중...
       </section>
     );
@@ -45,25 +46,28 @@ function StreakCard({
 
   if (!statistics) {
     return (
-      <section className="rounded-2xl bg-white p-6">
+      <section className="home-card home-stat-card home-stat-card--mint home-card--loading">
         스트릭을 불러오지 못했습니다.
       </section>
     );
   }
 
   return (
-    <section className="rounded-2xl bg-white p-6 shadow-sm">
-      <p className="text-sm text-slate-500">
-        현재 연속 필사
-      </p>
+    <section className="home-card home-stat-card home-stat-card--mint">
+      <div className="home-stat-card__header">
+        <span className="home-stat-card__eyebrow-icon" aria-hidden="true">
+          <Flame size={25} />
+        </span>
+        <h2>현재 연속 필사</h2>
+      </div>
 
-      <strong className="stat-card__value">
-        🔥 {statistics.currentStreak}일
-      </strong>
+      <div className="home-stat-card__metric">
+        <strong>{statistics.currentStreak}일</strong>
+        <p>최장 {statistics.longestStreak}일</p>
+      </div>
 
-      <div className="mt-4 flex justify-between text-sm text-slate-600">
-        <span>최장 {statistics.longestStreak}일</span>
-        <span>총 {statistics.totalCount}회</span>
+      <div className="home-stat-card__visual home-stat-card__visual--calendar" aria-hidden="true">
+        <CalendarRange size={50} />
       </div>
     </section>
   );

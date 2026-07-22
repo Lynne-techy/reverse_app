@@ -1,45 +1,95 @@
-import { NavLink } from "react-router-dom";
+import { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 import { NAV_ITEMS } from "../config/nav";
+import { supabase } from "../lib/supabase";
 
 function Sidebar() {
-  return (
-    <aside className="hidden min-h-screen w-60 shrink-0 flex-col bg-sidebar px-4 py-7 text-white md:flex">
-      <div className="mb-9 px-3">
-        <h1 className="m-0 text-2xl font-bold">
-          Re<span className="text-accent">:</span>Verse
-        </h1>
+  const navigate = useNavigate();
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-        <p className="mt-1 text-xs text-white/75">내가 적은 만큼 만나는 하나님</p>
+  const handleLogout = async () => {
+    if (isLoggingOut) {
+      return;
+    }
+
+    setIsLoggingOut(true);
+
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.error("로그아웃 실패:", error);
+      setIsLoggingOut(false);
+      return;
+    }
+
+    navigate("/login", { replace: true });
+  };
+
+  return (
+    <aside className="premium-sidebar sticky top-0 hidden h-screen w-72 shrink-0 flex-col overflow-y-auto px-6 py-8 text-white md:flex lg:w-80 2xl:w-[21rem]">
+      <div className="premium-sidebar__brand mb-10 px-2">
+        <h1 className="m-0 text-3xl font-bold tracking-tight">
+          Re<span className="premium-sidebar__colon">:</span>Verse
+        </h1>
+        <p className="mt-2 text-white/70">내가 적은 만큼 만나는 하나님</p>
       </div>
 
-      <nav aria-label="주 메뉴" className="flex flex-1 flex-col gap-1">
-        {NAV_ITEMS.map((menu) => (
-          <NavLink
-            key={menu.path}
-            to={menu.path}
-            className={({ isActive }) =>
-              [
-                "flex items-center gap-3 rounded-xl px-4 py-3",
-                "text-sm no-underline transition",
-                isActive
-                  ? "bg-white/15 font-semibold text-white"
-                  : "text-white/75 hover:bg-white/10 hover:text-white",
-              ].join(" ")
-            }
-          >
-            <span aria-hidden="true" className="w-6 text-center text-lg">
-              {menu.icon}
-            </span>
+      <nav aria-label="주 메뉴" className="flex flex-1 flex-col gap-2">
+        {NAV_ITEMS.map((menu) => {
+          // 대문자로 시작하는 변수에 아이콘 컴포넌트를 할당
+          const Icon = menu.icon;
 
-            <span>{menu.label}</span>
-          </NavLink>
-        ))}
+          return (
+            <NavLink
+              key={menu.path}
+              to={menu.path}
+              className={({ isActive }) =>
+                [
+                  "premium-sidebar__link flex items-center gap-4 rounded-2xl px-5 py-4",
+                  "text-[19px] font-medium no-underline transition",
+                  isActive
+                    ? "premium-sidebar__link--active font-semibold text-white"
+                    : "text-white/75 hover:bg-white/10 hover:text-white",
+                ].join(" ")
+              }
+            >
+              <span aria-hidden="true" className="flex items-center justify-center">
+                {/* 아이콘 태그 형태로 렌더링 */}
+                <Icon size={25} className="shrink-0" />
+              </span>
+              <span>{menu.label}</span>
+            </NavLink>
+          );
+        })}
       </nav>
 
-      <div className="rounded-xl bg-white/10 p-4 text-xs text-white/60">
-        <strong className="text-white/90">Re:Verse</strong>
-        <p className="mb-0 mt-1">오늘도 한 글자씩 기록해요.</p>
+      <div className="premium-sidebar__scene" aria-hidden="true">
+        <span className="premium-sidebar__cross">†</span>
       </div>
+
+      <div className="premium-sidebar__message rounded-2xl p-5 text-white/70">
+        <strong className="text-white/95">오늘도 말씀 안에서</strong>
+        <p className="mb-0 mt-2">
+          평안과 은혜가 가득하시길
+          <br />
+          응원합니다.
+        </p>
+        <span aria-hidden="true" className="premium-sidebar__leaf">
+          〰
+        </span>
+      </div>
+
+      <button
+        type="button"
+        onClick={handleLogout}
+        disabled={isLoggingOut}
+        className="premium-sidebar__logout"
+      >
+        <span aria-hidden="true" className="premium-sidebar__logout-icon">
+          ⇥
+        </span>
+        <span>{isLoggingOut ? "로그아웃 중..." : "로그아웃"}</span>
+      </button>
     </aside>
   );
 }

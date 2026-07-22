@@ -42,32 +42,58 @@ interface RecentRecordsProps {
   isLoading: boolean;
 }
 
-function RecentRecords({ records, isLoading }: RecentRecordsProps) {
+function RecentRecords({
+  records,
+  isLoading,
+}: RecentRecordsProps) {
   if (isLoading) {
-    return <section className="rounded-2xl bg-white p-6">최근 기록을 불러오는 중...</section>;
+    return (
+      <section className="home-card home-records-card home-card--loading">
+        최근 기록을 불러오는 중...
+      </section>
+    );
   }
 
   return (
-    <section className="rounded-2xl bg-white p-6 shadow-sm">
-      <h2 className="font-bold text-slate-800">최근 필사 기록</h2>
+    <section className="home-card home-records-card">
+      <div className="home-records-card__header">
+        <div className="home-section-heading">
+          <span aria-hidden="true">◷</span>
+          <h2>최근 필사 기록</h2>
+        </div>
+
+        <span>전체 보기 ›</span>
+      </div>
 
       {records.length === 0 ? (
-        <p className="mt-4 text-sm text-slate-500">아직 필사 기록이 없습니다.</p>
+        <div className="home-records-card__empty">
+          <span aria-hidden="true">✎</span>
+          <p>아직 필사 기록이 없습니다.</p>
+          <small>오늘의 말씀을 기록하면 이곳에 표시돼요.</small>
+        </div>
       ) : (
-        <ul className="record-list">
-          {records.map((record) => (
-            <li key={record.id} className="record-card">
-              <p className="font-semibold text-slate-800">
-                {record.bookNo}권 {record.chapter}장
-              </p>
+        <ul className="home-record-list">
+          {records.slice(0, 5).map((record, index) => (
+            <li key={record.id} className="home-record-item">
+              <span
+                className={`home-record-item__icon home-record-item__icon--${(index % 4) + 1}`}
+                aria-hidden="true"
+              >
+                †
+              </span>
 
-              <p className="mt-1 text-sm text-slate-500">
-                {record.startVerseNo}절 ~ {record.endVerseNo}절
-              </p>
+              <div className="home-record-item__content">
+                <p>
+                  {record.bookNo}권 {record.chapter}장{" "}
+                  {record.startVerseNo}-{record.endVerseNo}절
+                </p>
 
-              {record.clientDate && (
-                <p className="mt-1 text-xs text-slate-500">{record.clientDate}</p>
-              )}
+                {record.clientDate && <small>{record.clientDate}</small>}
+              </div>
+
+              <span className="home-record-item__count">
+                {Math.max(record.endVerseNo - record.startVerseNo + 1, 1)}절
+              </span>
             </li>
           ))}
         </ul>

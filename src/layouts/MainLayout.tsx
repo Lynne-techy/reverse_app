@@ -3,13 +3,14 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import Sidebar from "../components/Sidebar";
 import MobileTabBar from "../components/MobileTabBar";
 import { queryClient } from "../lib/queryClient";
+import "../styles/premium-theme.css";
 
 // 인증 이후 레이아웃. React Query 컨텍스트를 여기서 제공해 로그인 경로 초기 번들에서
 // @tanstack/react-query를 제외한다(MainLayout은 App에서 지연 로드).
 function MainLayout() {
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen bg-slate-50">
+      <div className="app-shell flex min-h-screen bg-slate-50">
         {/* 키보드/스크린리더 사용자용 본문 바로가기 — 평소 숨김, 포커스 시 노출 */}
         <a
           href="#main-content"

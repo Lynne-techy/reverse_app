@@ -23,8 +23,9 @@
 //   );
 // }
 
-
+import type { CSSProperties } from "react";
 import type { UserProgress } from "../api/users";
+import { Trophy } from 'lucide-react';
 
 interface ProgressCardProps {
   progress: UserProgress | null;
@@ -37,7 +38,7 @@ function ProgressCard({
 }: ProgressCardProps) {
   if (isLoading) {
     return (
-      <section className="rounded-2xl bg-white p-6">
+      <section className="home-card home-stat-card home-stat-card--blue home-card--loading">
         진척률을 불러오는 중...
       </section>
     );
@@ -45,7 +46,7 @@ function ProgressCard({
 
   if (!progress) {
     return (
-      <section className="rounded-2xl bg-white p-6">
+      <section className="home-card home-stat-card home-stat-card--blue home-card--loading">
         진척률을 불러오지 못했습니다.
       </section>
     );
@@ -56,31 +57,38 @@ function ProgressCard({
     100,
   );
 
+  const progressStyle = {
+    "--progress-rate": `${progressRate * 3.6}deg`,
+  } as CSSProperties;
+
   return (
-    <section className="stat-card">
-      <p className="text-sm text-slate-500">
-        전체 필사 진척률
-      </p>
-
-      <strong className="mt-2 block text-3xl text-slate-800">
-        {progressRate.toFixed(1)}%
-      </strong>
-
-      <div className="progress">
-      <span
-        style={{
-          width: `${Math.max(progressRate, 1.5)}%`,
-        }}
-      />
+    <section className="home-card home-stat-card home-stat-card--blue">
+      <div className="home-stat-card__header">
+        <span className="home-stat-card__eyebrow-icon" aria-hidden="true">
+          <Trophy size={25} />
+        </span>
+        <h2>전체 필사 진척률</h2>
       </div>
 
-      <div className="mt-4 flex justify-between text-sm">
-        <span>
-          {progress.coveredVerses.toLocaleString()} /{" "}
-          {progress.totalVerses.toLocaleString()}절
-        </span>
+      <div className="home-progress-card__body">
+        <div className="home-progress-ring" style={progressStyle}>
+          <div>
+            <strong>{progressRate.toFixed(1)}%</strong>
+          </div>
+        </div>
 
-        <span>완료 {progress.completedBooks}권</span>
+        <div className="home-stat-card__details">
+          <strong>
+            {progress.coveredVerses.toLocaleString()} /{" "}
+            {progress.totalVerses.toLocaleString()}절
+          </strong>
+
+          <p>
+            하나님의 말씀을
+            <br />
+            차곡차곡 써 내려가요.
+          </p>
+        </div>
       </div>
     </section>
   );

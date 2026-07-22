@@ -8,22 +8,37 @@ interface TodayVerseProps {
 
 function TodayVerse({ verse, isLoading }: TodayVerseProps) {
   if (isLoading) {
-    return <section className="rounded-2xl bg-white p-6">오늘의 말씀을 불러오는 중...</section>;
+    return (
+      <section className="home-card home-card--loading">
+        오늘의 말씀을 불러오는 중...
+      </section>
+    );
   }
 
   if (!verse) {
     return (
-      <section className="rounded-2xl bg-white p-6">오늘의 말씀을 불러오지 못했습니다.</section>
+      <section className="home-card home-card--loading">
+        오늘의 말씀을 불러오지 못했습니다.
+      </section>
     );
   }
 
   return (
-    <section className="hero-card">
-      <p className="text-sm font-semibold text-blue-600">오늘의 말씀</p>
+    <section className="home-card home-verse-card">
+      <div className="home-verse-card__icon" aria-hidden="true">
+        ✦
+      </div>
 
-      <p className="mt-4 max-w-3xl text-xl leading-relaxed text-slate-800">{verse.text}</p>
+      <div className="home-verse-card__content">
+        <div className="home-verse-card__header">
+          <h2>오늘의 말씀</h2>
+          <span>{formatVerseRef(verse)}</span>
+        </div>
 
-      <p className="mt-3 text-right text-sm text-slate-500">{formatVerseRef(verse)}</p>
+        <blockquote>{verse.text}</blockquote>
+
+        <p>{formatVerseRef(verse)}</p>
+      </div>
     </section>
   );
 }
