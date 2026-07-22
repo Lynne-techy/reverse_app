@@ -12,11 +12,11 @@ export function PhotoStep({ imagePreview, imageError, onUpload, onRemove }: Phot
         <div className="text-[13px] font-bold text-ink">필사 노트</div>
 
         <div className="relative mt-3">
-          <label className="flex min-h-[200px] cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-[1.5px] border-dashed border-border-strong bg-surface transition hover:border-brand">
+          <label className="flex min-h-[420px] cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-[1.5px] border-dashed border-border-strong bg-surface transition hover:border-brand">
             {imagePreview ? (
               <img
                 src={imagePreview}
-                className="max-h-[280px] w-full rounded-xl object-contain"
+                className="max-h-[500px] w-full rounded-xl object-contain"
                 alt="업로드한 필사 사진"
               />
             ) : (

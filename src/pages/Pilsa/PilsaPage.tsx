@@ -475,88 +475,84 @@ function PilsaPage() {
   };
 
   return (
-    <main className="w-full px-6 py-8">
-      <div className="mx-auto w-full max-w-[560px]">
-        <button
-          type="button"
-          onClick={() => navigate(-1)}
-          className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-border bg-white px-3 py-1.5 text-xs font-medium text-body transition hover:bg-surface"
-        >
-          <span aria-hidden="true">←</span> 나가기
-        </button>
+    <main className="mx-auto w-full max-w-4xl px-6 py-8">
+      <button
+        type="button"
+        onClick={() => navigate(-1)}
+        className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-border bg-white px-3 py-1.5 text-xs font-medium text-body transition hover:bg-surface"
+      >
+        <span aria-hidden="true">←</span> 나가기
+      </button>
 
-        <div className="mb-6">
-          <span className="inline-flex items-center rounded-full bg-primary-soft px-2.5 py-1 text-[11px] font-bold text-primary-deep">
-            DAILY PILSA
+      <div className="mb-6">
+        <span className="inline-flex items-center rounded-full bg-primary-soft px-2.5 py-1 text-[11px] font-bold text-primary-deep">
+          DAILY PILSA
+        </span>
+
+        <h1 className="mb-0 mt-3 text-2xl font-bold text-ink">성경 필사</h1>
+
+        <p className="mb-0 mt-2 text-[13px] text-sub">한 글자씩 적으며 말씀을 마음에 새겨보세요.</p>
+      </div>
+
+      {renderProgress()}
+
+      {stepStatus === "error" && (
+        <div
+          className="mb-4 flex items-center gap-2.5 rounded-xl border border-[#f4a6ae] bg-[#fdecee] px-3.5 py-3"
+          role="alert"
+        >
+          <span
+            className="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-danger text-xs font-extrabold text-white"
+            aria-hidden="true"
+          >
+            !
           </span>
 
-          <h1 className="mb-0 mt-3 text-2xl font-bold text-ink">성경 필사</h1>
+          <p className="flex-1 text-xs text-[#b4232e]">{stepError}</p>
 
-          <p className="mb-0 mt-2 text-[13px] text-sub">
-            한 글자씩 적으며 말씀을 마음에 새겨보세요.
-          </p>
-        </div>
-
-        {renderProgress()}
-
-        {stepStatus === "error" && (
-          <div
-            className="mb-4 flex items-center gap-2.5 rounded-xl border border-[#f4a6ae] bg-[#fdecee] px-3.5 py-3"
-            role="alert"
+          <button
+            type="button"
+            className="flex-none text-xs font-bold text-danger"
+            onClick={retryStep}
           >
-            <span
-              className="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-danger text-xs font-extrabold text-white"
-              aria-hidden="true"
-            >
-              !
-            </span>
+            다시 시도
+          </button>
+        </div>
+      )}
 
-            <p className="flex-1 text-xs text-[#b4232e]">{stepError}</p>
+      {renderCurrentStep()}
 
-            <button
-              type="button"
-              className="flex-none text-xs font-bold text-danger"
-              onClick={retryStep}
-            >
-              다시 시도
-            </button>
-          </div>
+      <div className="mt-7 flex gap-3">
+        {step > 1 && (
+          <button
+            type="button"
+            className="h-11 w-28 rounded-xl border border-border bg-white text-sm font-semibold text-ink transition hover:bg-surface"
+            onClick={prevStep}
+            disabled={stepStatus === "loading"}
+          >
+            이전
+          </button>
         )}
 
-        {renderCurrentStep()}
-
-        <div className="mt-7 flex gap-3">
-          {step > 1 && (
-            <button
-              type="button"
-              className="h-11 w-28 rounded-xl border border-border bg-white text-sm font-semibold text-ink transition hover:bg-surface"
-              onClick={prevStep}
-              disabled={stepStatus === "loading"}
-            >
-              이전
-            </button>
-          )}
-
-          {step < 5 ? (
-            <button
-              type="button"
-              className="h-11 flex-1 rounded-xl bg-brand px-5 text-sm font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
-              onClick={handleNext}
-              disabled={!canProceed() || stepStatus === "loading"}
-            >
-              {stepStatus === "loading" ? "처리 중…" : "다음"}
-            </button>
-          ) : (
-            <button
-              type="button"
-              className="h-11 flex-1 rounded-xl bg-brand px-5 text-sm font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
-              onClick={handleSave}
-              disabled={isBusy || !sessionId || keyVerseId === null}
-            >
-              {isBusy ? "저장 중…" : "저장하기"}
-            </button>
-          )}
-        </div>
+        {step < 5 ? (
+          <button
+            type="button"
+            className="h-11 flex-1 rounded-xl bg-brand px-5 text-sm font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={handleNext}
+            disabled={!canProceed() || stepStatus === "loading"}
+          >
+            {stepStatus === "loading" ? "처리 중…" : "다음"}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="h-11 flex-1 rounded-xl bg-brand px-5 text-sm font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={handleSave}
+            disabled={isBusy || !sessionId || keyVerseId === null}
+          >
+            {isBusy ? "저장 중…" : "저장하기"}
+          </button>
+        )}
       </div>
 
       {renderOverlay()}
