@@ -89,7 +89,8 @@ export default function ContributionGraph({ activity, isLoading = false }: Contr
       </div>
 
       <div className="overflow-x-auto">
-        <div className="inline-block min-w-full">
+        {/* 카드가 그리드보다 넓으면 가운데 정렬, 좁으면 좌측부터 스크롤(margin-auto). */}
+        <div className="mx-auto w-max">
           {/* 월 라벨 */}
           <div className="flex pl-7">
             {labels.map((label, i) => (
