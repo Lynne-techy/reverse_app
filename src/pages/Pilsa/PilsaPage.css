@@ -376,6 +376,42 @@
   object-fit: contain;
 }
 
+/* 사진 미리보기 + 우상단 삭제 버튼 컨테이너 */
+.upload-zone-holder {
+  position: relative;
+}
+
+.upload-remove {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+
+  width: 34px;
+  height: 34px;
+
+  border: none;
+  border-radius: 999px;
+
+  background: rgba(19, 42, 67, 0.55);
+  color: #fff;
+
+  font-size: 15px;
+  line-height: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: background 0.2s ease;
+}
+
+.upload-remove:hover {
+  background: rgba(19, 42, 67, 0.82);
+}
+
 .verse-list {
   display: flex;
   flex-direction: column;

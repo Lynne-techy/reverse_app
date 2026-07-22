@@ -1,4 +1,5 @@
 import type { Verse } from "../api/verses";
+import { formatVerseRef } from "../lib/verseRef";
 
 interface TodayVerseProps {
   verse: Verse | null;
@@ -20,11 +21,9 @@ function TodayVerse({ verse, isLoading }: TodayVerseProps) {
     <section className="hero-card">
       <p className="text-sm font-semibold text-blue-600">오늘의 말씀</p>
 
-      <p className="mt-4 text-xl leading-relaxed text-slate-800">{verse.text}</p>
+      <p className="mt-4 max-w-3xl text-xl leading-relaxed text-slate-800">{verse.text}</p>
 
-      <p className="mt-3 text-right text-sm text-slate-500">
-        {verse.bookName} {verse.chapter}:{verse.verseNo}
-      </p>
+      <p className="mt-3 text-right text-sm text-slate-500">{formatVerseRef(verse)}</p>
     </section>
   );
 }

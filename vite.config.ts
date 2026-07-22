@@ -43,6 +43,8 @@ export default defineConfig(({ mode }) => {
       environment: "jsdom",
       setupFiles: "./src/test/setup.ts",
       css: false,
+      // 유닛/컴포넌트 테스트는 src/ 로 한정 — e2e/(Playwright)는 vitest가 집지 않도록 제외.
+      include: ["src/**/*.{test,spec}.{ts,tsx}"],
     },
   };
 });

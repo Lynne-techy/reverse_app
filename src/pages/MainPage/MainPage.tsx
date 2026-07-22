@@ -1,4 +1,5 @@
 import { useQueries } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 import TodayVerse from "../../components/TodayVerse";
 import ProgressCard from "../../components/ProgressCard";
@@ -34,6 +35,7 @@ function getActivityDateRange() {
 }
 
 function MainPage() {
+  const navigate = useNavigate();
   const today = formatLocalDate(new Date());
   const { from, to } = getActivityDateRange();
 
@@ -64,7 +66,7 @@ function MainPage() {
   const errorMessage = failed.length ? `${failed.join(", ")} 데이터를 불러오지 못했습니다.` : "";
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-6 py-8">
+    <main className="w-full px-6 py-8">
       {/* 인사 영역 */}
       <section className="flex items-center justify-between rounded-2xl bg-blue-50 px-7 py-6">
         <div>
@@ -80,7 +82,8 @@ function MainPage() {
 
         <button
           type="button"
-          className="rounded-2xl bg-blue-600 px-6 py-4 font-bold text-white hover:bg-blue-700"
+          onClick={() => navigate("/pilsa")}
+          className="whitespace-nowrap rounded-2xl bg-blue-600 px-8 py-5 text-lg font-bold text-white shadow-md transition hover:bg-blue-700 hover:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
         >
           ✎ 오늘 필사 시작
         </button>

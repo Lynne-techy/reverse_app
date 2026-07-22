@@ -5,12 +5,8 @@ import Skeleton from "../../components/Skeleton";
 import ErrorState from "../../components/ErrorState";
 import { getRecommendations } from "../../api/recommend";
 import type { Verse } from "../../api/verses";
+import { formatVerseRef } from "../../lib/verseRef";
 import { EMOTIONS, type EmotionCode } from "../../data/emotions";
-
-/** Verse를 "마태복음 11장 28절" 형태의 출처 문자열로 만든다. */
-function formatReference(verse: Verse): string {
-  return `${verse.bookName} ${verse.chapter}장 ${verse.verseNo}절`;
-}
 
 function RecommendPage() {
   const navigate = useNavigate();
@@ -56,7 +52,7 @@ function RecommendPage() {
   const showFullError = isError && !hasData;
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-6 py-8">
+    <main className="w-full px-6 py-8">
       {/* 페이지 제목 */}
       <section>
         <p className="m-0 text-sm font-semibold text-brand">말씀 추천</p>
@@ -149,7 +145,7 @@ function RecommendPage() {
                   “{heroVerse.text}”
                 </blockquote>
                 <p className="mb-0 mt-4 text-sm font-semibold text-blue-100">
-                  {formatReference(heroVerse)}
+                  {formatVerseRef(heroVerse)}
                 </p>
                 <button
                   type="button"
@@ -206,7 +202,7 @@ function RecommendPage() {
                     key={verse.id}
                     className="flex flex-col rounded-2xl border border-slate-200 bg-white p-6 transition hover:-translate-y-1 hover:border-blue-200 hover:shadow-lg hover:shadow-slate-100"
                   >
-                    <p className="m-0 text-xs font-semibold text-brand">{formatReference(verse)}</p>
+                    <p className="m-0 text-xs font-semibold text-brand">{formatVerseRef(verse)}</p>
                     <p className="mb-0 mt-3 line-clamp-4 flex-1 text-sm leading-6 text-slate-600">
                       {verse.text}
                     </p>

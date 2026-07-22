@@ -7,10 +7,9 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci
 COPY . .
-# `npm run build`(tsc -b && vite build) 대신 vite build만 사용.
-# 미배선 프로토타입 페이지(MainPage/ProfilePage)가 typecheck에 실패하지만
-# 번들 그래프에는 포함되지 않는다. tsc 오류 해소 후 `npm run build`로 되돌릴 것.
-RUN npx vite build
+# tsc 오류(ContributionGraph 미배선)가 해소되어 typecheck를 배포 경로에 되살린다.
+# `npm run build` = tsc -b && vite build → 타입 에러 시 배포가 실패(회귀 게이트).
+RUN npm run build
 
 # ---- run ----
 FROM nginx:alpine AS run
