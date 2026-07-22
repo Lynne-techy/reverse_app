@@ -66,7 +66,7 @@ function MainPage() {
   const errorMessage = failed.length ? `${failed.join(", ")} 데이터를 불러오지 못했습니다.` : "";
 
   return (
-    <main className="w-full max-w-7xl px-6 py-8">
+    <main className="w-full px-6 py-8">
       {/* 인사 영역 */}
       <section className="flex items-center justify-between rounded-2xl bg-blue-50 px-7 py-6">
         <div>
