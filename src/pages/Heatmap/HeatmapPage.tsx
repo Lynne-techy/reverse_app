@@ -46,7 +46,7 @@ function HeatmapPage() {
   const errorMessage = failed.length ? `${failed.join(", ")} 데이터를 불러오지 못했습니다.` : "";
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-6 py-8">
+    <main className="w-full px-6 py-8">
       {/* (1)(2) 제목 · 부제 */}
       <h1 className="text-3xl font-bold text-slate-800">나의 필사 기록</h1>
       <p className="mt-2 text-slate-600">최근 1년간 하루하루 채워온 기록이에요.</p>
