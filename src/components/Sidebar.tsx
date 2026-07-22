@@ -2,6 +2,8 @@ import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { NAV_ITEMS } from "../config/nav";
 import { supabase } from "../lib/supabase";
+import sidebarStars from "../styles/stars.png";
+import { LogOut } from "lucide-react";
 
 function Sidebar() {
   const navigate = useNavigate();
@@ -63,31 +65,28 @@ function Sidebar() {
         })}
       </nav>
 
-      <div className="premium-sidebar__scene" aria-hidden="true">
-        <span className="premium-sidebar__cross">†</span>
-      </div>
+      <div
+        className="premium-sidebar__ambient"
+        style={{ backgroundImage: `url(${sidebarStars})` }}
+        aria-hidden="true"
+      />
+      <div className="premium-sidebar__phrase">
+        <span>오늘의 기록</span>
 
-      <div className="premium-sidebar__message rounded-2xl p-5 text-white/70">
-        <strong className="text-white/95">오늘도 말씀 안에서</strong>
-        <p className="mb-0 mt-2">
-          평안과 은혜가 가득하시길
+        <p>
+          한 줄씩, 천천히
           <br />
-          응원합니다.
+          나만의 리듬을 쌓아가요.
         </p>
-        <span aria-hidden="true" className="premium-sidebar__leaf">
-          〰
-        </span>
       </div>
-
+      
       <button
         type="button"
         onClick={handleLogout}
         disabled={isLoggingOut}
         className="premium-sidebar__logout"
       >
-        <span aria-hidden="true" className="premium-sidebar__logout-icon">
-          ⇥
-        </span>
+        <LogOut size={21} aria-hidden="true" />
         <span>{isLoggingOut ? "로그아웃 중..." : "로그아웃"}</span>
       </button>
     </aside>

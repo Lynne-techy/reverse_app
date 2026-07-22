@@ -26,12 +26,41 @@
   justify-content: space-between;
   gap: 2rem;
   overflow: hidden;
+
+  border: 1px solid #d9e2ea;
   border-radius: 1.65rem;
-  background:
-    radial-gradient(circle at 87% 38%, rgb(181 225 215 / 42%), transparent 16rem),
-    linear-gradient(116deg, #eaf1ff 0%, #f8fbff 53%, #edf8f5 100%);
-  padding: clamp(1.75rem, 3.3vw, 2.7rem) clamp(1.5rem, 3.5vw, 3.5rem);
+  background: #eef3f7;
+
+  padding:
+    clamp(1.75rem, 3.3vw, 2.7rem)
+    clamp(1.5rem, 3.5vw, 3.5rem);
+
+  box-shadow:
+    0 14px 34px rgb(31 48 68 / 7%),
+    inset 0 1px 0 rgb(255 255 255 / 70%);
 }
+
+/* .home-hero::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 13%;
+  z-index: 0;
+  width: 16rem;
+  height: 16rem;
+  border-radius: 50%;
+
+  background: radial-gradient(
+    circle,
+    rgb(159 180 211 / 18%) 0%,
+    rgb(188 178 207 / 9%) 42%,
+    transparent 70%
+  );
+
+  filter: blur(12px);
+  transform: translateY(-50%);
+  pointer-events: none;
+} */
 
 .home-hero__copy {
   position: relative;
@@ -40,7 +69,7 @@
 
 .home-hero__title {
   margin: 0;
-  color: #0b1d38;
+   color: #13233b;
   font-size: clamp(1.375rem, 2vw, 1.75rem);
   font-weight: 600;
   line-height: 1.3;
@@ -49,63 +78,9 @@
 
 .home-hero__description {
   margin: 0.7rem 0 0;
-  color: #4f6279;
+  color: #5f7083;
   font-size: clamp(1rem, 1.4vw, 1.15rem);
   line-height: 1.7;
-}
-
-.home-hero__branch {
-  position: absolute;
-  right: 30%;
-  bottom: -0.9rem;
-  width: 11rem;
-  height: 8rem;
-  opacity: 0.29;
-  transform: rotate(-12deg);
-}
-
-.home-hero__branch::before {
-  content: "";
-  position: absolute;
-  left: 0.8rem;
-  bottom: 1.5rem;
-  width: 9rem;
-  height: 2px;
-  border-radius: 999px;
-  background: #72afa3;
-  transform: rotate(-39deg);
-}
-
-.home-hero__branch span {
-  position: absolute;
-  width: 2.35rem;
-  height: 1.1rem;
-  border-radius: 100% 0 100% 0;
-  background: linear-gradient(135deg, #9fc8df, #78b3a7);
-}
-
-.home-hero__branch span:nth-child(1) {
-  left: 2.5rem;
-  bottom: 3rem;
-  transform: rotate(-15deg);
-}
-
-.home-hero__branch span:nth-child(2) {
-  left: 4.7rem;
-  bottom: 4.5rem;
-  transform: rotate(14deg);
-}
-
-.home-hero__branch span:nth-child(3) {
-  left: 6.5rem;
-  bottom: 5.8rem;
-  transform: rotate(-15deg);
-}
-
-.home-hero__branch span:nth-child(4) {
-  left: 8rem;
-  bottom: 7rem;
-  transform: rotate(14deg);
 }
 
 .home-primary-button {
@@ -669,11 +644,6 @@
     align-items: stretch;
   }
 
-  .home-hero__branch {
-    right: 3rem;
-    bottom: -2rem;
-  }
-
   .home-primary-button {
     width: 100%;
   }
@@ -734,4 +704,120 @@
       1rem
       6.5rem;
   }
+}
+
+/* 카드 제목 확대 */
+.home-stat-card__header h2 {
+  color: #26374f;
+  font-size: 1.125rem;
+  font-weight: 750;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+}
+
+/* 제목 옆 작은 아이콘 공통 형태 */
+.home-stat-card__eyebrow-icon,
+.home-stat-icon--lavender {
+  width: 2.15rem;
+  height: 2.15rem;
+  display: inline-grid;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 0.65rem;
+  box-shadow: 0 5px 12px rgb(31 58 94 / 7%);
+}
+
+/* 제목 아이콘 크기 */
+.home-stat-card__eyebrow-icon svg,
+.home-stat-icon--lavender svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  stroke-width: 2.2;
+}
+
+/* 진척률 카드 제목 아이콘 */
+.home-stat-card--blue .home-stat-card__eyebrow-icon {
+  background: #dfe9fb;
+  color: #587db8;
+}
+
+/* 연속 필사 카드 제목 아이콘 */
+.home-stat-card--mint .home-stat-card__eyebrow-icon {
+  background: #d8ede9;
+  color: #2f8d7d;
+}
+
+/* 완료 필사 카드 제목 아이콘 */
+.home-stat-card--lavender .home-stat-icon--lavender {
+  background: #e9e0f7;
+  color: #7959c1;
+}
+
+/*
+ * 0일, 0권을 0.0%와 같은 크기로 맞춤
+ */
+.home-stat-card--mint .home-stat-card__metric strong,
+.home-stat-card--lavender .home-stat-card__metric strong {
+  font-size: 1.55rem;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+/* 숫자 아래 보조 문구 */
+.home-stat-card--mint .home-stat-card__metric p,
+.home-stat-card--lavender .home-stat-card__metric p {
+  margin-top: 0.55rem;
+  font-size: 0.9375rem;
+}
+
+/*
+ * 제목은 위쪽에 유지하고,
+ * 숫자 영역은 카드의 남은 세로 공간 가운데 배치
+ */
+.home-stat-card--mint,
+.home-stat-card--lavender {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-stat-card--mint .home-stat-card__metric,
+.home-stat-card--lavender .home-stat-card__metric {
+  min-height: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  margin-top: 0;
+  padding-bottom: 0.15rem;
+}
+
+/* 오른쪽 큰 아이콘을 카드 세로 중앙으로 이동 */
+.home-stat-card__visual {
+  top: 50%;
+  right: 1.5rem;
+  bottom: auto;
+  width: 4.85rem;
+  height: 4.85rem;
+  transform: translateY(-50%);
+}
+
+/* 오른쪽 아이콘 자체 크기 */
+.home-stat-card__visual svg {
+  width: 2.5rem;
+  height: 2.5rem;
+  stroke-width: 2;
+}
+
+/* 연속 필사 큰 아이콘 */
+.home-stat-card__visual--calendar {
+  border: 1px solid rgb(47 141 125 / 9%);
+  background: #d8ede9;
+  color: #2f8d7d;
+}
+
+/* 완료 필사 큰 아이콘 */
+.home-stat-card__visual--check {
+  border: 1px solid rgb(121 89 193 / 9%);
+  background: #e9e0f7;
+  color: #7959c1;
 }

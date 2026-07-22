@@ -95,13 +95,6 @@ function MainPage() {
           </p>
         </div>
 
-        <div className="home-hero__branch" aria-hidden="true">
-          <span />
-          <span />
-          <span />
-          <span />
-        </div>
-
         <button
           type="button"
           onClick={() => navigate("/pilsa")}
