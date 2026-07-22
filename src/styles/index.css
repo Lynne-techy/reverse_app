@@ -19,6 +19,19 @@
   --color-sidebar: #15598a;
   --color-accent: #f97e62;
 
+  /* 시맨틱 토큰 (design-tokens.json → @theme 이관). brand = primary. */
+  --color-primary-deep: #1e40b0; /* hover/pressed */
+  --color-primary-soft: #e8f1ff; /* 정보 배경·선택 */
+  --color-ink: #17324a; /* 제목 */
+  --color-body: #4e5968; /* 본문 */
+  --color-sub: #5b6b7a; /* 보조(AA 대비 상향) */
+  --color-surface: #f9fafb;
+  --color-fill: #f2f4f6;
+  --color-border: #e5e8eb;
+  --color-border-strong: #d1d6db;
+  --color-success: #03b26c;
+  --color-danger: #f04452;
+
   /* 잔디밭(contribution calendar) 5단계 컬러맵 */
   --color-jandi-0: #f0f0f0;
   --color-jandi-1: #bfdbfe;
