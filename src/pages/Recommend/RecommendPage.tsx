@@ -52,7 +52,7 @@ function RecommendPage() {
   const showFullError = isError && !hasData;
 
   return (
-    <main className="mx-auto w-full max-w-6xl px-6 py-8">
+    <main className="w-full max-w-6xl px-6 py-8">
       {/* 페이지 제목 */}
       <section>
         <p className="m-0 text-sm font-semibold text-brand">말씀 추천</p>

@@ -101,7 +101,7 @@ function ProfilePage() {
 
   if (isLoading) {
     return (
-      <main className="mx-auto w-full max-w-5xl px-6 py-8">
+      <main className="w-full max-w-5xl px-6 py-8">
         <section>
           <p className="m-0 text-sm font-semibold text-brand">마이페이지</p>
 
@@ -121,7 +121,7 @@ function ProfilePage() {
 
   if (!progress || !statistics) {
     return (
-      <main className="mx-auto w-full max-w-5xl px-6 py-8">
+      <main className="w-full max-w-5xl px-6 py-8">
         <section>
           <p className="m-0 text-sm font-semibold text-brand">마이페이지</p>
 
