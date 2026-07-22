@@ -1,170 +1,93 @@
-import "./HeatmapPage.css";
+import { useQueries } from "@tanstack/react-query";
 
+import Heatmap from "../../components/Heatmap";
+import StatTile from "../../components/StatTile";
+import StreakStartCard from "../../components/StreakStartCard";
+import { getActivity, getMyStatistics } from "../../api/stats";
 
-type HeatmapLevel = "level-0" | "level-1" | "level-2" | "level-3" | "level-4";
-
-
-interface HeatmapDay {
-  date: Date;
-  count: number | null; // null = no data for this cell (padding)
+/**
+ * Date를 사용자 로컬 날짜 기준 YYYY-MM-DD로 변환.
+ * toISOString()은 UTC라 한국 시간과 날짜가 달라질 수 있어 로컬로 조합한다.
+ * (MainPage와 동일 로직 — 추후 공용 utils로 추출 여지 있음)
+ */
+function formatLocalDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
-interface HeatmapProps {
-  // 임시방편: prop이 없어도 크래시하지 않도록 optional + 기본값([]) 처리.
-  activity?: number[];
-
-
-  startDate?: Date | string;
-
-  // 카드 상단에 표시할 제목. 디자인 시안(index.html)의 "최근 6개월"과 동일한 자리.
-  title?: string;
+/** 잔디 그래프에 쓸 최근 1년 날짜 범위(from = 오늘−364). */
+function getActivityDateRange() {
+  const today = new Date();
+  const startDate = new Date(today);
+  startDate.setDate(today.getDate() - 364);
+  return { from: formatLocalDate(startDate), to: formatLocalDate(today) };
 }
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-const WEEKDAY_LABELS = ["", "월", "", "수", "", "금", ""]; // GitHub식 히트맵처럼 3개만 표기
+function HeatmapPage() {
+  const { from, to } = getActivityDateRange();
 
-
-
-const getLevel = (count: number): HeatmapLevel => {
-  if (count === 0) return "level-0";
-  if (count <= 2) return "level-1";
-  if (count <= 5) return "level-2";
-  if (count <= 8) return "level-3";
-  return "level-4";
-};
-
-const startOfDay = (date: Date) => {
-  const copy = new Date(date);
-  copy.setHours(0, 0, 0, 0);
-  return copy;
-};
-
-
-function buildCalendarDays(activity: number[], startDate?: Date | string): HeatmapDay[] {
-  const firstDataDate = startDate
-    ? startOfDay(new Date(startDate))
-    : startOfDay(new Date(Date.now() - (activity.length - 1) * DAY_MS));
-
-  const lastDataDate = new Date(firstDataDate.getTime() + (activity.length - 1) * DAY_MS);
-
-  
-  const gridStart = new Date(firstDataDate);
-  gridStart.setDate(gridStart.getDate() - gridStart.getDay());
-
- 
-  const gridEnd = new Date(lastDataDate);
-  gridEnd.setDate(gridEnd.getDate() + (6 - gridEnd.getDay()));
-
-  const days: HeatmapDay[] = [];
-  for (let t = gridStart.getTime(); t <= gridEnd.getTime(); t += DAY_MS) {
-    const date = new Date(t);
-    const dayIndex = Math.round((date.getTime() - firstDataDate.getTime()) / DAY_MS);
-    const isWithinData = dayIndex >= 0 && dayIndex < activity.length;
-    days.push({ date, count: isWithinData ? activity[dayIndex] : null });
-  }
-  return days;
-}
-
-
-function chunkIntoWeeks(days: HeatmapDay[]): HeatmapDay[][] {
-  const weeks: HeatmapDay[][] = [];
-  for (let i = 0; i < days.length; i += 7) {
-    weeks.push(days.slice(i, i + 7));
-  }
-  return weeks;
-}
-
-function formatDateLabel(date: Date): string {
-  return date.toLocaleDateString("ko-KR", {
-    month: "long",
-    day: "numeric",
+  // 통계 + 활동 잔디 병렬 요청. queryKey를 MainPage와 동일하게 두어 캐시를 공유한다.
+  const [statsQ, activityQ] = useQueries({
+    queries: [
+      { queryKey: ["statistics"], queryFn: getMyStatistics },
+      { queryKey: ["activity", from, to], queryFn: () => getActivity(from, to) },
+    ],
   });
-}
 
-function Heatmap({ activity = [], startDate, title = "최근 6개월" }: HeatmapProps) {
-  const days = buildCalendarDays(activity, startDate);
-  const weeks = chunkIntoWeeks(days);
+  const statistics = statsQ.data ?? null;
+  const activity = activityQ.data ?? [];
 
-  
-  let lastLabeledMonth = -1;
-  const monthLabels = weeks.map((week) => {
-    const firstDay = week[0].date;
-    const month = firstDay.getMonth();
-    if (month !== lastLabeledMonth) {
-      lastLabeledMonth = month;
-      return firstDay.toLocaleDateString("ko-KR", { month: "short" });
-    }
-    return "";
-  });
+  // 일부 실패 안내(모아서 한 줄로).
+  const failed = [statsQ.isError && "필사 통계", activityQ.isError && "활동 기록"].filter(
+    Boolean,
+  ) as string[];
+  const errorMessage = failed.length ? `${failed.join(", ")} 데이터를 불러오지 못했습니다.` : "";
 
   return (
-    <div className="heatmap-wrapper">
-      {title ? <div className="heatmap-title">{title}</div> : null}
-      <div className="heatmap-scroll">
-        {/* Month labels row, one per week column */}
-        <div className="heatmap-months" style={{ gridTemplateColumns: `repeat(${weeks.length}, 1fr)` }}>
-          {monthLabels.map((label, i) => (
-            <span key={i} className="heatmap-month-label">
-              {label}
-            </span>
-          ))}
+    <main className="w-full px-6 py-8">
+      {/* (1)(2) 제목 · 부제 */}
+      <h1 className="text-3xl font-bold text-slate-800">나의 필사 기록</h1>
+      <p className="mt-2 text-slate-600">최근 1년간 하루하루 채워온 기록이에요.</p>
+
+      {/* 일부 API 실패 안내 */}
+      {errorMessage && (
+        <div role="alert" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
+          {errorMessage}
         </div>
+      )}
 
-        <div className="heatmap-body">
-          {/* Weekday labels down the left side */}
-          <div className="heatmap-weekdays">
-            {WEEKDAY_LABELS.map((label, i) => (
-              <span key={i} className="heatmap-weekday-label">
-                {label}
-              </span>
-            ))}
-          </div>
-
-        
-          <div className="heatmap-grid">
-            {weeks.map((week, weekIndex) => (
-              <div className="heatmap-week" key={weekIndex}>
-                {week.map((day) => {
-                
-                  const hasData = day.count !== null;
-                  const level = hasData ? getLevel(day.count as number) : null;
-
-                  return (
-                    <div
-                      key={day.date.toISOString()}
-                      className={`heatmap-cell ${level ?? "level-empty"}`}
-                      role="img"
-                      aria-label={
-                        hasData
-                          ? `${formatDateLabel(day.date)} ${day.count}회 필사`
-                          : `${formatDateLabel(day.date)} 기록 없음`
-                      }
-                      title={
-                        hasData
-                          ? `${formatDateLabel(day.date)} · ${day.count}회 필사`
-                          : `${formatDateLabel(day.date)} · 기록 없음`
-                      }
-                    />
-                  );
-                })}
-              </div>
-            ))}
-          </div>
-        </div>
+      {/* (3)(4) 부제 아래 간격 + 스탯 카드 3종 */}
+      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <StatTile
+          label="🔥 현재 연속 필사"
+          value={statistics ? `${statistics.currentStreak}일` : "—"}
+          caption="오늘까지 이어지는 중"
+        />
+        <StatTile
+          label="최장 연속 필사"
+          value={statistics ? `${statistics.longestStreak}일` : "—"}
+          caption="개인 기록"
+        />
+        <StatTile
+          label="총 필사"
+          value={statistics ? `${statistics.totalCount}회` : "—"}
+          caption="누적 기록"
+        />
       </div>
 
-     
-      <div className="heatmap-legend">
-        <span>적음</span>
-        <div className="heatmap-cell level-0" />
-        <div className="heatmap-cell level-1" />
-        <div className="heatmap-cell level-2" />
-        <div className="heatmap-cell level-3" />
-        <div className="heatmap-cell level-4" />
-        <span>많음</span>
+      {/* (5) 잔디 — 위아래 카드와 좌우 경계를 맞추기 위해 별도 wrapper 없이 카드 자신으로 정렬 */}
+      <div className="mt-4">
+        <Heatmap activity={activity} startDate={from} endDate={to} title="최근 1년" />
       </div>
-    </div>
+
+      {/* (6) 가로로 꽉 채운 연속 시작 카드 */}
+      <div className="mt-4">
+        <StreakStartCard statistics={statistics} isLoading={statsQ.isPending} />
+      </div>
+    </main>
   );
 }
 
-export default Heatmap;
+export default HeatmapPage;

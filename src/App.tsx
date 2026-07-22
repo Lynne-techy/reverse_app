@@ -2,7 +2,6 @@ import { lazy, Suspense, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 import ProtectedRoute from "./auth/ProtectedRoute";
-import { heatmapActivity } from "./data/dummy";
 
 // 라우트 코드 스플리팅 — 초기 번들에서 로그인 외 페이지를 분리(지연 로드).
 // MainLayout도 지연 로드 → React Query 컨텍스트가 인증 화면 청크에만 포함(로그인 초기 번들 감축).
@@ -64,15 +63,7 @@ export default function App() {
             <Route element={<MainLayout />}>
               <Route path="/mainpage" element={<MainPage />} />
               <Route path="/pilsa" element={<PilsaPage />} />
-              <Route
-                path="/heatmap"
-                element={
-                  // 다른 페이지와 동일한 반응형 컨테이너로 감싼다(페이지별 폭/여백 일관).
-                  <main className="w-full px-6 py-8">
-                    <HeatmapPage activity={heatmapActivity} />
-                  </main>
-                }
-              />
+              <Route path="/heatmap" element={<HeatmapPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/recommend" element={<RecommendPage />} />
             </Route>
