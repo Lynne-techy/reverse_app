@@ -22,6 +22,76 @@ export function getRecentWritingRecords() {
   return apiRequest<WritingRecord[]>("/writing-sessions?limit=5&offset=0");
 }
 
+function formatLocalDate(date: Date): string {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+/** 최근 N일 안에 묵상(meditation)을 남긴 필사 기록 수. */
+export async function getRecentMeditationCount(days = 30): Promise<number> {
+  const safeDays = Math.max(1, Math.floor(days));
+  const today = new Date();
+  const fromDate = new Date(today);
+
+  // 오늘을 포함한 최근 N일 범위.
+  fromDate.setDate(fromDate.getDate() - (safeDays - 1));
+
+  const from = formatLocalDate(fromDate);
+  const to = formatLocalDate(today);
+  const pageSize = 50;
+
+  let offset = 0;
+  let count = 0;
+
+  while (true) {
+    const records = await apiRequest<WritingRecord[]>(
+      `/writing-sessions?limit=${pageSize}&offset=${offset}`,
+    );
+
+    count += records.filter((record) => {
+      const hasDate =
+        typeof record.clientDate === "string" &&
+        record.clientDate >= from &&
+        record.clientDate <= to;
+
+      const hasMeditation =
+        typeof record.meditation === "string" &&
+        record.meditation.trim().length > 0;
+
+      return hasDate && hasMeditation;
+    }).length;
+
+    if (records.length < pageSize) {
+      break;
+    }
+
+    const datedRecords = records.filter(
+      (record): record is WritingRecord & { clientDate: string } =>
+        typeof record.clientDate === "string",
+    );
+
+    const oldestDate = datedRecords.reduce<string | null>((oldest, record) => {
+      if (oldest === null || record.clientDate < oldest) {
+        return record.clientDate;
+      }
+
+      return oldest;
+    }, null);
+
+    // 최신순 응답 기준으로 이미 최근 N일 범위를 벗어났다면 다음 페이지는 불필요하다.
+    if (oldestDate !== null && oldestDate < from) {
+      break;
+    }
+
+    offset += pageSize;
+  }
+
+  return count;
+}
+
 // ───────── 필사 제출·상태 폴링 (백엔드 writing-sessions 흐름) ─────────
 
 export type WritingSessionStatus = "pending" | "uploaded" | "processing" | "completed" | "failed";

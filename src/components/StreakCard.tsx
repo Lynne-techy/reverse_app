@@ -24,18 +24,16 @@
 //   );
 // }
 
+import { CalendarRange, Flame } from "lucide-react";
+
 import type { MyStatistics } from "../api/stats";
-import { Flame, CalendarRange } from 'lucide-react';
 
 interface StreakCardProps {
   statistics: MyStatistics | null;
   isLoading: boolean;
 }
 
-function StreakCard({
-  statistics,
-  isLoading,
-}: StreakCardProps) {
+function StreakCard({ statistics, isLoading }: StreakCardProps) {
   if (isLoading) {
     return (
       <section className="home-card home-stat-card home-stat-card--mint home-card--loading">
@@ -61,12 +59,33 @@ function StreakCard({
         <h2>현재 연속 필사</h2>
       </div>
 
-      <div className="home-stat-card__metric">
-        <strong>{statistics.currentStreak}일</strong>
-        <p>최장 {statistics.longestStreak}일</p>
+      <div className="home-stat-card__content">
+        <div className="home-stat-pair">
+          <div className="home-stat-block">
+            <span className="home-stat-block__label">현재 연속</span>
+            <strong className="home-stat-block__value">
+              {statistics.currentStreak}일
+            </strong>
+          </div>
+
+          <div className="home-stat-block">
+            <span className="home-stat-block__label">최장 기록</span>
+            <strong className="home-stat-block__value">
+              {statistics.longestStreak}일
+            </strong>
+          </div>
+        </div>
+
+        <p className="home-stat-card__description">
+          오늘의 한 페이지가
+          <br />꾸준함으로 이어져요.
+        </p>
       </div>
 
-      <div className="home-stat-card__visual home-stat-card__visual--calendar" aria-hidden="true">
+      <div
+        className="home-stat-card__visual home-stat-card__visual--calendar"
+        aria-hidden="true"
+      >
         <CalendarRange size={50} />
       </div>
     </section>

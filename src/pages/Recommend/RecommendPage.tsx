@@ -52,19 +52,19 @@ function RecommendPage() {
   const showFullError = isError && !hasData;
 
   return (
-    <main className="w-full px-6 py-8">
+    <main className="app-page">
       {/* 페이지 제목 */}
       <section>
-        <p className="m-0 text-sm font-semibold text-brand">말씀 추천</p>
-        <h1 className="mb-0 mt-2 text-3xl font-bold text-slate-900">오늘 마음은 어떠신가요?</h1>
-        <p className="mb-0 mt-3 text-sm leading-6 text-slate-500">
+        <p className="app-page__eyebrow">말씀 추천</p>
+        <h1 className="app-page__title">오늘 마음은 어떠신가요?</h1>
+        <p className="app-page__description">
           지금의 마음과 가까운 감정을 선택하면 필사하기 좋은 말씀을 추천해드려요.
         </p>
       </section>
 
       {/* 감정 선택 */}
       <section className="mt-8">
-        <h2 className="text-base font-semibold text-slate-900">내 마음 선택하기</h2>
+        <h2 className="app-section-title">내 마음 선택하기</h2>
         <div className="mt-4 flex flex-wrap gap-3">
           {EMOTIONS.map((emotion) => {
             const isSelected = selectedEmotion === emotion.code;
@@ -169,7 +169,7 @@ function RecommendPage() {
         <section className="mt-10">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h2 className="m-0 text-xl font-bold text-slate-900">이런 말씀도 추천해요</h2>
+              <h2 className="app-section-title">이런 말씀도 추천해요</h2>
               <p className="mb-0 mt-2 text-sm text-slate-500">
                 오늘 천천히 읽고 기록하기 좋은 말씀들이에요.
               </p>

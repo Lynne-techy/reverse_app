@@ -12,7 +12,7 @@ export function LanguageStep({ language, setLanguage }: LanguageStepProps) {
       <button
         type="button"
         onClick={() => setLanguage(mode)}
-        className={`flex w-full items-center gap-3.5 rounded-2xl border-2 p-4 text-left transition ${
+        className={`flex w-full items-center gap-3.5 rounded-2xl border-2 p-5 text-left transition ${
           selected ? "border-brand bg-primary-soft" : "border-border bg-white"
         }`}
       >
@@ -21,11 +21,11 @@ export function LanguageStep({ language, setLanguage }: LanguageStepProps) {
         </span>
 
         <span className="flex-1">
-          <span className="block text-[15px] font-bold text-ink">{title}</span>
-          <span className="block text-xs text-sub">{desc}</span>
+          <span className="block text-lg font-bold text-ink">{title}</span>
+          <span className="mt-1 block text-sm leading-6 text-sub">{desc}</span>
         </span>
 
-        {selected && <span className="text-base font-bold text-brand">✓</span>}
+        {selected && <span className="text-xl font-bold text-brand">✓</span>}
       </button>
     );
   };

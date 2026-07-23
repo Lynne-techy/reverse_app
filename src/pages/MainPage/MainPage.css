@@ -821,3 +821,139 @@
   background: #e9e0f7;
   color: #7959c1;
 }
+/* ─────────────────────────────────────
+   Contest polish: 기존 파랑 무드 유지 + 통계 위계 통일
+───────────────────────────────────── */
+.home-hero {
+  border-color: rgb(191 219 254 / 36%);
+  background: linear-gradient(135deg, #2663ec 0%, #1e40b0 100%);
+  box-shadow:
+    0 18px 42px rgb(30 64 176 / 18%),
+    inset 0 1px 0 rgb(255 255 255 / 18%);
+}
+
+.home-hero__title {
+  color: #ffffff;
+  font-size: 1.875rem;
+  font-weight: 700;
+}
+
+.home-hero__description {
+  color: rgb(255 255 255 / 82%);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+.home-primary-button {
+  border: 1px solid rgb(255 255 255 / 42%);
+  background: #ffffff;
+  color: #1e40b0;
+  font-size: 0.875rem;
+  box-shadow: 0 12px 28px rgb(7 21 42 / 18%);
+}
+
+.home-primary-button:hover {
+  background: #eff6ff;
+  color: #1e3a8a;
+  box-shadow: 0 16px 32px rgb(7 21 42 / 22%);
+}
+
+.home-verse-card__header h2,
+.home-section-heading h2,
+.home-section-title {
+  font-size: 1.125rem;
+}
+
+.home-stat-card {
+  min-height: 13rem;
+}
+
+.home-stat-card__header h2 {
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.home-progress-ring strong,
+.home-stat-block__value {
+  color: #152a4b;
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+
+.home-stat-card__details > strong,
+.home-stat-block__label {
+  color: #5d6d82;
+  font-size: 0.8125rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.home-stat-card__details > p,
+.home-stat-card__description {
+  margin: 0.8rem 0 0;
+  color: #68788d;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.65;
+}
+
+.home-stat-card__content {
+  min-height: 0;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 5.4rem;
+}
+
+.home-stat-pair {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.home-stat-block {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+}
+
+.home-stat-block__label,
+.home-stat-block__value {
+  display: block;
+}
+
+.home-stat-card--mint,
+.home-stat-card--lavender {
+  display: flex;
+  flex-direction: column;
+}
+
+.home-stat-card--mint .home-stat-block__value {
+  color: #285f59;
+}
+
+.home-stat-card--lavender .home-stat-block__value {
+  color: #644a9e;
+}
+
+.home-records-card__header {
+  justify-content: flex-start;
+}
+
+@media (max-width: 720px) {
+  .home-hero__title {
+    font-size: 1.65rem;
+  }
+
+  .home-stat-card__content {
+    padding-right: 4.5rem;
+  }
+
+  .home-stat-pair {
+    gap: 0.7rem;
+  }
+}

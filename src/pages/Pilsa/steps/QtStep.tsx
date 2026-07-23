@@ -36,11 +36,11 @@ export function QtStep({
     value: string,
     onChange: (v: string) => void,
   ) => (
-    <div className="rounded-2xl border border-border bg-white p-4">
-      <div className="text-[13px] font-bold text-ink">{label}</div>
+    <div className="rounded-2xl border border-border bg-white p-5">
+      <div className="text-base font-bold text-ink">{label}</div>
 
       <textarea
-        className="mt-2.5 min-h-[120px] w-full resize-y rounded-xl border border-border bg-surface p-3.5 text-sm leading-relaxed text-ink outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+        className="mt-2.5 min-h-[120px] w-full resize-y rounded-xl border border-border bg-surface p-4 text-base leading-7 text-ink outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
         aria-label={label}
         placeholder={placeholder}
         value={value}
@@ -65,25 +65,25 @@ export function QtStep({
       )}
       {qtField("기도 (Prayer)", "오늘의 기도를 적어보세요.", prayer, setPrayer)}
 
-      <div className="rounded-2xl bg-primary-soft p-4">
-        <h3 className="text-[13px] font-bold text-primary-deep">오늘의 필사 요약</h3>
+      <div className="rounded-2xl bg-primary-soft p-5">
+        <h3 className="text-base font-bold text-primary-deep">오늘의 필사 요약</h3>
 
         <div className="mt-2.5 space-y-2.5">
           <div className="flex items-center justify-between">
-            <span className="text-xs text-body">범위</span>
-            <strong className="text-xs font-bold text-ink">{rangeLabel}</strong>
+            <span className="text-sm text-body">범위</span>
+            <strong className="text-sm font-bold text-ink">{rangeLabel}</strong>
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="text-xs text-body">언어</span>
-            <strong className="text-xs font-bold text-ink">
+            <span className="text-sm text-body">언어</span>
+            <strong className="text-sm font-bold text-ink">
               {language === "ko" ? "한국어" : "영어"}
             </strong>
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="text-xs text-body">Key Verse</span>
-            <strong className="text-xs font-bold text-ink">
+            <span className="text-sm text-body">Key Verse</span>
+            <strong className="text-sm font-bold text-ink">
               {selectedKeyVerse
                 ? `${bookName(bookNo)} ${chapter}:${selectedKeyVerse.verseNo}`
                 : "-"}

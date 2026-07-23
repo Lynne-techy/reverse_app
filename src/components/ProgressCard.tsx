@@ -24,18 +24,16 @@
 // }
 
 import type { CSSProperties } from "react";
+import { Trophy } from "lucide-react";
+
 import type { UserProgress } from "../api/users";
-import { Trophy } from 'lucide-react';
 
 interface ProgressCardProps {
   progress: UserProgress | null;
   isLoading: boolean;
 }
 
-function ProgressCard({
-  progress,
-  isLoading,
-}: ProgressCardProps) {
+function ProgressCard({ progress, isLoading }: ProgressCardProps) {
   if (isLoading) {
     return (
       <section className="home-card home-stat-card home-stat-card--blue home-card--loading">
@@ -52,11 +50,7 @@ function ProgressCard({
     );
   }
 
-  const progressRate = Math.min(
-    Math.max(progress.progressRate, 0),
-    100,
-  );
-
+  const progressRate = Math.min(Math.max(progress.progressRate, 0), 100);
   const progressStyle = {
     "--progress-rate": `${progressRate * 3.6}deg`,
   } as CSSProperties;
@@ -79,14 +73,12 @@ function ProgressCard({
 
         <div className="home-stat-card__details">
           <strong>
-            {progress.coveredVerses.toLocaleString()} /{" "}
-            {progress.totalVerses.toLocaleString()}절
+            {progress.coveredVerses.toLocaleString()} / {progress.totalVerses.toLocaleString()}절
           </strong>
 
           <p>
-            하나님의 말씀을
-            <br />
-            차곡차곡 써 내려가요.
+            한 절씩 나만의 속도로
+            <br />써 내려가요.
           </p>
         </div>
       </div>

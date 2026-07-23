@@ -25,11 +25,11 @@ export function RangeStep({
 }: RangeStepProps) {
   return (
     <div className="flex flex-col gap-4">
-      <div className="rounded-2xl border border-border bg-white p-4">
-        <div className="text-xs font-bold text-brand">① 성경 선택</div>
+      <div className="rounded-2xl border border-border bg-white p-5">
+        <div className="text-base font-bold text-brand">① 성경 선택</div>
 
         <select
-          className="mt-2.5 h-[42px] w-full rounded-[10px] border border-border-strong bg-white px-3.5 text-sm text-ink outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+          className="mt-3 h-12 w-full rounded-xl border border-border-strong bg-white px-4 text-lg text-ink outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
           aria-label="성경 선택"
           value={bookNo}
           onChange={(e) => setBookNo(Number(e.target.value))}
@@ -42,11 +42,11 @@ export function RangeStep({
         </select>
       </div>
 
-      <div className="rounded-2xl border border-border bg-white p-4">
-        <div className="text-xs font-bold text-brand">② 장 선택</div>
+      <div className="rounded-2xl border border-border bg-white p-5">
+        <div className="text-base font-bold text-brand">② 장 선택</div>
 
         <input
-          className="mt-2.5 h-[42px] w-full rounded-[10px] border border-border-strong bg-white px-3.5 text-sm text-ink outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+          className="mt-3 h-12 w-full rounded-xl border border-border-strong bg-white px-4 text-lg text-ink outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
           type="number"
           min={1}
           aria-label="장 선택"
@@ -55,12 +55,12 @@ export function RangeStep({
         />
       </div>
 
-      <div className="rounded-2xl border border-border bg-white p-4">
-        <div className="text-xs font-bold text-brand">③ 절 범위</div>
+      <div className="rounded-2xl border border-border bg-white p-5">
+        <div className="text-base font-bold text-brand">③ 절 범위</div>
 
-        <div className="mt-2.5 flex items-center gap-2">
+        <div className="mt-3 flex items-center gap-3">
           <input
-            className="h-[42px] w-full rounded-[10px] border border-border-strong bg-white px-3.5 text-sm text-ink outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+            className="h-12 w-full rounded-xl border border-border-strong bg-white px-4 text-lg text-ink outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
             type="number"
             min={1}
             aria-label="시작 절"
@@ -68,10 +68,10 @@ export function RangeStep({
             onChange={(e) => setStartVerse(Number(e.target.value))}
           />
 
-          <span className="text-sm font-medium text-sub">~</span>
+          <span className="text-base font-medium text-sub">~</span>
 
           <input
-            className="h-[42px] w-full rounded-[10px] border border-border-strong bg-white px-3.5 text-sm text-ink outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+            className="h-12 w-full rounded-xl border border-border-strong bg-white px-4 text-lg text-ink outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
             type="number"
             min={1}
             aria-label="끝 절"
@@ -81,10 +81,10 @@ export function RangeStep({
         </div>
       </div>
 
-      <div className="rounded-2xl bg-primary-soft px-[18px] py-4">
-        <p className="text-[11px] font-medium text-primary-deep">선택한 범위</p>
+      <div className="rounded-2xl bg-primary-soft px-5 py-5">
+        <p className="text-sm font-semibold text-primary-deep">선택한 범위</p>
 
-        <p className="mt-1 text-[22px] font-extrabold text-primary-deep">{rangeLabel}</p>
+        <p className="mt-1.5 text-[28px] font-extrabold leading-tight text-primary-deep">{rangeLabel}</p>
       </div>
     </div>
   );

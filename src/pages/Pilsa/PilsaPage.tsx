@@ -103,8 +103,10 @@ function PilsaPage() {
   }, [bookNo, chapter, startVerse, endVerse]);
 
   const rangeValid =
-    Number.isFinite(startVerse) &&
-    Number.isFinite(endVerse) &&
+    Number.isInteger(chapter) &&
+    Number.isInteger(startVerse) &&
+    Number.isInteger(endVerse) &&
+    chapter >= 1 &&
     startVerse >= 1 &&
     endVerse >= startVerse;
 
@@ -118,7 +120,7 @@ function PilsaPage() {
     queryKey: ["verseRange", bookNo, chapter, startVerse, endVerse],
     queryFn: ({ signal }) =>
       getVersesInRange({ book: bookNo, chapter, from: startVerse, to: endVerse }, signal),
-    enabled: step === 4 && rangeValid,
+    enabled: false,
     staleTime: 5 * 60_000,
   });
 
@@ -191,6 +193,52 @@ function PilsaPage() {
     }
   };
 
+  // 1단계에서 입력한 장/절이 실제 범위 내에 있는지 확인한다.
+  async function handleValidateRange() {
+  setStepError("");
+
+  if (!rangeValid) {
+    setStepError("장과 절 범위를 올바르게 입력해 주세요.");
+    setStepStatus("error");
+    return;
+  }
+
+  setStepStatus("loading");
+
+  try {
+    const result = await refetchRange();
+    const verses = result.data ?? [];
+    const expectedCount = endVerse - startVerse + 1;
+
+    const hasExactRange =
+      verses.length === expectedCount &&
+      verses.every(
+        (verse, index) =>
+          verse.bookNo === bookNo &&
+          verse.chapter === chapter &&
+          verse.verseNo === startVerse + index,
+      );
+
+    if (!hasExactRange) {
+      setStepError(
+        "선택한 장 또는 절 범위가 존재하지 않아요. 범위를 다시 확인해 주세요.",
+      );
+      setStepStatus("error");
+      return;
+    }
+
+    setStepStatus("idle");
+    nextStep();
+  } catch (error) {
+    console.error("[pilsa] 성경 범위 확인 실패:", error);
+
+    setStepError(
+      "성경 범위를 확인하지 못했어요. 잠시 후 다시 시도해 주세요.",
+    );
+    setStepStatus("error");
+  }
+}
+
   // 2단계 "다음": 임시 세션 + presigned 업로드 URL 발급. 성공해야만 3단계로 넘어간다.
   async function handleCreateSession() {
     setStepError("");
@@ -257,12 +305,17 @@ function PilsaPage() {
   // "다음" 버튼 디스패처 — 단계별로 동기 진행 or 비동기 작업.
   const handleNext = () => {
     switch (step) {
+      case 1:
+        return handleValidateRange();
+
       case 2:
         return handleCreateSession();
+
       case 3:
         return handleUploadImage();
+
       default:
-        return nextStep(); // 1·4단계는 검증만 통과하면 바로 다음.
+        return nextStep();  // 4단계는 검증만 통과하면 바로 다음.
     }
   };
 
@@ -318,7 +371,7 @@ function PilsaPage() {
   const retryStep = () => (step === 5 ? handleSave() : handleNext());
 
   const renderProgress = () => (
-    <div className="mb-6 flex gap-1.5">
+    <div className="mb-7 flex gap-2">
       {STEPS.map((label, index) => (
         <div className="flex flex-1 flex-col items-center gap-1.5" key={label}>
           <div
@@ -326,7 +379,7 @@ function PilsaPage() {
           />
 
           <span
-            className={`text-[10px] ${
+            className={`text-sm ${
               index + 1 === step ? "font-bold text-brand" : "font-medium text-sub"
             }`}
           >
@@ -426,7 +479,7 @@ function PilsaPage() {
 
           <h2 className="text-lg font-bold text-ink">필사를 확인하고 있어요</h2>
 
-          <p className="mt-1.5 text-[13px] text-sub">
+          <p className="mt-2 text-sm leading-6 text-sub">
             필사한 말씀이 본문과 얼마나 닮았는지 살펴보는 중이에요…
           </p>
         </>,
@@ -447,11 +500,11 @@ function PilsaPage() {
 
           <h2 className="text-lg font-bold text-ink">검사에 실패했어요</h2>
 
-          <p className="mt-1.5 text-[13px] text-sub">사진을 다시 확인해 저장을 시도해 주세요.</p>
+          <p className="mt-2 text-sm leading-6 text-sub">사진을 다시 확인해 저장을 시도해 주세요.</p>
 
           <button
             type="button"
-            className="mt-5 w-full rounded-xl bg-brand py-3 text-sm font-semibold text-white"
+            className="mt-5 h-12 w-full rounded-xl bg-brand px-5 text-base font-semibold text-white"
             onClick={closeOverlay}
           >
             확인
@@ -477,14 +530,14 @@ function PilsaPage() {
           {passed ? "필사를 완료했어요!" : "조금 더 정확히 써볼까요?"}
         </h2>
 
-        <p className="mt-1.5 text-[13px] text-sub">
+        <p className="mt-2 text-sm leading-6 text-sub">
           {rangeLabel}
           {scoreText ? ` · ${scoreText}` : ""}
         </p>
 
         <button
           type="button"
-          className="mt-5 w-full rounded-xl bg-brand py-3 text-sm font-semibold text-white"
+          className="mt-5 h-12 w-full rounded-xl bg-brand px-5 text-base font-semibold text-white"
           onClick={passed ? handleFinishSuccess : closeOverlay}
         >
           확인
@@ -494,23 +547,21 @@ function PilsaPage() {
   };
 
   return (
-    <main className="mx-auto w-full max-w-4xl px-6 py-8">
+    <main className="app-page app-page--narrow">
       <button
         type="button"
         onClick={() => navigate(-1)}
-        className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-border bg-white px-3 py-1.5 text-xs font-medium text-body transition hover:bg-surface"
+        className="mb-5 inline-flex min-h-10 items-center gap-2 rounded-full border border-border bg-white px-4 py-2 text-sm font-medium text-body transition hover:bg-surface"
       >
         <span aria-hidden="true">←</span> 나가기
       </button>
 
       <div className="mb-6">
-        <span className="inline-flex items-center rounded-full bg-primary-soft px-2.5 py-1 text-[11px] font-bold text-primary-deep">
-          DAILY PILSA
-        </span>
+        <p className="app-page__eyebrow">DAILY PILSA</p>
 
-        <h1 className="mb-0 mt-3 text-2xl font-bold text-ink">성경 필사</h1>
+        <h1 className="app-page__title">성경 필사</h1>
 
-        <p className="mb-0 mt-2 text-[13px] text-sub">한 글자씩 적으며 말씀을 마음에 새겨보세요.</p>
+        <p className="app-page__description">한 글자씩 적으며 말씀을 마음에 새겨보세요.</p>
       </div>
 
       {renderProgress()}
@@ -521,17 +572,17 @@ function PilsaPage() {
           role="alert"
         >
           <span
-            className="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-danger text-xs font-extrabold text-white"
+            className="flex h-6 w-6 flex-none items-center justify-center rounded-full bg-danger text-sm font-extrabold text-white"
             aria-hidden="true"
           >
             !
           </span>
 
-          <p className="flex-1 text-xs text-[#b4232e]">{stepError}</p>
+          <p className="flex-1 text-sm leading-6 text-[#b4232e]">{stepError}</p>
 
           <button
             type="button"
-            className="flex-none text-xs font-bold text-danger"
+            className="flex-none text-sm font-bold text-danger"
             onClick={retryStep}
           >
             다시 시도
@@ -545,7 +596,7 @@ function PilsaPage() {
         {step > 1 && (
           <button
             type="button"
-            className="h-11 w-28 rounded-xl border border-border bg-white text-sm font-semibold text-ink transition hover:bg-surface"
+            className="h-12 w-32 rounded-xl border border-border bg-white text-base font-semibold text-ink transition hover:bg-surface"
             onClick={prevStep}
             disabled={stepStatus === "loading"}
           >
@@ -556,7 +607,7 @@ function PilsaPage() {
         {step < 5 ? (
           <button
             type="button"
-            className="h-11 flex-1 rounded-xl bg-brand px-5 text-sm font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
+            className="h-12 flex-1 rounded-xl bg-brand px-6 text-base font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
             onClick={handleNext}
             disabled={!canProceed() || stepStatus === "loading"}
           >
@@ -565,7 +616,7 @@ function PilsaPage() {
         ) : (
           <button
             type="button"
-            className="h-11 flex-1 rounded-xl bg-brand px-5 text-sm font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
+            className="h-12 flex-1 rounded-xl bg-brand px-6 text-base font-semibold text-white transition hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
             onClick={handleSave}
             disabled={isBusy || !sessionId || keyVerseId === null}
           >

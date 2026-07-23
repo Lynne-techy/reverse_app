@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-
 import { getMyProfile, getUserProgress } from "../../api/users";
 import { getMyStatistics } from "../../api/stats";
 
@@ -13,8 +11,6 @@ import ErrorState from "../../components/ErrorState";
 import "./ProfilePage.css";
 
 function ProfilePage() {
-  const navigate = useNavigate();
-
   const [userName, setUserName] = useState("사용자");
 
   const [userEmail, setUserEmail] = useState("");
@@ -85,29 +81,16 @@ function ProfilePage() {
     };
   }, [reloadKey]);
 
-  const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-
-    if (error) {
-      console.error("로그아웃 실패:", error);
-
-      setErrorMessage("로그아웃하지 못했습니다. 다시 시도해주세요.");
-
-      return;
-    }
-
-    navigate("/login", { replace: true });
-  };
 
   if (isLoading) {
     return (
-      <main className="w-full px-6 py-8">
+      <main className="app-page">
         <section>
-          <p className="m-0 text-sm font-semibold text-brand">마이페이지</p>
+          <p className="app-page__eyebrow">마이페이지</p>
 
-          <h1 className="mb-0 mt-2 text-3xl font-bold text-slate-900">프로필</h1>
+          <h1 className="app-page__title">프로필</h1>
 
-          <p className="mb-0 mt-3 text-sm text-slate-500">
+          <p className="app-page__description">
             나의 필사 기록과 계정 정보를 확인해보세요.
           </p>
         </section>
@@ -121,13 +104,13 @@ function ProfilePage() {
 
   if (!progress || !statistics) {
     return (
-      <main className="w-full px-6 py-8">
+      <main className="app-page">
         <section>
-          <p className="m-0 text-sm font-semibold text-brand">마이페이지</p>
+          <p className="app-page__eyebrow">마이페이지</p>
 
-          <h1 className="mb-0 mt-2 text-3xl font-bold text-slate-900">프로필</h1>
+          <h1 className="app-page__title">프로필</h1>
 
-          <p className="mb-0 mt-3 text-sm text-slate-500">
+          <p className="app-page__description">
             나의 필사 기록과 계정 정보를 확인해보세요.
           </p>
         </section>
@@ -164,14 +147,14 @@ function ProfilePage() {
   ];
 
   return (
-    <main className="w-full px-6 py-8">
+    <main className="app-page">
       {/* 페이지 제목 */}
       <section>
-        <p className="m-0 text-sm font-semibold text-brand">마이페이지</p>
+        <p className="app-page__eyebrow">마이페이지</p>
 
-        <h1 className="mb-0 mt-2 text-3xl font-bold text-slate-900">프로필</h1>
+        <h1 className="app-page__title">프로필</h1>
 
-        <p className="mb-0 mt-3 text-sm text-slate-500">
+        <p className="app-page__description">
           나의 필사 기록과 계정 정보를 확인해보세요.
         </p>
       </section>
@@ -245,7 +228,7 @@ function ProfilePage() {
 
       {/* 실제 데이터 기반 기록 뱃지 */}
       <section className="mt-8">
-        <h2 className="m-0 text-xl font-bold text-slate-900">나의 기록 뱃지</h2>
+        <h2 className="app-section-title">나의 기록 뱃지</h2>
 
         <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-3">
           {achievements.map((achievement) => (
@@ -276,16 +259,6 @@ function ProfilePage() {
         </p>
       )}
 
-      {/* 로그아웃 */}
-      <section className="mt-8 flex justify-end">
-        <button
-          type="button"
-          className="border-0 bg-transparent p-0 text-sm font-semibold text-slate-600 transition hover:text-red-500"
-          onClick={handleLogout}
-        >
-          로그아웃
-        </button>
-      </section>
     </main>
   );
 }

@@ -21,8 +21,13 @@ function formatLocalDate(date: Date): string {
 function getActivityDateRange() {
   const today = new Date();
   const startDate = new Date(today);
+
   startDate.setDate(today.getDate() - 364);
-  return { from: formatLocalDate(startDate), to: formatLocalDate(today) };
+
+  return {
+    from: formatLocalDate(startDate),
+    to: formatLocalDate(today),
+  };
 }
 
 function HeatmapPage() {
@@ -31,8 +36,14 @@ function HeatmapPage() {
   // 통계 + 활동 잔디 병렬 요청. queryKey를 MainPage와 동일하게 두어 캐시를 공유한다.
   const [statsQ, activityQ] = useQueries({
     queries: [
-      { queryKey: ["statistics"], queryFn: getMyStatistics },
-      { queryKey: ["activity", from, to], queryFn: () => getActivity(from, to) },
+      {
+        queryKey: ["statistics"],
+        queryFn: getMyStatistics,
+      },
+      {
+        queryKey: ["activity", from, to],
+        queryFn: () => getActivity(from, to),
+      },
     ],
   });
 
@@ -43,13 +54,17 @@ function HeatmapPage() {
   const failed = [statsQ.isError && "필사 통계", activityQ.isError && "활동 기록"].filter(
     Boolean,
   ) as string[];
+
   const errorMessage = failed.length ? `${failed.join(", ")} 데이터를 불러오지 못했습니다.` : "";
 
   return (
     <main className="w-full px-6 py-8">
-      {/* (1)(2) 제목 · 부제 */}
-      <h1 className="text-3xl font-bold text-slate-800">나의 필사 기록</h1>
-      <p className="mt-2 text-slate-600">최근 1년간 하루하루 채워온 기록이에요.</p>
+      {/* 추천·프로필 페이지와 같은 3단 페이지 헤더 */}
+      <section>
+        <p className="app-page__eyebrow">필사 기록</p>
+        <h1 className="app-page__title">나의 필사 기록</h1>
+        <p className="app-page__description">최근 1년간 하루하루 채워온 기록이에요.</p>
+      </section>
 
       {/* 일부 API 실패 안내 */}
       {errorMessage && (
@@ -58,10 +73,10 @@ function HeatmapPage() {
         </div>
       )}
 
-      {/* (3)(4) 부제 아래 간격 + 스탯 카드 3종 */}
+      {/* 부제 아래 간격 + 스탯 카드 3종 */}
       <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
         <StatTile
-          label="🔥 현재 연속 필사"
+          label="현재 연속 필사"
           value={statistics ? `${statistics.currentStreak}일` : "—"}
           caption="오늘까지 이어지는 중"
         />
@@ -77,12 +92,12 @@ function HeatmapPage() {
         />
       </div>
 
-      {/* (5) 잔디 — 위아래 카드와 좌우 경계를 맞추기 위해 별도 wrapper 없이 카드 자신으로 정렬 */}
+      {/* 잔디 — 위아래 카드와 좌우 경계를 맞추기 위해 별도 wrapper 없이 카드 자신으로 정렬 */}
       <div className="mt-4">
         <Heatmap activity={activity} startDate={from} endDate={to} title="최근 1년" />
       </div>
 
-      {/* (6) 가로로 꽉 채운 연속 시작 카드 */}
+      {/* 가로로 꽉 채운 연속 시작 카드 */}
       <div className="mt-4">
         <StreakStartCard statistics={statistics} isLoading={statsQ.isPending} />
       </div>

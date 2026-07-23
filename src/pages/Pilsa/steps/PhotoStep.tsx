@@ -8,8 +8,8 @@ interface PhotoStepProps {
 export function PhotoStep({ imagePreview, imageError, onUpload, onRemove }: PhotoStepProps) {
   return (
     <div className="flex flex-col gap-4">
-      <div className="rounded-2xl border border-border bg-white p-4">
-        <div className="text-[13px] font-bold text-ink">필사 노트</div>
+      <div className="rounded-2xl border border-border bg-white p-5">
+        <div className="text-base font-bold text-ink">필사 노트</div>
 
         <div className="relative mt-3">
           <label className="flex min-h-[420px] cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-[1.5px] border-dashed border-border-strong bg-surface transition hover:border-brand">
@@ -22,7 +22,7 @@ export function PhotoStep({ imagePreview, imageError, onUpload, onRemove }: Phot
             ) : (
               <>
                 <span className="text-3xl">📷</span>
-                <span className="text-[13px] font-medium text-sub">사진 업로드</span>
+                <span className="text-base font-medium text-sub">사진 업로드</span>
               </>
             )}
 
@@ -42,7 +42,7 @@ export function PhotoStep({ imagePreview, imageError, onUpload, onRemove }: Phot
         </div>
 
         {imageError && (
-          <p className="mt-3 text-[13px] font-semibold text-danger" role="alert">
+          <p className="mt-3 text-sm font-semibold leading-6 text-danger" role="alert">
             {imageError}
           </p>
         )}
