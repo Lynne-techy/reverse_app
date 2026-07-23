@@ -71,7 +71,7 @@ export default function ContributionGraph({ activity, isLoading = false }: Contr
       <section
         role="status"
         aria-label="필사 잔디밭 불러오는 중"
-        className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm sm:p-7"
+        className="home-card home-heatmap-card rounded-3xl border border-gray-100 bg-white p-6 shadow-sm sm:p-7"
       >
         <h2 className="mb-5 text-lg font-bold text-gray-900">필사 잔디밭</h2>
         <Skeleton height={140} radius={12} />
@@ -80,7 +80,7 @@ export default function ContributionGraph({ activity, isLoading = false }: Contr
   }
 
   return (
-    <section className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm sm:p-7">
+    <section className="home-card home-heatmap-card rounded-3xl border border-gray-100 bg-white p-6 shadow-sm sm:p-7">
       <div className="mb-5 flex items-end justify-between">
         <div>
           <h2 className="text-lg font-bold text-gray-900">필사 잔디밭</h2>
