@@ -3,11 +3,11 @@
   width: 100%;
   max-width: none;
   margin: 0;
-  padding:
-    var(--premium-page-top)
-    var(--premium-page-gutter)
-    var(--premium-page-bottom);
+  padding: var(--premium-page-top) var(--premium-page-gutter) var(--premium-page-bottom);
   color: #13243e;
+  /* 그리드가 뷰포트가 아니라 '사이드바를 뺀 실제 본문 폭'에 반응하도록 쿼리 컨테이너로 만든다.
+     실제 @container 규칙은 기본 그리드 정의보다 뒤(파일 끝)에 둬야 소스 순서상 이긴다. */
+  container: home / inline-size;
 }
 
 .home-hero,
@@ -31,9 +31,7 @@
   border-radius: 1.65rem;
   background: #eef3f7;
 
-  padding:
-    clamp(1.75rem, 3.3vw, 2.7rem)
-    clamp(1.5rem, 3.5vw, 3.5rem);
+  padding: clamp(1.75rem, 3.3vw, 2.7rem) clamp(1.5rem, 3.5vw, 3.5rem);
 
   box-shadow:
     0 14px 34px rgb(31 48 68 / 7%),
@@ -69,7 +67,7 @@
 
 .home-hero__title {
   margin: 0;
-   color: #13233b;
+  color: #13233b;
   font-size: clamp(1.375rem, 2vw, 1.75rem);
   font-weight: 600;
   line-height: 1.3;
@@ -211,15 +209,16 @@
 }
 
 .home-stat-card--blue {
-  background: #EDF2FC;
+  background: #edf2fc;
 }
 
 .home-stat-card--mint {
-  background: #EAF2F3;
+  background: #eaf2f3;
 }
 
-.home-stat-card--lavender, home-stat-icon--lavender {
-  background: #F6F3FB;
+.home-stat-card--lavender,
+home-stat-icon--lavender {
+  background: #f6f3fb;
 }
 
 .home-stat-card__header {
@@ -250,8 +249,7 @@
   flex-shrink: 0;
   place-items: center;
   border-radius: 50%;
-  background:
-    conic-gradient(#7f9fd6 var(--progress-rate), #dce6f5 0);
+  background: conic-gradient(#7f9fd6 var(--progress-rate), #dce6f5 0);
   box-shadow: inset 0 0 0 1px rgb(98 126 173 / 8%);
 }
 
@@ -634,24 +632,7 @@
   font-size: 0.875rem;
 }
 
-@media (max-width: 1180px) {
-  .home-summary-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .home-summary-grid > :first-child {
-    grid-column: 1 / -1;
-  }
-
- .home-dashboard-grid {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .home-dashboard-grid > .home-heatmap-card,
-  .home-dashboard-grid > .home-records-card {
-    grid-column: auto;
-  }
-}
+/* (그리드 반응은 위의 @container 규칙으로 이전됨 — 뷰포트 기준 1180px 분기 제거) */
 
 @media (max-width: 720px) {
   .home-page {
@@ -677,14 +658,6 @@
     flex-direction: column;
   }
 
-  .home-summary-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .home-summary-grid > :first-child {
-    grid-column: auto;
-  }
-
   .home-progress-card__body {
     align-items: flex-start;
     flex-direction: column;
@@ -694,7 +667,6 @@
     opacity: 0.65;
   }
 }
-
 
 /* v3 — 작은 본문과 빈 상태 메시지 가독성 */
 .home-card--loading {
@@ -719,10 +691,7 @@
 
 @media (max-width: 767px) {
   .home-page {
-    padding:
-      1.25rem
-      1rem
-      6.5rem;
+    padding: 1.25rem 1rem 6.5rem;
   }
 }
 
@@ -975,5 +944,32 @@
 
   .home-stat-pair {
     gap: 0.7rem;
+  }
+}
+
+/* ───────── 본문 폭 기준 반응형 그리드 (파일 끝: 기본 정의보다 뒤라 소스 순서상 우선) ─────────
+   사이드바가 먹은 실제 본문 폭에 반응. 3열 ≥1000px · 2열 720~1000px(첫 카드 전폭) · 1열 <720px */
+@container home (max-width: 1000px) {
+  .home-summary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .home-summary-grid > :first-child {
+    grid-column: 1 / -1;
+  }
+  .home-dashboard-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .home-dashboard-grid > .home-heatmap-card,
+  .home-dashboard-grid > .home-records-card {
+    grid-column: auto;
+  }
+}
+
+@container home (max-width: 720px) {
+  .home-summary-grid {
+    grid-template-columns: 1fr;
+  }
+  .home-summary-grid > :first-child {
+    grid-column: auto;
   }
 }

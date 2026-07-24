@@ -28,7 +28,7 @@ function Sidebar() {
   };
 
   return (
-    <aside className="premium-sidebar sticky top-0 hidden h-screen w-72 shrink-0 flex-col overflow-y-auto px-6 py-8 text-white md:flex lg:w-80 2xl:w-[21rem]">
+    <aside className="premium-sidebar sticky top-0 hidden h-screen w-72 shrink-0 flex-col overflow-hidden px-6 py-8 text-white md:flex lg:w-80 2xl:w-[21rem]">
       <div className="premium-sidebar__brand mb-10 px-2">
         <h1 className="m-0 text-3xl font-bold tracking-tight">
           Re<span className="premium-sidebar__colon">:</span>Verse
@@ -36,7 +36,7 @@ function Sidebar() {
         <p className="mt-2 text-white/70">내가 적은 만큼 만나는 하나님</p>
       </div>
 
-      <nav aria-label="주 메뉴" className="flex flex-1 flex-col gap-2">
+      <nav aria-label="주 메뉴" className="flex flex-1 min-h-0 flex-col gap-2 overflow-y-auto">
         {NAV_ITEMS.map((menu) => {
           // 대문자로 시작하는 변수에 아이콘 컴포넌트를 할당
           const Icon = menu.icon;
@@ -79,7 +79,7 @@ function Sidebar() {
           나만의 리듬을 쌓아가요.
         </p>
       </div>
-      
+
       <button
         type="button"
         onClick={handleLogout}

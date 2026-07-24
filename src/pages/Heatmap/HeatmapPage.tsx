@@ -74,7 +74,7 @@ function HeatmapPage() {
       )}
 
       {/* 부제 아래 간격 + 스탯 카드 3종 */}
-      <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="mt-8 grid grid-cols-1 gap-4 xl:grid-cols-3">
         <StatTile
           label="현재 연속 필사"
           value={statistics ? `${statistics.currentStreak}일` : "—"}
