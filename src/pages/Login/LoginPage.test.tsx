@@ -5,6 +5,7 @@ import { MemoryRouter } from "react-router-dom";
 
 // useAuth는 Supabase에 붙으므로 스모크에선 목킹한다(미로그인 상태 가정).
 const signInWithGoogle = vi.fn();
+const signInWithKakao = vi.fn();
 vi.mock("../../auth/AuthContext", () => ({
   useAuth: () => ({
     session: null,
@@ -12,6 +13,7 @@ vi.mock("../../auth/AuthContext", () => ({
     accessToken: null,
     isLoading: false,
     signInWithGoogle,
+    signInWithKakao,
     signOut: vi.fn(),
   }),
 }));
@@ -44,5 +46,18 @@ describe("LoginPage", () => {
 
     await user.click(googleBtn);
     expect(signInWithGoogle).toHaveBeenCalledOnce();
+  });
+
+  it("카카오 버튼 클릭 시 카카오 로그인을 시작한다", async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.click(screen.getByRole("button", { name: "건너뛰기" }));
+
+    const kakaoBtn = screen.getByRole("button", { name: /카카오로 시작하기/ });
+    expect(kakaoBtn).toBeInTheDocument();
+
+    await user.click(kakaoBtn);
+    expect(signInWithKakao).toHaveBeenCalledOnce();
   });
 });

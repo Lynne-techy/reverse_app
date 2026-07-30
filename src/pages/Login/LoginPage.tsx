@@ -25,13 +25,20 @@ const onboardingSlides = [
 ];
 
 function LoginPage() {
-  const { session, isLoading: isAuthLoading, signInWithGoogle } = useAuth();
+  const {
+    session,
+    isLoading: isAuthLoading,
+    signInWithGoogle,
+    signInWithKakao,
+  } = useAuth();
 
   const [showLogin, setShowLogin] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const [error, setError] = useState("");
-  const [socialLoading, setSocialLoading] = useState<"google" | null>(null);
+  const [socialLoading, setSocialLoading] = useState<
+    "google" | "kakao" | null
+  >(null);
 
   // 이미 로그인돼 있으면(새로고침·재방문) 메인으로 보낸다.
   if (!isAuthLoading && session) {
@@ -59,6 +66,19 @@ function LoginPage() {
     } catch (err) {
       console.error("google login error", err);
       setError("구글 로그인을 시작하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+      setSocialLoading(null);
+    }
+  };
+
+  const handleKakaoLogin = async () => {
+    setError("");
+    setSocialLoading("kakao");
+    try {
+      // Supabase → 카카오 동의 화면으로 리다이렉트된다(성공 시 이 페이지를 떠남).
+      await signInWithKakao();
+    } catch (err) {
+      console.error("kakao login error", err);
+      setError("카카오 로그인을 시작하지 못했습니다. 잠시 후 다시 시도해 주세요.");
       setSocialLoading(null);
     }
   };
@@ -175,8 +195,8 @@ function LoginPage() {
           </div>
         )}
 
-        {/* ================= SOCIAL (Google only) ================= */}
-        {/* 카카오·이메일/비밀번호 로그인은 미지원이라 숨김 (구글 OAuth만 지원). */}
+        {/* ================= SOCIAL (Google / Kakao) ================= */}
+        {/* 이메일/비밀번호 로그인은 미지원이라 숨김 (구글·카카오 OAuth만 지원). */}
 
         <div className="social-buttons">
 
@@ -184,13 +204,26 @@ function LoginPage() {
             type="button"
             className="btn btn-google"
             onClick={handleGoogleLogin}
-            disabled={socialLoading === "google"}
+            disabled={socialLoading === "google" || socialLoading === "kakao"}
           >
             <span className="social-icon">🔵</span>
 
             {socialLoading === "google"
               ? "구글로 이동 중…"
               : "Google로 시작하기"}
+          </button>
+
+          <button
+            type="button"
+            className="btn btn-kakao"
+            onClick={handleKakaoLogin}
+            disabled={socialLoading === "google" || socialLoading === "kakao"}
+          >
+            <span className="social-icon">🟡</span>
+
+            {socialLoading === "kakao"
+              ? "카카오로 이동 중…"
+              : "카카오로 시작하기"}
           </button>
 
         </div>

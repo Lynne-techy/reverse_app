@@ -4,7 +4,7 @@ import { apiRequest } from "./client";
 
 export interface UserProfile {
   id: string;
-  email: string;
+  email: string | null;
   provider: "google" | "kakao";
   displayName: string | null;
   avatarUrl: string | null;

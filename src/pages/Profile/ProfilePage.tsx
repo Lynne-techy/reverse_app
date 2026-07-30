@@ -170,7 +170,7 @@ function ProfilePage() {
             <h2 className="m-0 text-2xl font-bold">{userName}님</h2>
 
             <p className="mb-0 mt-2 truncate text-sm text-white/90">
-              {userEmail || "이메일 정보 없음"}
+              {userEmail || "등록된 이메일이 없어요"}
             </p>
 
             <p className="mb-0 mt-2 text-xs text-white/75">

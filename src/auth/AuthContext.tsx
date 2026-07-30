@@ -20,6 +20,8 @@ interface AuthContextValue {
   isLoading: boolean;
   /** 구글 OAuth 로그인 시작 */
   signInWithGoogle: () => Promise<void>;
+  /** 카카오 OAuth 로그인 시작 */
+  signInWithKakao: () => Promise<void>;
   /** 로그아웃 */
   signOut: () => Promise<void>;
 }
@@ -57,6 +59,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signInWithGoogle: async () => {
         const { error } = await supabase.auth.signInWithOAuth({
           provider: "google",
+          options: {
+            // 로그인 후 돌아올 앱 주소. Supabase 대시보드 Redirect URLs에 등록돼 있어야 함.
+            redirectTo: `${window.location.origin}/auth/callback`,
+          },
+        });
+        if (error) throw error;
+      },
+      signInWithKakao: async () => {
+        const { error } = await supabase.auth.signInWithOAuth({
+          provider: "kakao",
           options: {
             // 로그인 후 돌아올 앱 주소. Supabase 대시보드 Redirect URLs에 등록돼 있어야 함.
             redirectTo: `${window.location.origin}/auth/callback`,
