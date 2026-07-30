@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../../auth/AuthContext";
 import "./LoginPage.css";
+
+// 마지막으로 로그인에 성공(시도)한 provider를 저장해두는 키.
+// 구글로 가입한 사람이 카카오를 눌러 계정이 갈라지는 걸 막기 위한 힌트용.
+const LAST_PROVIDER_KEY = "reverse:lastLoginProvider";
 
 const onboardingSlides = [
   {
@@ -39,6 +43,17 @@ function LoginPage() {
   const [socialLoading, setSocialLoading] = useState<
     "google" | "kakao" | null
   >(null);
+  const [lastProvider, setLastProvider] = useState<"google" | "kakao" | null>(
+    null,
+  );
+
+  // 마지막으로 사용한 로그인 수단을 불러와 버튼에 배지로 표시한다.
+  useEffect(() => {
+    const stored = localStorage.getItem(LAST_PROVIDER_KEY);
+    if (stored === "google" || stored === "kakao") {
+      setLastProvider(stored);
+    }
+  }, []);
 
   // 이미 로그인돼 있으면(새로고침·재방문) 메인으로 보낸다.
   if (!isAuthLoading && session) {
@@ -61,6 +76,9 @@ function LoginPage() {
     setError("");
     setSocialLoading("google");
     try {
+      // 성공하면 이 페이지를 바로 떠나버리므로, 리다이렉트 전에 미리 저장해둔다.
+      localStorage.setItem(LAST_PROVIDER_KEY, "google");
+      setLastProvider("google");
       // Supabase → Google 동의 화면으로 리다이렉트된다(성공 시 이 페이지를 떠남).
       await signInWithGoogle();
     } catch (err) {
@@ -74,6 +92,9 @@ function LoginPage() {
     setError("");
     setSocialLoading("kakao");
     try {
+      // 성공하면 이 페이지를 바로 떠나버리므로, 리다이렉트 전에 미리 저장해둔다.
+      localStorage.setItem(LAST_PROVIDER_KEY, "kakao");
+      setLastProvider("kakao");
       // Supabase → 카카오 동의 화면으로 리다이렉트된다(성공 시 이 페이지를 떠남).
       await signInWithKakao();
     } catch (err) {
@@ -211,6 +232,10 @@ function LoginPage() {
             {socialLoading === "google"
               ? "구글로 이동 중…"
               : "Google로 시작하기"}
+
+            {lastProvider === "google" && (
+              <span className="last-used-badge">마지막으로 사용함</span>
+            )}
           </button>
 
           <button
@@ -224,6 +249,10 @@ function LoginPage() {
             {socialLoading === "kakao"
               ? "카카오로 이동 중…"
               : "카카오로 시작하기"}
+
+            {lastProvider === "kakao" && (
+              <span className="last-used-badge">마지막으로 사용함</span>
+            )}
           </button>
 
         </div>
