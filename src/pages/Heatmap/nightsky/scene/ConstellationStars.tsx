@@ -155,7 +155,7 @@ export default function ConstellationStars({
 
   return (
     // 문구 위에 뜨도록 위로 올리고(+y), 좌우 여백·문구와의 간격 확보를 위해 축소.
-    <group position={[0, 1.35, 0]} scale={0.8}>
+    <group position={[0, 0.8, 0]} scale={0.82}>
       {edges.map(([a, b]) => (
         <Line
           key={`${a}-${b}`}
