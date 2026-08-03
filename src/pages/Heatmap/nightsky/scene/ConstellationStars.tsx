@@ -154,15 +154,16 @@ export default function ConstellationStars({
   );
 
   return (
-    <group>
+    // 문구 위에 뜨도록 위로 올리고(+y), 좌우 여백·문구와의 간격 확보를 위해 축소.
+    <group position={[0, 1.35, 0]} scale={0.8}>
       {edges.map(([a, b]) => (
         <Line
           key={`${a}-${b}`}
           points={[starByVerse.get(a)!.pos, starByVerse.get(b)!.pos]}
-          color="#41528a"
-          lineWidth={1}
+          color="#c7d4ff"
+          lineWidth={2}
           transparent
-          opacity={0.3}
+          opacity={0.55}
         />
       ))}
 
