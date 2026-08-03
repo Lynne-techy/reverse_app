@@ -1,9 +1,13 @@
+import { useState } from "react";
 import { useQueries } from "@tanstack/react-query";
 
 import Heatmap from "../../components/Heatmap";
 import StatTile from "../../components/StatTile";
 import StreakStartCard from "../../components/StreakStartCard";
 import { getActivity, getMyStatistics } from "../../api/stats";
+import NightSkyTab from "./nightsky/NightSkyTab";
+
+type HeatmapTab = "record" | "nightsky";
 
 /**
  * Date를 사용자 로컬 날짜 기준 YYYY-MM-DD로 변환.
@@ -31,6 +35,7 @@ function getActivityDateRange() {
 }
 
 function HeatmapPage() {
+  const [tab, setTab] = useState<HeatmapTab>("record");
   const { from, to } = getActivityDateRange();
 
   // 통계 + 활동 잔디 병렬 요청. queryKey를 MainPage와 동일하게 두어 캐시를 공유한다.
@@ -66,41 +71,83 @@ function HeatmapPage() {
         <p className="app-page__description">최근 1년간 하루하루 채워온 기록이에요.</p>
       </section>
 
-      {/* 일부 API 실패 안내 */}
-      {errorMessage && (
-        <div role="alert" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
-          {errorMessage}
+      {/* 탭 스위처: 기록(잔디) / 밤하늘(3D 별자리) */}
+      <div role="tablist" aria-label="기록 보기 방식" className="mt-6 flex gap-2">
+        <button
+          type="button"
+          role="tab"
+          id="tab-record"
+          aria-selected={tab === "record"}
+          aria-controls="panel-record"
+          onClick={() => setTab("record")}
+          className={`rounded-xl border-2 px-4 py-2 text-sm font-bold transition ${
+            tab === "record"
+              ? "border-brand bg-primary-soft text-brand"
+              : "border-border bg-white text-ink"
+          }`}
+        >
+          기록
+        </button>
+        <button
+          type="button"
+          role="tab"
+          id="tab-nightsky"
+          aria-selected={tab === "nightsky"}
+          aria-controls="panel-nightsky"
+          onClick={() => setTab("nightsky")}
+          className={`rounded-xl border-2 px-4 py-2 text-sm font-bold transition ${
+            tab === "nightsky"
+              ? "border-brand bg-primary-soft text-brand"
+              : "border-border bg-white text-ink"
+          }`}
+        >
+          밤하늘
+        </button>
+      </div>
+
+      {tab === "record" ? (
+        <div role="tabpanel" id="panel-record" aria-labelledby="tab-record">
+          {/* 일부 API 실패 안내 */}
+          {errorMessage && (
+            <div role="alert" className="mt-4 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-600">
+              {errorMessage}
+            </div>
+          )}
+
+          {/* 부제 아래 간격 + 스탯 카드 3종 */}
+          <div className="mt-8 grid grid-cols-1 gap-4 xl:grid-cols-3">
+            <StatTile
+              label="현재 연속 필사"
+              value={statistics ? `${statistics.currentStreak}일` : "—"}
+              caption="오늘까지 이어지는 중"
+            />
+            <StatTile
+              label="최장 연속 필사"
+              value={statistics ? `${statistics.longestStreak}일` : "—"}
+              caption="개인 기록"
+            />
+            <StatTile
+              label="총 필사"
+              value={statistics ? `${statistics.totalCount}회` : "—"}
+              caption="누적 기록"
+            />
+          </div>
+
+          {/* 잔디 — 위아래 카드와 좌우 경계를 맞추기 위해 별도 wrapper 없이 카드 자신으로 정렬 */}
+          <div className="mt-4">
+            <Heatmap activity={activity} startDate={from} endDate={to} title="최근 1년" />
+          </div>
+
+          {/* 가로로 꽉 채운 연속 시작 카드 */}
+          <div className="mt-4">
+            <StreakStartCard statistics={statistics} isLoading={statsQ.isPending} />
+          </div>
+        </div>
+      ) : (
+        <div role="tabpanel" id="panel-nightsky" aria-labelledby="tab-nightsky">
+          <NightSkyTab />
         </div>
       )}
-
-      {/* 부제 아래 간격 + 스탯 카드 3종 */}
-      <div className="mt-8 grid grid-cols-1 gap-4 xl:grid-cols-3">
-        <StatTile
-          label="현재 연속 필사"
-          value={statistics ? `${statistics.currentStreak}일` : "—"}
-          caption="오늘까지 이어지는 중"
-        />
-        <StatTile
-          label="최장 연속 필사"
-          value={statistics ? `${statistics.longestStreak}일` : "—"}
-          caption="개인 기록"
-        />
-        <StatTile
-          label="총 필사"
-          value={statistics ? `${statistics.totalCount}회` : "—"}
-          caption="누적 기록"
-        />
-      </div>
-
-      {/* 잔디 — 위아래 카드와 좌우 경계를 맞추기 위해 별도 wrapper 없이 카드 자신으로 정렬 */}
-      <div className="mt-4">
-        <Heatmap activity={activity} startDate={from} endDate={to} title="최근 1년" />
-      </div>
-
-      {/* 가로로 꽉 채운 연속 시작 카드 */}
-      <div className="mt-4">
-        <StreakStartCard statistics={statistics} isLoading={statsQ.isPending} />
-      </div>
     </main>
   );
 }

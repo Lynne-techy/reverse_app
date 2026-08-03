@@ -22,6 +22,13 @@ export function getRecentWritingRecords() {
   return apiRequest<WritingRecord[]>("/writing-sessions?limit=5&offset=0");
 }
 
+/** 필사 기록 한 페이지 조회 (limit/offset 페이징). 밤하늘 진행도 집계 등에서 재사용. */
+export function getWritingRecordsPage(limit: number, offset: number, signal?: AbortSignal) {
+  return apiRequest<WritingRecord[]>(`/writing-sessions?limit=${limit}&offset=${offset}`, {
+    signal,
+  });
+}
+
 function formatLocalDate(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
@@ -58,8 +65,7 @@ export async function getRecentMeditationCount(days = 30): Promise<number> {
         record.clientDate <= to;
 
       const hasMeditation =
-        typeof record.meditation === "string" &&
-        record.meditation.trim().length > 0;
+        typeof record.meditation === "string" && record.meditation.trim().length > 0;
 
       return hasDate && hasMeditation;
     }).length;
