@@ -1,4 +1,4 @@
-import { BIBLE_BOOKS } from "../../../data/books";
+import { BookCombobox } from "./BookCombobox";
 
 interface RangeStepProps {
   bookNo: number;
@@ -28,18 +28,7 @@ export function RangeStep({
       <div className="rounded-2xl border border-border bg-white p-5">
         <div className="text-base font-bold text-brand">① 성경 선택</div>
 
-        <select
-          className="mt-3 h-12 w-full rounded-xl border border-border-strong bg-white px-4 text-lg text-ink outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
-          aria-label="성경 선택"
-          value={bookNo}
-          onChange={(e) => setBookNo(Number(e.target.value))}
-        >
-          {BIBLE_BOOKS.map((name, index) => (
-            <option key={name} value={index + 1}>
-              {name}
-            </option>
-          ))}
-        </select>
+        <BookCombobox bookNo={bookNo} setBookNo={setBookNo} />
       </div>
 
       <div className="rounded-2xl border border-border bg-white p-5">
@@ -84,7 +73,9 @@ export function RangeStep({
       <div className="rounded-2xl bg-primary-soft px-5 py-5">
         <p className="text-sm font-semibold text-primary-deep">선택한 범위</p>
 
-        <p className="mt-1.5 text-[28px] font-extrabold leading-tight text-primary-deep">{rangeLabel}</p>
+        <p className="mt-1.5 text-[28px] font-extrabold leading-tight text-primary-deep">
+          {rangeLabel}
+        </p>
       </div>
     </div>
   );
