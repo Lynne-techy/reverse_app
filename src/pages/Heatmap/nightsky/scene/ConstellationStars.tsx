@@ -1,13 +1,15 @@
-// 발자국 별자리 — 절 하나가 별 하나. 채워진 절은 밝은 코어 + 부드러운 글로우(스프라이트) +
-// 주변을 감싸는 별무리 파티클로 "반짝이는 성단"처럼 보인다(불투명 전구 느낌 배제).
-// 아직 안 채워진 절은 흐린 점. 별을 잇는 선(edges)은 상시 은은히 표시.
+// 별자리 렌더 — 앵커 별 하나가 경전의 한 구간(anchorProgress.ts). 구간을 채운 비율(fraction)에
+// 따라 별이 서서히 밝아지고, 다 채우면(=1) 밝은 코어 + 부드러운 글로우(스프라이트) +
+// 별무리 파티클로 "반짝이는 성단"처럼 완성된다(불투명 전구 느낌 배제).
+// 아직 안 채워진 앵커는 흐린 점. 앵커를 잇는 선(edges)은 상시 은은히 보이되,
+// 양끝이 완성된 선은 더 또렷해져 형태의 완성이 선에서도 읽힌다.
 
 import { useMemo, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Line } from "@react-three/drei";
 import * as THREE from "three";
 
-import type { ConstellationConfig, StarNode } from "../constellations";
+import type { ConstellationConfig, AnchorNode } from "../constellations";
 
 /** 방사형 그라디언트 소프트 글로우 텍스처(별 글로우·파티클 공용). 한 번만 만들어 캐시. */
 let glowTexture: THREE.Texture | null = null;
@@ -46,13 +48,17 @@ function makeCluster(size: number, count = 30): Float32Array {
   return arr;
 }
 
+const UNLIT_COLOR = new THREE.Color("#6274a8");
+const LIT_COLOR = new THREE.Color("#fffdf5");
+
 function Star({
   node,
-  lit,
+  fraction,
   reducedMotion,
 }: {
-  node: StarNode;
-  lit: boolean;
+  node: AnchorNode;
+  /** 이 앵커가 대표하는 구간의 채움 정도(0~1). 1이면 완성. */
+  fraction: number;
   reducedMotion: boolean;
 }) {
   const glowRef = useRef<THREE.Sprite>(null);
@@ -60,72 +66,79 @@ function Star({
   const size = node.size ?? 1;
   const coreR = 0.045 + size * 0.03;
 
+  const complete = fraction >= 1;
+
   const tex = useMemo(getGlowTexture, []);
-  const cluster = useMemo(() => (lit ? makeCluster(size) : null), [lit, size]);
+  // 별무리는 구간 완성의 보상 — 완성 앵커에만 두른다.
+  const cluster = useMemo(() => (complete ? makeCluster(size) : null), [complete, size]);
   const glowBase = 0.7 + size * 0.45;
+
+  // 코어 색: 진행도에 따라 흐린 남색 → 따뜻한 흰색으로.
+  const coreColor = useMemo(() => UNLIT_COLOR.clone().lerp(LIT_COLOR, fraction), [fraction]);
 
   useFrame((state) => {
     const t = state.clock.elapsedTime;
 
     if (glowRef.current) {
-      const twinkle = reducedMotion ? 1 : 0.85 + Math.sin(t * 1.4 + node.verseNo) * 0.15;
-      glowRef.current.scale.setScalar(glowBase * twinkle);
+      const twinkle = reducedMotion ? 1 : 0.85 + Math.sin(t * 1.4 + node.index) * 0.15;
+      // 진행 중인 앵커의 글로우는 채운 만큼만 자란다.
+      glowRef.current.scale.setScalar(glowBase * (0.55 + 0.45 * fraction) * twinkle);
     }
 
     if (clusterRef.current && !reducedMotion) {
-      clusterRef.current.rotation.z = t * 0.05 + node.verseNo;
+      clusterRef.current.rotation.z = t * 0.05 + node.index;
       const mat = clusterRef.current.material as THREE.PointsMaterial;
-      mat.opacity = 0.55 + Math.sin(t * 2 + node.verseNo) * 0.2;
+      mat.opacity = 0.55 + Math.sin(t * 2 + node.index) * 0.2;
     }
   });
 
   return (
     <group position={node.pos}>
-      {/* 코어 — 작고 또렷한 빛점 */}
+      {/* 코어 — 작고 또렷한 빛점. 진행도만큼 밝아진다. */}
       <mesh>
         <sphereGeometry args={[coreR, 12, 12]} />
         <meshBasicMaterial
-          color={lit ? "#fffdf5" : "#6274a8"}
+          color={coreColor}
           toneMapped={false}
           transparent
-          opacity={lit ? 1 : 0.55}
+          opacity={0.55 + 0.45 * fraction}
         />
       </mesh>
 
-      {lit && (
-        <>
-          {/* 부드러운 글로우(스프라이트) — 카메라를 향하는 방사형 그라디언트 */}
-          <sprite ref={glowRef}>
-            <spriteMaterial
-              map={tex}
-              color="#ffe7bc"
-              transparent
-              opacity={0.9}
-              depthWrite={false}
-              blending={THREE.AdditiveBlending}
-              toneMapped={false}
-            />
-          </sprite>
+      {/* 부드러운 글로우(스프라이트) — 카메라를 향하는 방사형 그라디언트 */}
+      {fraction > 0 && (
+        <sprite ref={glowRef}>
+          <spriteMaterial
+            map={tex}
+            color="#ffe7bc"
+            transparent
+            opacity={0.9 * (0.3 + 0.7 * fraction)}
+            depthWrite={false}
+            blending={THREE.AdditiveBlending}
+            toneMapped={false}
+          />
+        </sprite>
+      )}
 
-          {/* 별무리 — 소프트 파티클로 감싼다 */}
-          <points ref={clusterRef}>
-            <bufferGeometry>
-              <bufferAttribute attach="attributes-position" args={[cluster!, 3]} />
-            </bufferGeometry>
-            <pointsMaterial
-              map={tex}
-              size={0.16}
-              color="#fff1cf"
-              sizeAttenuation
-              transparent
-              opacity={0.7}
-              depthWrite={false}
-              blending={THREE.AdditiveBlending}
-              alphaTest={0.01}
-              toneMapped={false}
-            />
-          </points>
-        </>
+      {/* 별무리 — 완성된 구간을 소프트 파티클로 감싼다 */}
+      {complete && (
+        <points ref={clusterRef}>
+          <bufferGeometry>
+            <bufferAttribute attach="attributes-position" args={[cluster!, 3]} />
+          </bufferGeometry>
+          <pointsMaterial
+            map={tex}
+            size={0.16}
+            color="#fff1cf"
+            sizeAttenuation
+            transparent
+            opacity={0.7}
+            depthWrite={false}
+            blending={THREE.AdditiveBlending}
+            alphaTest={0.01}
+            toneMapped={false}
+          />
+        </points>
       )}
     </group>
   );
@@ -133,25 +146,21 @@ function Star({
 
 interface ConstellationStarsProps {
   config: ConstellationConfig;
-  covered: Set<number>;
-  /** 실제 절 수 — 이 이상의 앵커는 그리지 않는다. */
-  verseCount: number;
+  /** 앵커별 채움 정도(0~1). index 0 = 앵커 1 (useBookProgress.anchorFractions). */
+  fractions: number[];
   reducedMotion: boolean;
 }
 
 export default function ConstellationStars({
   config,
-  covered,
-  verseCount,
+  fractions,
   reducedMotion,
 }: ConstellationStarsProps) {
-  const starByVerse = useMemo(() => new Map(config.stars.map((s) => [s.verseNo, s])), [config]);
+  const anchorByIndex = useMemo(() => new Map(config.anchors.map((a) => [a.index, a])), [config]);
 
-  const visibleStars = config.stars.filter((s) => s.verseNo <= verseCount);
+  const fractionOf = (index: number) => fractions[index - 1] ?? 0;
 
-  const edges = config.edges.filter(
-    ([a, b]) => a <= verseCount && b <= verseCount && starByVerse.has(a) && starByVerse.has(b),
-  );
+  const edges = config.edges.filter(([a, b]) => anchorByIndex.has(a) && anchorByIndex.has(b));
 
   return (
     // 문구 위에 뜨도록 위로 올리고(+y), 좌우 여백·문구와의 간격 확보를 위해 축소.
@@ -159,16 +168,17 @@ export default function ConstellationStars({
       {edges.map(([a, b]) => (
         <Line
           key={`${a}-${b}`}
-          points={[starByVerse.get(a)!.pos, starByVerse.get(b)!.pos]}
+          points={[anchorByIndex.get(a)!.pos, anchorByIndex.get(b)!.pos]}
           color="#c7d4ff"
           lineWidth={2}
           transparent
-          opacity={0.55}
+          // 상시 은은히 + 양끝이 완성된 만큼 또렷하게.
+          opacity={0.35 + 0.45 * Math.min(fractionOf(a), fractionOf(b))}
         />
       ))}
 
-      {visibleStars.map((s) => (
-        <Star key={s.verseNo} node={s} lit={covered.has(s.verseNo)} reducedMotion={reducedMotion} />
+      {config.anchors.map((a) => (
+        <Star key={a.index} node={a} fraction={fractionOf(a.index)} reducedMotion={reducedMotion} />
       ))}
     </group>
   );

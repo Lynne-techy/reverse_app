@@ -4,11 +4,16 @@ import type { ConstellationConfig } from "./constellations";
 
 interface NightSkyFallbackProps {
   config: ConstellationConfig;
-  litCount: number;
-  verseCount: number;
+  /** 필사한 절 수 / 경전 전체 절 수. */
+  coveredCount: number;
+  totalVerses: number;
 }
 
-export default function NightSkyFallback({ config, litCount, verseCount }: NightSkyFallbackProps) {
+export default function NightSkyFallback({
+  config,
+  coveredCount,
+  totalVerses,
+}: NightSkyFallbackProps) {
   const Symbol = config.symbol;
 
   return (
@@ -23,7 +28,7 @@ export default function NightSkyFallback({ config, litCount, verseCount }: Night
       </p>
 
       <p className="mt-6 text-sm text-white/60">
-        {litCount}/{verseCount}절 · 3D를 표시할 수 없어 간단 화면으로 보여드려요
+        {coveredCount}/{totalVerses}절 · 3D를 표시할 수 없어 간단 화면으로 보여드려요
       </p>
     </div>
   );

@@ -1,7 +1,7 @@
 // 밤하늘 3D 씬 — three.js/r3f/drei를 import 하는 "유일한" 모듈.
 // NightSkyTab에서 React.lazy로 로드돼 별도 async 청크로 분리된다(메인/히트맵 번들 영향 0).
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 
@@ -24,18 +24,21 @@ function usePrefersReducedMotion() {
 
 interface NightSkySceneProps {
   config: ConstellationConfig;
-  coveredVerses: Set<number>;
-  verseCount: number;
+  /** 앵커별 채움 정도(0~1). index 0 = 앵커 1 (useBookProgress.anchorFractions). */
+  anchorFractions: number[];
+  /** 필사한 절 수 / 경전 전체 절 수 — 스크린리더 라벨용. */
+  coveredCount: number;
+  totalVerses: number;
 }
 
-export default function NightSkyScene({ config, coveredVerses, verseCount }: NightSkySceneProps) {
+export default function NightSkyScene({
+  config,
+  anchorFractions,
+  coveredCount,
+  totalVerses,
+}: NightSkySceneProps) {
   const reducedMotion = usePrefersReducedMotion();
   const frameloop: "always" | "demand" = reducedMotion ? "demand" : "always";
-
-  const litCount = useMemo(
-    () => Array.from(coveredVerses).filter((v) => v <= verseCount).length,
-    [coveredVerses, verseCount],
-  );
 
   return (
     <div className="relative h-[70vh] min-h-[420px] w-full overflow-hidden rounded-2xl bg-[#070a1a]">
@@ -50,8 +53,7 @@ export default function NightSkyScene({ config, coveredVerses, verseCount }: Nig
         <Nebula reducedMotion={reducedMotion} />
         <ConstellationStars
           config={config}
-          covered={coveredVerses}
-          verseCount={verseCount}
+          fractions={anchorFractions}
           reducedMotion={reducedMotion}
         />
         <OrbitControls
@@ -79,7 +81,7 @@ export default function NightSkyScene({ config, coveredVerses, verseCount }: Nig
       </div>
 
       <span className="sr-only">
-        {config.bookName} {config.symbolLabel} 별자리, {litCount}/{verseCount}절 완료
+        {config.bookName} {config.symbolLabel} 별자리, {coveredCount}/{totalVerses}절 완료
       </span>
     </div>
   );

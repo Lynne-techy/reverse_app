@@ -8,19 +8,25 @@ import { Sparkles } from "lucide-react";
 import Skeleton from "../../../components/Skeleton";
 import { bookName } from "../../../data/books";
 import { BookCombobox } from "../../Pilsa/steps/BookCombobox";
-import { getConstellation, type ConstellationConfig } from "./constellations";
+import { CONSTELLATIONS, getConstellation, type ConstellationConfig } from "./constellations";
 import { isWebGLAvailable } from "./webglSupport";
-import { useJohn3Progress } from "./useJohn3Progress";
+import { useBookProgress } from "./useBookProgress";
 import SceneErrorBoundary from "./SceneErrorBoundary";
 import NightSkyFallback from "./NightSkyFallback";
 
 // three.js를 끌어오는 유일한 지점 — 밤하늘을 열 때만 청크를 받는다.
 const NightSkyScene = lazy(() => import("./NightSkyScene"));
 
-const JOHN3_BOOK_NO = 64; // 요한삼서
+/** 별자리가 준비된 경전 이름들("요한삼서" 등) — 안내 문구용. */
+const READY_BOOK_NAMES = Object.values(CONSTELLATIONS)
+  .map((c) => c.bookName)
+  .join(", ");
+
+/** 첫 화면에 보여줄 경전 = 별자리가 준비된 경전 중 정경 순서가 가장 빠른 것. */
+const DEFAULT_BOOK_NO = Math.min(...Object.keys(CONSTELLATIONS).map(Number));
 
 export default function NightSkyTab() {
-  const [bookNo, setBookNo] = useState(JOHN3_BOOK_NO);
+  const [bookNo, setBookNo] = useState(DEFAULT_BOOK_NO);
   const [demo, setDemo] = useState(false);
 
   const config = getConstellation(bookNo);
@@ -30,7 +36,7 @@ export default function NightSkyTab() {
       {/* 경전 선택 */}
       <div className="rounded-2xl border border-border bg-white p-5">
         <div className="text-base font-bold text-brand">경전 선택</div>
-        <p className="mt-1 text-sm text-sub">지금은 요한삼서만 밤하늘이 준비돼 있어요.</p>
+        <p className="mt-1 text-sm text-sub">지금은 {READY_BOOK_NAMES}만 밤하늘이 준비돼 있어요.</p>
         <BookCombobox bookNo={bookNo} setBookNo={setBookNo} />
       </div>
 
@@ -43,7 +49,7 @@ export default function NightSkyTab() {
   );
 }
 
-/** 별자리 config가 있는 경전(파일럿=요한삼서) 전용 뷰 — 진행도 훅은 여기서만 실행된다. */
+/** 별자리 config가 있는 경전 전용 뷰 — 진행도 훅은 여기서만 실행된다. */
 function ConstellationView({
   config,
   demo,
@@ -53,15 +59,16 @@ function ConstellationView({
   demo: boolean;
   setDemo: (updater: (prev: boolean) => boolean) => void;
 }) {
-  const { coveredVerses, verseCount, isLoading, isError } = useJohn3Progress(demo);
+  const { anchorFractions, coveredCount, totalVerses, isLoading, isError } = useBookProgress(
+    config.bookNo,
+    config.anchors.length,
+    demo,
+  );
   const webglOk = useMemo(() => isWebGLAvailable(), []);
 
-  const litCount = useMemo(
-    () => Array.from(coveredVerses).filter((v) => v <= verseCount).length,
-    [coveredVerses, verseCount],
-  );
-
   const SymbolIcon = config.symbol;
+
+  const percent = totalVerses > 0 ? Math.round((coveredCount / totalVerses) * 100) : 0;
 
   const progressLabel = demo
     ? "완성형 미리보기"
@@ -69,7 +76,7 @@ function ConstellationView({
       ? "진행도를 불러오지 못했어요"
       : isLoading
         ? "진행도 불러오는 중…"
-        : `${litCount}/${verseCount}절 필사 완료`;
+        : `${coveredCount}/${totalVerses}절 필사 완료 · ${percent}%`;
 
   return (
     <div className="flex flex-col gap-3">
@@ -78,7 +85,7 @@ function ConstellationView({
         <div className="flex items-center gap-2 text-sm text-body">
           <SymbolIcon size={20} className="flex-none text-brand" aria-hidden="true" />
           <span>
-            <b className="text-ink">{config.symbolLabel}</b> · 절 하나가 별 하나예요
+            <b className="text-ink">{config.symbolLabel}</b> · 필사한 만큼 별이 켜져요
           </span>
         </div>
 
@@ -99,15 +106,24 @@ function ConstellationView({
       {webglOk ? (
         <SceneErrorBoundary
           fallback={
-            <NightSkyFallback config={config} litCount={litCount} verseCount={verseCount} />
+            <NightSkyFallback
+              config={config}
+              coveredCount={coveredCount}
+              totalVerses={totalVerses}
+            />
           }
         >
           <Suspense fallback={<Skeleton height="70vh" radius={16} />}>
-            <NightSkyScene config={config} coveredVerses={coveredVerses} verseCount={verseCount} />
+            <NightSkyScene
+              config={config}
+              anchorFractions={anchorFractions}
+              coveredCount={coveredCount}
+              totalVerses={totalVerses}
+            />
           </Suspense>
         </SceneErrorBoundary>
       ) : (
-        <NightSkyFallback config={config} litCount={litCount} verseCount={verseCount} />
+        <NightSkyFallback config={config} coveredCount={coveredCount} totalVerses={totalVerses} />
       )}
     </div>
   );
@@ -122,7 +138,7 @@ function ComingSoon({ bookName }: { bookName: string }) {
         {bookName || "이 경전"}의 밤하늘은 준비 중이에요
       </p>
       <p className="mt-2 text-sm text-white/55">
-        지금은 <b className="text-amber-200/80">요한삼서</b>만 볼 수 있어요.
+        지금은 <b className="text-amber-200/80">{READY_BOOK_NAMES}</b>만 볼 수 있어요.
       </p>
     </div>
   );
