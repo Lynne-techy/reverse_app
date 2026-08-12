@@ -182,16 +182,19 @@ export default function ConstellationStars({
 
   return (
     // 문구 위에 뜨도록 위로 올리고(+y), 좌우 여백·문구와의 간격 확보를 위해 축소.
-    <group position={[0, 0.8, 0]} scale={0.82}>
+    // z만 0.5로 압축: 형태는 정면 실루엣 기준으로 그려졌으므로, 깊이를 살짝만 남겨
+    // 회전 시 입체감은 유지하되 실루엣이 일그러지지 않게 한다(가독성 우선).
+    <group position={[0, 0.8, 0]} scale={[0.82, 0.82, 0.41]}>
       {edges.map(([a, b]) => (
         <Line
           key={`${a}-${b}`}
           points={[anchorByIndex.get(a)!.pos, anchorByIndex.get(b)!.pos]}
           color="#c7d4ff"
-          lineWidth={2}
+          lineWidth={2.5}
           transparent
-          // 상시 은은히 + 양끝이 완성된 만큼 또렷하게.
-          opacity={0.35 + 0.45 * Math.min(fractionOf(a), fractionOf(b))}
+          // 밑그림이 형태 이해의 핵심 — 미완성도 실루엣이 또렷이 읽히게 기본을 올리고,
+          // 양끝이 완성된 선은 더 밝힌다.
+          opacity={0.5 + 0.35 * Math.min(fractionOf(a), fractionOf(b))}
         />
       ))}
 

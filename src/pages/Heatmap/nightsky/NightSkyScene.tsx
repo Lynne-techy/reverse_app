@@ -61,19 +61,25 @@ export default function NightSkyScene({
           emotions={anchorEmotions}
           reducedMotion={reducedMotion}
         />
+        {/* 회전은 "살짝 흔들리는 밤하늘" 정도로 — 형태가 정면 실루엣 기준이라 크게 돌면 읽기 어렵다. */}
         <OrbitControls
           enablePan={false}
           enableZoom={false}
           enableDamping
           dampingFactor={0.08}
           autoRotate={!reducedMotion}
-          autoRotateSpeed={0.25}
-          minPolarAngle={Math.PI / 2 - 0.4}
-          maxPolarAngle={Math.PI / 2 + 0.4}
-          minAzimuthAngle={-0.6}
-          maxAzimuthAngle={0.6}
+          autoRotateSpeed={0.16}
+          minPolarAngle={Math.PI / 2 - 0.25}
+          maxPolarAngle={Math.PI / 2 + 0.25}
+          minAzimuthAngle={-0.35}
+          maxAzimuthAngle={0.35}
         />
       </Canvas>
+
+      {/* 별자리 이름 캡션 — 무엇을 그린 형태인지 한눈에 알려준다. */}
+      <div className="pointer-events-none absolute left-4 top-4 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold tracking-wide text-white/75 backdrop-blur-sm">
+        {config.symbolLabel} 별자리
+      </div>
 
       {/* 대표 문구 — 별자리 밑에 은은히 떠 있는 오버레이 */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#070a1a] via-[#070a1a]/70 to-transparent px-6 pb-6 pt-16 text-center">
