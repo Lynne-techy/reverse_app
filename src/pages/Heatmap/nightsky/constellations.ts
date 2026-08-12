@@ -14,11 +14,14 @@
 import {
   Amphora,
   Anchor,
+  Archive,
   Baby,
+  Bird,
   BrickWall,
   Castle,
   Cloud,
   CloudRain,
+  CloudSun,
   Columns3,
   Cross,
   Crown,
@@ -26,10 +29,13 @@ import {
   Droplets,
   Fish,
   Flag,
+  Flame,
+  FlameKindling,
   Flashlight,
   Flower2,
   Footprints,
   Gem,
+  Globe,
   Grape,
   Hammer,
   Hand,
@@ -38,22 +44,31 @@ import {
   HardHat,
   Heart,
   HeartHandshake,
+  Lamp,
   Landmark,
   Leaf,
   MapPin,
   Megaphone,
   MoonStar,
   Mountain,
+  Music,
   Music4,
+  Orbit,
   PawPrint,
+  Route,
   Sailboat,
   Scale,
+  ScrollText,
   Shield,
   Ship,
+  Sparkle,
   Sparkles,
+  Star,
+  Sun,
   SunMedium,
   Sunrise,
   Swords,
+  Target,
   TowerControl,
   TreeDeciduous,
   Trophy,
@@ -61,6 +76,7 @@ import {
   Wand,
   Wheat,
   Wind,
+  Zap,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -2120,19 +2136,764 @@ export const REVELATION_CONSTELLATION: ConstellationConfig = {
   ],
 };
 
-/** bookNo → 별자리 config (정경 순서). */
+/** 창세기 = 떠오르는 해(1:3 "빛이 있으라"). 지평선 위로 솟는 반원 해와 첫 새벽의 방사 광선. */
+export const GENESIS_CONSTELLATION: ConstellationConfig = {
+  bookNo: 1,
+  bookName: "창세기",
+  symbol: Sun,
+  symbolLabel: "떠오르는 해",
+  phrase: {
+    ref: "창세기 1:1",
+    text: "태초에 하나님이 천지를 창조하시니라",
+  },
+  anchors: [
+    { index: 1, pos: [-1.15, -1.2, 0], size: 0.6 }, // 지평선
+    { index: 2, pos: [-0.55, -1.25, 0], size: 0.5 },
+    { index: 3, pos: [0, -1.3, 0], size: 0.6 },
+    { index: 4, pos: [0.55, -1.25, 0], size: 0.5 },
+    { index: 5, pos: [1.15, -1.2, 0], size: 0.6 },
+    { index: 6, pos: [-0.7, -0.75, 0.05], size: 0.6 }, // 반원 해 호
+    { index: 7, pos: [-0.35, -0.35, 0.1], size: 0.6 },
+    { index: 8, pos: [0, -0.2, 0.15], size: 0.9 }, // 해 정점
+    { index: 9, pos: [0.35, -0.35, 0.1], size: 0.6 },
+    { index: 10, pos: [0.7, -0.75, 0.05], size: 0.6 },
+    { index: 11, pos: [-1.0, 0.4, 0.2], size: 0.5 }, // 방사 광선 (+z)
+    { index: 12, pos: [-0.4, 0.9, 0.25], size: 0.55 },
+    { index: 13, pos: [0.05, 1.5, 0.3], size: 0.7 }, // 첫 빛
+    { index: 14, pos: [0.5, 0.9, 0.25], size: 0.55 },
+    { index: 15, pos: [1.0, 0.45, 0.2], size: 0.5 },
+  ],
+  edges: [
+    [1, 2],
+    [2, 3],
+    [3, 4],
+    [4, 5],
+    [6, 7],
+    [7, 8],
+    [8, 9],
+    [9, 10],
+    [6, 11],
+    [7, 12],
+    [8, 13],
+    [9, 14],
+    [10, 15],
+  ],
+};
+
+/** 출애굽기 = 불기둥(13:21). 아래에서 위로 타오르는 지그재그 불꽃 기둥과 상단의 구름. */
+export const EXODUS_CONSTELLATION: ConstellationConfig = {
+  bookNo: 2,
+  bookName: "출애굽기",
+  symbol: Flame,
+  symbolLabel: "불기둥",
+  phrase: {
+    ref: "출애굽기 14:14",
+    text: "여호와께서 너희를 위하여 싸우시리니 너희는 가만히 있을지니라",
+  },
+  anchors: [
+    { index: 1, pos: [0, -2.3, 0], size: 0.8 }, // 기둥 뿌리
+    { index: 2, pos: [-0.35, -1.6, 0.05], size: 0.6 }, // 지그재그 불꽃
+    { index: 3, pos: [0.3, -1.0, 0.1], size: 0.65 },
+    { index: 4, pos: [-0.3, -0.35, 0.1], size: 0.6 },
+    { index: 5, pos: [0.35, 0.3, 0.15], size: 0.65 },
+    { index: 6, pos: [-0.25, 0.95, 0.15], size: 0.6 },
+    { index: 7, pos: [0.1, 1.55, 0.2], size: 0.7 }, // 불꽃 끝 (+z)
+    { index: 8, pos: [-0.6, -0.75, 0.2], size: 0.5 }, // 좌 불혀
+    { index: 9, pos: [0.65, -0.4, 0.2], size: 0.5 }, // 우 불혀
+    { index: 10, pos: [-0.55, 2.0, 0], size: 0.65 }, // 구름
+    { index: 11, pos: [0, 2.25, 0.05], size: 0.7 },
+    { index: 12, pos: [0.6, 2.0, 0], size: 0.65 },
+    { index: 13, pos: [0.55, 1.1, 0.25], size: 0.45 }, // 불티
+    { index: 14, pos: [-0.5, 1.5, 0.2], size: 0.45 },
+  ],
+  edges: [
+    [1, 2],
+    [2, 3],
+    [3, 4],
+    [4, 5],
+    [5, 6],
+    [6, 7],
+    [3, 8],
+    [5, 9],
+    [10, 11],
+    [11, 12],
+    [7, 11],
+  ],
+};
+
+/** 레위기 = 번제단(1장). 사다리꼴 제단과 네 뿔, 위로 감아 오르는 향연기 나선(+z). */
+export const LEVITICUS_CONSTELLATION: ConstellationConfig = {
+  bookNo: 3,
+  bookName: "레위기",
+  symbol: FlameKindling,
+  symbolLabel: "번제단",
+  phrase: {
+    ref: "레위기 19:2",
+    text: "너희는 거룩하라 이는 나 여호와 너희 하나님이 거룩함이니라",
+  },
+  anchors: [
+    { index: 1, pos: [-1.0, -2.0, 0], size: 0.7 }, // 제단 하단
+    { index: 2, pos: [1.0, -2.0, 0], size: 0.7 },
+    { index: 3, pos: [-0.7, -0.9, 0], size: 0.65 }, // 제단 상단
+    { index: 4, pos: [0.7, -0.9, 0], size: 0.65 },
+    { index: 5, pos: [-0.85, -0.55, 0.1], size: 0.55 }, // 앞 두 뿔
+    { index: 6, pos: [0.85, -0.55, 0.1], size: 0.55 },
+    { index: 7, pos: [-0.5, -0.7, -0.2], size: 0.45 }, // 뒤 두 뿔 (-z)
+    { index: 8, pos: [0.5, -0.7, -0.2], size: 0.45 },
+    { index: 9, pos: [0, -0.5, 0.15], size: 0.8 }, // 제단 불
+    { index: 10, pos: [0.15, 0.3, 0.25], size: 0.55 }, // 향연기 나선 (+z)
+    { index: 11, pos: [-0.2, 1.0, 0.35], size: 0.55 },
+    { index: 12, pos: [0.15, 1.7, 0.45], size: 0.55 },
+    { index: 13, pos: [-0.1, 2.3, 0.5], size: 0.5 },
+  ],
+  edges: [
+    [1, 2],
+    [1, 3],
+    [2, 4],
+    [3, 4],
+    [3, 5],
+    [4, 6],
+    [9, 10],
+    [10, 11],
+    [11, 12],
+    [12, 13],
+  ],
+};
+
+/** 민수기 = 광야의 구불길. S자로 굽이치는 길이 위의 큰 별(약속의 땅)에 닿고, 굽이 옆에 진영 별들. */
+export const NUMBERS_CONSTELLATION: ConstellationConfig = {
+  bookNo: 4,
+  bookName: "민수기",
+  symbol: Route,
+  symbolLabel: "광야의 길",
+  phrase: {
+    ref: "민수기 6:24",
+    text: "여호와는 네게 복을 주시고 너를 지키시기를 원하며",
+  },
+  anchors: [
+    { index: 1, pos: [-0.7, -2.2, 0], size: 0.7 }, // 출애굽 시작점
+    { index: 2, pos: [0.2, -1.8, 0.05], size: 0.5 },
+    { index: 3, pos: [0.75, -1.2, 0.05], size: 0.55 },
+    { index: 4, pos: [0.3, -0.6, 0.1], size: 0.5 },
+    { index: 5, pos: [-0.5, -0.2, 0.1], size: 0.55 },
+    { index: 6, pos: [-0.75, 0.5, 0.15], size: 0.5 },
+    { index: 7, pos: [-0.2, 1.0, 0.15], size: 0.55 },
+    { index: 8, pos: [0.5, 1.4, 0.2], size: 0.5 },
+    { index: 9, pos: [0.15, 2.2, 0.25], size: 0.95 }, // 약속의 땅 별
+    { index: 10, pos: [-1.05, -1.6, 0], size: 0.45 }, // 진영 별
+    { index: 11, pos: [1.1, -0.6, 0], size: 0.45 },
+    { index: 12, pos: [-1.1, 1.1, 0], size: 0.45 },
+    { index: 13, pos: [0.9, 0.6, 0.3], size: 0.5 }, // 동행하는 구름 기둥
+    { index: 14, pos: [0.8, 2.0, 0.2], size: 0.45 },
+  ],
+  edges: [
+    [1, 2],
+    [2, 3],
+    [3, 4],
+    [4, 5],
+    [5, 6],
+    [6, 7],
+    [7, 8],
+    [8, 9],
+    [13, 14],
+  ],
+};
+
+/** 신명기 = 두 돌판(쉐마). 위가 둥근 두 돌판 — 우판을 +z로 살짝 젖혀 펼쳐 든 모양. */
+export const DEUTERONOMY_CONSTELLATION: ConstellationConfig = {
+  bookNo: 5,
+  bookName: "신명기",
+  symbol: ScrollText,
+  symbolLabel: "두 돌판",
+  phrase: {
+    ref: "신명기 6:5",
+    text: "너는 마음을 다하고 뜻을 다하고 힘을 다하여 네 하나님 여호와를 사랑하라",
+  },
+  anchors: [
+    { index: 1, pos: [-1.0, -1.4, -0.05], size: 0.65 }, // 좌판 (살짝 -z)
+    { index: 2, pos: [-0.15, -1.4, -0.05], size: 0.6 },
+    { index: 3, pos: [-1.0, 0.9, -0.05], size: 0.65 },
+    { index: 4, pos: [-0.15, 0.9, -0.05], size: 0.6 },
+    { index: 5, pos: [-0.57, 1.4, -0.05], size: 0.7 }, // 좌판 아치 정점
+    { index: 6, pos: [0.15, -1.35, 0.15], size: 0.6 }, // 우판 (+z 젖힘)
+    { index: 7, pos: [1.0, -1.35, 0.1], size: 0.65 },
+    { index: 8, pos: [0.15, 0.95, 0.2], size: 0.6 },
+    { index: 9, pos: [1.0, 0.95, 0.15], size: 0.65 },
+    { index: 10, pos: [0.57, 1.45, 0.2], size: 0.7 }, // 우판 아치 정점
+    { index: 11, pos: [-0.57, 0.1, 0], size: 0.5 }, // 좌판 글줄 별
+    { index: 12, pos: [-0.57, -0.6, 0], size: 0.5 },
+    { index: 13, pos: [0.57, 0.15, 0.2], size: 0.5 }, // 우판 글줄 별
+    { index: 14, pos: [0.57, -0.55, 0.2], size: 0.5 },
+  ],
+  edges: [
+    [1, 2],
+    [1, 3],
+    [3, 5],
+    [5, 4],
+    [4, 2],
+    [6, 7],
+    [6, 8],
+    [8, 10],
+    [10, 9],
+    [9, 7],
+  ],
+};
+
+/** 사무엘상 = 물매와 다섯 돌(17장). 크게 감아 도는 물매 궤적 끝에서 돌 하나가 날아가고(+z), 아래에 남은 돌들. */
+export const SAMUEL1_CONSTELLATION: ConstellationConfig = {
+  bookNo: 9,
+  bookName: "사무엘상",
+  symbol: Target,
+  symbolLabel: "물매와 다섯 돌",
+  phrase: {
+    ref: "사무엘상 16:7",
+    text: "사람은 외모를 보거니와 나 여호와는 중심을 보느니라",
+  },
+  anchors: [
+    { index: 1, pos: [-0.9, -1.6, 0], size: 0.6 }, // 물매 궤적
+    { index: 2, pos: [-1.1, -0.6, 0.05], size: 0.55 },
+    { index: 3, pos: [-0.85, 0.4, 0.1], size: 0.55 },
+    { index: 4, pos: [-0.25, 1.1, 0.15], size: 0.6 },
+    { index: 5, pos: [0.5, 1.35, 0.2], size: 0.6 },
+    { index: 6, pos: [1.05, 0.9, 0.3], size: 0.65 }, // 궤적 끝
+    { index: 7, pos: [1.15, 1.6, 0.5], size: 0.8 }, // 날아가는 돌 (+z)
+    { index: 8, pos: [-0.5, -2.1, 0.1], size: 0.55 }, // 남은 매끄러운 돌들
+    { index: 9, pos: [-0.1, -2.2, 0.12], size: 0.55 },
+    { index: 10, pos: [0.3, -2.1, 0.14], size: 0.55 },
+    { index: 11, pos: [0.65, -1.95, 0.1], size: 0.55 },
+    { index: 12, pos: [0.95, 0.55, 0.25], size: 0.5 }, // 물매 주머니
+    { index: 13, pos: [-0.55, -1.95, 0], size: 0.6 }, // 물매 손잡이
+  ],
+  edges: [
+    [13, 1],
+    [1, 2],
+    [2, 3],
+    [3, 4],
+    [4, 5],
+    [5, 6],
+    [6, 12],
+    [12, 7],
+  ],
+};
+
+/** 열왕기하 = 불병거(2:11, 6:17). 두 바퀴(앞바퀴 +z 원근)와 위로 날리는 불꽃 갈기. */
+export const KINGS2_CONSTELLATION: ConstellationConfig = {
+  bookNo: 12,
+  bookName: "열왕기하",
+  symbol: Zap,
+  symbolLabel: "불병거",
+  phrase: {
+    ref: "열왕기하 6:16",
+    text: "두려워하지 말라 우리와 함께 한 자가 그들과 함께 한 자보다 많으니라",
+  },
+  anchors: [
+    { index: 1, pos: [-0.55, -1.2, 0], size: 0.7 }, // 뒷바퀴 축
+    { index: 2, pos: [-1.0, -1.0, 0], size: 0.5 }, // 뒷바퀴 테
+    { index: 3, pos: [-0.55, -0.75, 0], size: 0.5 },
+    { index: 4, pos: [-0.1, -1.05, 0], size: 0.5 },
+    { index: 5, pos: [-0.6, -1.7, 0], size: 0.5 },
+    { index: 6, pos: [0.6, -1.1, 0.35], size: 0.75 }, // 앞바퀴 축 (+z 원근)
+    { index: 7, pos: [0.95, -0.75, 0.4], size: 0.5 }, // 앞바퀴 테
+    { index: 8, pos: [0.25, -0.7, 0.4], size: 0.5 },
+    { index: 9, pos: [-0.7, -0.3, 0.05], size: 0.6 }, // 수레 몸체
+    { index: 10, pos: [0.5, -0.15, 0.15], size: 0.6 },
+    { index: 11, pos: [-0.3, 0.5, 0.1], size: 0.6 }, // 불꽃 갈기
+    { index: 12, pos: [0.3, 0.9, 0.15], size: 0.65 },
+    { index: 13, pos: [-0.1, 1.5, 0.2], size: 0.7 },
+    { index: 14, pos: [0.4, 2.1, 0.25], size: 0.6 },
+  ],
+  edges: [
+    [2, 3],
+    [3, 4],
+    [4, 5],
+    [5, 2],
+    [1, 3],
+    [6, 7],
+    [7, 8],
+    [8, 6],
+    [3, 9],
+    [9, 10],
+    [10, 8],
+    [9, 11],
+    [11, 12],
+    [12, 13],
+    [13, 14],
+  ],
+};
+
+/** 역대상 = 언약궤(13~16장). 궤와 채, 속죄소 위에서 마주 닿는 그룹 날개(끝 +z), 그 위 임재의 빛. */
+export const CHRONICLES1_CONSTELLATION: ConstellationConfig = {
+  bookNo: 13,
+  bookName: "역대상",
+  symbol: Archive,
+  symbolLabel: "언약궤",
+  phrase: {
+    ref: "역대상 16:34",
+    text: "여호와께 감사하라 그는 선하시며 그의 인자하심이 영원함이로다",
+  },
+  anchors: [
+    { index: 1, pos: [-0.8, -1.3, 0], size: 0.65 }, // 궤 몸체
+    { index: 2, pos: [0.8, -1.3, 0], size: 0.65 },
+    { index: 3, pos: [-0.8, -0.4, 0], size: 0.6 },
+    { index: 4, pos: [0.8, -0.4, 0], size: 0.6 },
+    { index: 5, pos: [-1.2, -1.05, 0.15], size: 0.5 }, // 좌 채(운반 막대)
+    { index: 6, pos: [1.2, -1.05, 0.15], size: 0.5 }, // 우 채
+    { index: 7, pos: [0, -0.3, 0.1], size: 0.6 }, // 속죄소
+    { index: 8, pos: [-0.5, 0.2, 0.05], size: 0.6 }, // 좌 그룹 날개 죽지
+    { index: 9, pos: [-0.9, 0.9, 0.25], size: 0.7 }, // 좌 날개 끝 (+z)
+    { index: 10, pos: [0.5, 0.2, 0.05], size: 0.6 }, // 우 그룹 날개 죽지
+    { index: 11, pos: [0.9, 0.95, 0.25], size: 0.7 }, // 우 날개 끝 (+z)
+    { index: 12, pos: [0, 0.9, 0.15], size: 0.65 }, // 마주 닿는 날개
+    { index: 13, pos: [0, 1.7, 0.2], size: 0.8 }, // 임재의 빛
+    { index: 14, pos: [0, 2.3, 0.2], size: 0.5 },
+  ],
+  edges: [
+    [1, 2],
+    [1, 3],
+    [2, 4],
+    [3, 7],
+    [7, 4],
+    [5, 1],
+    [2, 6],
+    [7, 8],
+    [8, 9],
+    [9, 12],
+    [7, 10],
+    [10, 11],
+    [11, 12],
+    [12, 13],
+    [13, 14],
+  ],
+};
+
+/** 역대하 = 성전에 임한 영광 구름(7:1-3). 작은 성전 위를 덮는 큰 구름과 내려오는 불 광선. */
+export const CHRONICLES2_CONSTELLATION: ConstellationConfig = {
+  bookNo: 14,
+  bookName: "역대하",
+  symbol: CloudSun,
+  symbolLabel: "영광의 구름",
+  phrase: {
+    ref: "역대하 7:14",
+    text: "스스로 낮추고 기도하여 내 얼굴을 찾으면 내가 하늘에서 듣고 그들의 땅을 고칠지라",
+  },
+  anchors: [
+    { index: 1, pos: [-0.7, -2.1, 0], size: 0.6 }, // 성전 실루엣
+    { index: 2, pos: [0.7, -2.1, 0], size: 0.6 },
+    { index: 3, pos: [-0.7, -1.4, 0], size: 0.55 },
+    { index: 4, pos: [0.7, -1.4, 0], size: 0.55 },
+    { index: 5, pos: [0, -1.0, 0.05], size: 0.65 }, // 성전 지붕
+    { index: 6, pos: [-0.95, 0.6, 0], size: 0.7 }, // 큰 구름
+    { index: 7, pos: [-0.35, 0.95, 0.1], size: 0.8 },
+    { index: 8, pos: [0.3, 1.0, 0.05], size: 0.8 },
+    { index: 9, pos: [0.9, 0.65, 0], size: 0.7 },
+    { index: 10, pos: [0, 0.45, 0.15], size: 0.65 }, // 구름 배
+    { index: 11, pos: [-0.45, -0.3, 0.2], size: 0.55 }, // 내려오는 불 광선
+    { index: 12, pos: [0, -0.45, 0.25], size: 0.6 },
+    { index: 13, pos: [0.45, -0.35, 0.2], size: 0.55 },
+    { index: 14, pos: [0, 1.8, 0.1], size: 0.75 }, // 구름 위 영광 별
+  ],
+  edges: [
+    [1, 2],
+    [1, 3],
+    [2, 4],
+    [3, 5],
+    [4, 5],
+    [6, 7],
+    [7, 8],
+    [8, 9],
+    [6, 10],
+    [10, 9],
+    [10, 12],
+    [12, 5],
+    [7, 11],
+    [8, 13],
+    [8, 14],
+  ],
+};
+
+/** 욥기 = 묘성(플레이아데스, 38:31). 실제 성단 배치를 본뜬 별무리와 그 둘레의 폭풍 자락 — 밤하늘 기능과 가장 직결되는 경전. */
+export const JOB_CONSTELLATION: ConstellationConfig = {
+  bookNo: 18,
+  bookName: "욥기",
+  symbol: Sparkle,
+  symbolLabel: "묘성",
+  phrase: {
+    ref: "욥기 38:31",
+    text: "네가 묘성을 매어 묶을 수 있으며 삼성의 띠를 풀 수 있겠느냐",
+  },
+  anchors: [
+    // 플레이아데스 실측 배치 근사 (알키오네가 중심)
+    { index: 1, pos: [0.15, 0.35, 0], size: 0.85 }, // 알키오네
+    { index: 2, pos: [0.9, -0.3, 0], size: 0.7 }, // 아틀라스
+    { index: 3, pos: [0.95, -0.05, 0.05], size: 0.5 }, // 플레이오네
+    { index: 4, pos: [-0.25, -0.4, 0], size: 0.65 }, // 메로페
+    { index: 5, pos: [-0.8, -0.05, 0], size: 0.65 }, // 엘렉트라
+    { index: 6, pos: [-0.8, 0.5, 0], size: 0.45 }, // 켈라이노
+    { index: 7, pos: [-0.9, 1.0, 0], size: 0.6 }, // 타이게타
+    { index: 8, pos: [-0.3, 1.0, 0], size: 0.65 }, // 마이아
+    { index: 9, pos: [-0.5, 1.45, 0], size: 0.45 }, // 아스테로페
+    { index: 10, pos: [1.1, 1.4, 0.3], size: 0.5 }, // 폭풍 자락 (둘레)
+    { index: 11, pos: [0.2, 1.9, 0.35], size: 0.5 },
+    { index: 12, pos: [-1.0, 1.5, 0.3], size: 0.5 },
+    { index: 13, pos: [-1.15, -1.5, 0.25], size: 0.45 },
+    { index: 14, pos: [0.9, -1.8, 0.25], size: 0.45 },
+  ],
+  edges: [
+    [1, 2],
+    [2, 3],
+    [1, 4],
+    [4, 5],
+    [5, 6],
+    [6, 7],
+    [1, 8],
+    [8, 7],
+    [8, 9],
+    [10, 11],
+    [11, 12],
+    [13, 14],
+  ],
+};
+
+/** 시편 = 다윗의 수금(리라). 울림통에서 두 팔이 위로 벌어져 가로대에서 만나고, 그 사이 현이 걸린다. */
+export const PSALMS_CONSTELLATION: ConstellationConfig = {
+  bookNo: 19,
+  bookName: "시편",
+  symbol: Music,
+  symbolLabel: "다윗의 수금",
+  phrase: {
+    ref: "시편 23:1",
+    text: "여호와는 나의 목자시니 내게 부족함이 없으리로다",
+  },
+  anchors: [
+    { index: 1, pos: [-0.5, -2.0, 0], size: 0.7 }, // 울림통
+    { index: 2, pos: [0.5, -2.0, 0], size: 0.7 },
+    { index: 3, pos: [0, -2.3, 0.05], size: 0.6 },
+    { index: 4, pos: [-0.7, -1.2, 0], size: 0.6 }, // 좌 팔
+    { index: 5, pos: [-0.85, -0.3, 0.05], size: 0.6 },
+    { index: 6, pos: [-0.8, 0.7, 0.1], size: 0.65 },
+    { index: 7, pos: [-0.6, 1.5, 0.1], size: 0.7 },
+    { index: 8, pos: [0.7, -1.2, 0.1], size: 0.6 }, // 우 팔 (+z)
+    { index: 9, pos: [0.85, -0.3, 0.2], size: 0.6 },
+    { index: 10, pos: [0.8, 0.7, 0.25], size: 0.65 },
+    { index: 11, pos: [0.6, 1.5, 0.3], size: 0.7 },
+    { index: 12, pos: [0, 1.7, 0.2], size: 0.65 }, // 가로대
+    { index: 13, pos: [-0.25, 0.2, 0.1], size: 0.45 }, // 현 위의 별
+    { index: 14, pos: [0.25, 0.25, 0.15], size: 0.45 },
+    { index: 15, pos: [0, 2.3, 0.2], size: 0.6 }, // 다윗의 별
+    { index: 16, pos: [0, -1.5, 0.05], size: 0.5 }, // 울림 구멍
+  ],
+  edges: [
+    [1, 3],
+    [3, 2],
+    [1, 4],
+    [4, 5],
+    [5, 6],
+    [6, 7],
+    [7, 12],
+    [2, 8],
+    [8, 9],
+    [9, 10],
+    [10, 11],
+    [11, 12],
+    [12, 13],
+    [13, 16],
+    [12, 14],
+    [14, 16],
+    [12, 15],
+  ],
+};
+
+/** 잠언 = 지혜의 등불(6:23). 기름 등잔의 불꽃에서 위로 퍼지는 빛 — 명령은 등불이요 법은 빛이라. */
+export const PROVERBS_CONSTELLATION: ConstellationConfig = {
+  bookNo: 20,
+  bookName: "잠언",
+  symbol: Lamp,
+  symbolLabel: "지혜의 등불",
+  phrase: {
+    ref: "잠언 3:5",
+    text: "너는 마음을 다하여 여호와를 신뢰하고 네 명철을 의지하지 말라",
+  },
+  anchors: [
+    { index: 1, pos: [-0.6, -2.0, 0], size: 0.6 }, // 받침
+    { index: 2, pos: [0.6, -2.0, 0], size: 0.6 },
+    { index: 3, pos: [0, -1.7, 0.05], size: 0.6 },
+    { index: 4, pos: [-0.7, -1.1, 0], size: 0.65 }, // 등잔 몸통
+    { index: 5, pos: [0.7, -1.1, 0], size: 0.65 },
+    { index: 6, pos: [1.0, -0.85, 0.1], size: 0.6 }, // 부리
+    { index: 7, pos: [1.05, -0.3, 0.15], size: 0.85 }, // 불꽃
+    { index: 8, pos: [0.5, 0.5, 0.25], size: 0.55 }, // 퍼지는 빛 (+z)
+    { index: 9, pos: [0.9, 1.2, 0.3], size: 0.5 },
+    { index: 10, pos: [0.1, 1.3, 0.3], size: 0.55 },
+    { index: 11, pos: [-0.4, 2.0, 0.35], size: 0.5 },
+    { index: 12, pos: [0.6, 2.1, 0.35], size: 0.5 },
+    { index: 13, pos: [-1.0, -0.7, 0], size: 0.5 }, // 손잡이 고리
+  ],
+  edges: [
+    [1, 3],
+    [3, 2],
+    [4, 3],
+    [3, 5],
+    [5, 6],
+    [4, 13],
+    [6, 7],
+    [7, 8],
+    [8, 10],
+    [10, 11],
+    [7, 9],
+    [9, 12],
+  ],
+};
+
+/** 이사야 = 날개 치며 오르는 독수리(40:31). 위로 비상하는 몸통과 크게 편 두 날개(한쪽 +z 선회). */
+export const ISAIAH_CONSTELLATION: ConstellationConfig = {
+  bookNo: 23,
+  bookName: "이사야",
+  symbol: Bird,
+  symbolLabel: "비상하는 독수리",
+  phrase: {
+    ref: "이사야 40:31",
+    text: "오직 여호와를 앙망하는 자는 새 힘을 얻으리니 독수리가 날개치며 올라감 같을 것이요",
+  },
+  anchors: [
+    { index: 1, pos: [0, -1.9, 0], size: 0.65 }, // 꼬리
+    { index: 2, pos: [0, -1.0, 0.05], size: 0.7 }, // 몸통
+    { index: 3, pos: [0, -0.1, 0.1], size: 0.75 }, // 가슴
+    { index: 4, pos: [0.15, 0.7, 0.15], size: 0.7 }, // 머리
+    { index: 5, pos: [0.35, 1.0, 0.15], size: 0.5 }, // 부리
+    { index: 6, pos: [-0.5, 0.3, 0], size: 0.65 }, // 좌 날개 죽지 (-z 젖힘)
+    { index: 7, pos: [-1.0, 0.8, -0.15], size: 0.6 },
+    { index: 8, pos: [-1.2, 1.4, -0.25], size: 0.65 }, // 좌 끝깃
+    { index: 9, pos: [-0.85, 1.5, -0.2], size: 0.5 },
+    { index: 10, pos: [0.55, 0.35, 0.2], size: 0.65 }, // 우 날개 죽지 (+z)
+    { index: 11, pos: [1.0, 0.9, 0.35], size: 0.6 },
+    { index: 12, pos: [1.15, 1.5, 0.45], size: 0.65 }, // 우 끝깃
+    { index: 13, pos: [0.8, 1.6, 0.4], size: 0.5 },
+    { index: 14, pos: [-0.3, -2.2, 0], size: 0.5 }, // 꼬리깃
+    { index: 15, pos: [0.3, -2.25, 0], size: 0.5 },
+  ],
+  edges: [
+    [1, 2],
+    [2, 3],
+    [3, 4],
+    [4, 5],
+    [3, 6],
+    [6, 7],
+    [7, 8],
+    [8, 9],
+    [3, 10],
+    [10, 11],
+    [11, 12],
+    [12, 13],
+    [1, 14],
+    [1, 15],
+  ],
+};
+
+/** 예레미야 = 토기장이의 물레(18장). 도는 원반 위에 빚어지는(한쪽이 일그러진) 그릇과 토기장이의 손(+z). */
+export const JEREMIAH_CONSTELLATION: ConstellationConfig = {
+  bookNo: 24,
+  bookName: "예레미야",
+  symbol: Amphora,
+  symbolLabel: "토기장이의 물레",
+  phrase: {
+    ref: "예레미야 29:11",
+    text: "너희를 향한 나의 생각을 내가 아나니 평안이요 재앙이 아니니라 너희에게 미래와 희망을 주는 것이니라",
+  },
+  anchors: [
+    { index: 1, pos: [-0.9, -1.6, 0], size: 0.6 }, // 물레 원반
+    { index: 2, pos: [0, -1.9, 0.1], size: 0.65 },
+    { index: 3, pos: [0.9, -1.6, 0], size: 0.6 },
+    { index: 4, pos: [0, -1.3, 0.05], size: 0.55 }, // 원반 뒤
+    { index: 5, pos: [-0.45, -1.0, 0.05], size: 0.55 }, // 그릇 바닥
+    { index: 6, pos: [0.45, -1.0, 0.05], size: 0.55 },
+    { index: 7, pos: [-0.6, -0.2, 0.05], size: 0.6 }, // 그릇 몸통
+    { index: 8, pos: [0.6, -0.15, 0.05], size: 0.6 },
+    { index: 9, pos: [-0.3, 0.5, 0.05], size: 0.55 }, // 목
+    { index: 10, pos: [0.5, 0.6, 0.1], size: 0.6 }, // 일그러진 쪽
+    { index: 11, pos: [0.05, 0.9, 0.1], size: 0.6 }, // 입구
+    { index: 12, pos: [0.8, 0.15, 0.35], size: 0.65 }, // 토기장이의 손 (+z)
+    { index: 13, pos: [-0.75, 0.3, 0.3], size: 0.6 },
+    { index: 14, pos: [0, 1.8, 0.2], size: 0.75 }, // 새로 지으시는 소망의 별
+  ],
+  edges: [
+    [1, 2],
+    [2, 3],
+    [3, 4],
+    [4, 1],
+    [5, 6],
+    [5, 7],
+    [6, 8],
+    [7, 9],
+    [8, 10],
+    [9, 11],
+    [10, 11],
+    [11, 14],
+  ],
+};
+
+/** 에스겔 = 바퀴 안의 바퀴(1장). 직교하며 맞물린 두 원환 — 회전 시 가장 극적인 3D. */
+export const EZEKIEL_CONSTELLATION: ConstellationConfig = {
+  bookNo: 26,
+  bookName: "에스겔",
+  symbol: Orbit,
+  symbolLabel: "바퀴 안의 바퀴",
+  phrase: {
+    ref: "에스겔 36:26",
+    text: "새 영을 너희 속에 두고 새 마음을 너희에게 주되",
+  },
+  anchors: [
+    { index: 1, pos: [0, 1.6, 0], size: 0.7 }, // 정면 원환 (z=0)
+    { index: 2, pos: [0.81, 1.13, 0], size: 0.55 },
+    { index: 3, pos: [1.15, 0, 0], size: 0.7 },
+    { index: 4, pos: [0.81, -1.13, 0], size: 0.55 },
+    { index: 5, pos: [0, -1.6, 0], size: 0.7 },
+    { index: 6, pos: [-0.81, -1.13, 0], size: 0.55 },
+    { index: 7, pos: [-1.15, 0, 0], size: 0.7 },
+    { index: 8, pos: [-0.81, 1.13, 0], size: 0.55 },
+    { index: 9, pos: [0, 1.13, 0.64], size: 0.55 }, // 직교 원환 (yz 평면)
+    { index: 10, pos: [0, 0, 0.9], size: 0.7 },
+    { index: 11, pos: [0, -1.13, 0.64], size: 0.55 },
+    { index: 12, pos: [0, -1.13, -0.64], size: 0.55 },
+    { index: 13, pos: [0, 0, -0.9], size: 0.7 },
+    { index: 14, pos: [0, 1.13, -0.64], size: 0.55 },
+    { index: 15, pos: [0.6, 0.6, 0.5], size: 0.45 }, // 둘레의 눈
+    { index: 16, pos: [-0.55, -0.65, -0.45], size: 0.45 },
+  ],
+  edges: [
+    [1, 2],
+    [2, 3],
+    [3, 4],
+    [4, 5],
+    [5, 6],
+    [6, 7],
+    [7, 8],
+    [8, 1],
+    [1, 9],
+    [9, 10],
+    [10, 11],
+    [11, 5],
+    [5, 12],
+    [12, 13],
+    [13, 14],
+    [14, 1],
+  ],
+};
+
+/** 마태복음 = 동방의 별(2:2). 긴 꼬리 광선이 베들레헴 지붕까지 내려오고, 동방박사 별 셋이 따라온다(+z). */
+export const MATTHEW_CONSTELLATION: ConstellationConfig = {
+  bookNo: 40,
+  bookName: "마태복음",
+  symbol: Star,
+  symbolLabel: "동방의 별",
+  phrase: {
+    ref: "마태복음 11:28",
+    text: "수고하고 무거운 짐 진 자들아 다 내게로 오라 내가 너희를 쉬게 하리라",
+  },
+  anchors: [
+    { index: 1, pos: [0, 1.7, 0.2], size: 1.0 }, // 큰 별
+    { index: 2, pos: [-0.6, 1.7, 0.15], size: 0.5 }, // 십자 광선
+    { index: 3, pos: [0.6, 1.7, 0.15], size: 0.5 },
+    { index: 4, pos: [0, 2.3, 0.2], size: 0.55 },
+    { index: 5, pos: [0.15, 1.0, 0.15], size: 0.5 }, // 긴 꼬리 광선
+    { index: 6, pos: [0.3, 0.2, 0.1], size: 0.5 },
+    { index: 7, pos: [0.45, -0.6, 0.05], size: 0.5 },
+    { index: 8, pos: [0.6, -1.4, 0], size: 0.55 },
+    { index: 9, pos: [-0.9, -1.3, 0.3], size: 0.6 }, // 동방박사 별 (+z)
+    { index: 10, pos: [-0.55, -1.6, 0.35], size: 0.55 },
+    { index: 11, pos: [-0.15, -1.85, 0.4], size: 0.5 },
+    { index: 12, pos: [0.35, -1.9, 0], size: 0.55 }, // 베들레헴 지붕
+    { index: 13, pos: [0.85, -1.75, 0], size: 0.55 },
+    { index: 14, pos: [1.1, -2.1, 0], size: 0.45 },
+  ],
+  edges: [
+    [1, 2],
+    [1, 3],
+    [1, 4],
+    [1, 5],
+    [5, 6],
+    [6, 7],
+    [7, 8],
+    [9, 10],
+    [10, 11],
+    [12, 13],
+    [13, 14],
+    [8, 13],
+  ],
+};
+
+/** 사도행전 = 땅끝으로 퍼지는 빛(1:8). 예루살렘 한 점에서 위로 부챗살처럼 퍼지는 다섯 빛줄기. */
+export const ACTS_CONSTELLATION: ConstellationConfig = {
+  bookNo: 44,
+  bookName: "사도행전",
+  symbol: Globe,
+  symbolLabel: "땅끝으로 퍼지는 빛",
+  phrase: {
+    ref: "사도행전 1:8",
+    text: "오직 성령이 너희에게 임하시면 너희가 권능을 받고 땅 끝까지 이르러 내 증인이 되리라",
+  },
+  anchors: [
+    { index: 1, pos: [0, -2.1, 0.1], size: 0.85 }, // 예루살렘
+    { index: 2, pos: [-0.9, -1.0, 0], size: 0.5 }, // 부챗살 (좌외)
+    { index: 3, pos: [-1.15, 0.3, -0.1], size: 0.65 },
+    { index: 4, pos: [-0.45, -0.8, 0.1], size: 0.5 }, // 좌중
+    { index: 5, pos: [-0.6, 0.9, 0.15], size: 0.65 },
+    { index: 6, pos: [0, -0.7, 0.2], size: 0.55 }, // 중앙
+    { index: 7, pos: [0, 1.3, 0.3], size: 0.75 },
+    { index: 8, pos: [0.45, -0.8, 0.1], size: 0.5 }, // 우중
+    { index: 9, pos: [0.6, 0.9, 0.15], size: 0.65 },
+    { index: 10, pos: [0.9, -1.0, 0], size: 0.5 }, // 우외
+    { index: 11, pos: [1.15, 0.3, -0.1], size: 0.65 },
+    { index: 12, pos: [0, -1.5, 0.25], size: 0.6 }, // 성령의 불
+    { index: 13, pos: [0.15, 2.1, 0.25], size: 0.5 }, // 땅끝 별
+    { index: 14, pos: [-0.85, 1.6, 0.1], size: 0.45 },
+    { index: 15, pos: [0.95, 1.5, 0.1], size: 0.45 },
+  ],
+  edges: [
+    [1, 2],
+    [2, 3],
+    [1, 4],
+    [4, 5],
+    [1, 6],
+    [6, 7],
+    [1, 8],
+    [8, 9],
+    [1, 10],
+    [10, 11],
+    [1, 12],
+    [7, 13],
+    [5, 14],
+    [9, 15],
+  ],
+};
+
+/** bookNo → 별자리 config (정경 순서). 66권 전체. */
 export const CONSTELLATIONS: Record<number, ConstellationConfig> = {
+  1: GENESIS_CONSTELLATION,
+  2: EXODUS_CONSTELLATION,
+  3: LEVITICUS_CONSTELLATION,
+  4: NUMBERS_CONSTELLATION,
+  5: DEUTERONOMY_CONSTELLATION,
   6: JOSHUA_CONSTELLATION,
   7: JUDGES_CONSTELLATION,
   8: RUTH_CONSTELLATION,
+  9: SAMUEL1_CONSTELLATION,
   10: SAMUEL2_CONSTELLATION,
   11: KINGS1_CONSTELLATION,
+  12: KINGS2_CONSTELLATION,
+  13: CHRONICLES1_CONSTELLATION,
+  14: CHRONICLES2_CONSTELLATION,
   15: EZRA_CONSTELLATION,
   16: NEHEMIAH_CONSTELLATION,
   17: ESTHER_CONSTELLATION,
+  18: JOB_CONSTELLATION,
+  19: PSALMS_CONSTELLATION,
+  20: PROVERBS_CONSTELLATION,
   21: ECCLESIASTES_CONSTELLATION,
   22: SONG_CONSTELLATION,
+  23: ISAIAH_CONSTELLATION,
+  24: JEREMIAH_CONSTELLATION,
   25: LAMENTATIONS_CONSTELLATION,
+  26: EZEKIEL_CONSTELLATION,
   27: DANIEL_CONSTELLATION,
   28: HOSEA_CONSTELLATION,
   29: JOEL_CONSTELLATION,
@@ -2146,9 +2907,11 @@ export const CONSTELLATIONS: Record<number, ConstellationConfig> = {
   37: HAGGAI_CONSTELLATION,
   38: ZECHARIAH_CONSTELLATION,
   39: MALACHI_CONSTELLATION,
+  40: MATTHEW_CONSTELLATION,
   41: MARK_CONSTELLATION,
   42: LUKE_CONSTELLATION,
   43: JOHN_CONSTELLATION,
+  44: ACTS_CONSTELLATION,
   45: ROMANS_CONSTELLATION,
   46: CORINTHIANS1_CONSTELLATION,
   47: CORINTHIANS2_CONSTELLATION,

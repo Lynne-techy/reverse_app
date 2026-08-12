@@ -17,10 +17,14 @@ import NightSkyFallback from "./NightSkyFallback";
 // three.js를 끌어오는 유일한 지점 — 밤하늘을 열 때만 청크를 받는다.
 const NightSkyScene = lazy(() => import("./NightSkyScene"));
 
-/** 별자리가 준비된 경전 — 4곳 이하면 이름 나열, 많아지면 개수로 요약. */
+/** 별자리가 준비된 경전 — 전부면 "모든 경전", 4곳 이하면 이름 나열, 그 사이는 개수 요약. */
 const READY_BOOKS = Object.values(CONSTELLATIONS).map((c) => c.bookName);
 const READY_BOOK_NAMES =
-  READY_BOOKS.length <= 4 ? READY_BOOKS.join(", ") : `${READY_BOOKS.length}개 경전`;
+  READY_BOOKS.length >= 66
+    ? "모든 경전"
+    : READY_BOOKS.length <= 4
+      ? READY_BOOKS.join(", ")
+      : `${READY_BOOKS.length}개 경전`;
 
 /** 첫 화면에 보여줄 경전 = 별자리가 준비된 경전 중 정경 순서가 가장 빠른 것. */
 const DEFAULT_BOOK_NO = Math.min(...Object.keys(CONSTELLATIONS).map(Number));

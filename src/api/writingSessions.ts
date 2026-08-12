@@ -22,9 +22,38 @@ export function getRecentWritingRecords() {
   return apiRequest<WritingRecord[]>("/writing-sessions?limit=5&offset=0");
 }
 
-/** 필사 기록 한 페이지 조회 (limit/offset 페이징). 밤하늘 진행도 집계 등에서 재사용. */
+/** 필사 기록 한 페이지 조회 (limit/offset 페이징). */
 export function getWritingRecordsPage(limit: number, offset: number, signal?: AbortSignal) {
   return apiRequest<WritingRecord[]>(`/writing-sessions?limit=${limit}&offset=${offset}`, {
+    signal,
+  });
+}
+
+// ───────── 경전 단위 필사 진행도 (밤하늘 별자리) ─────────
+
+export interface BookChapterCoverage {
+  chapter: number;
+  /** 병합된 [시작 절, 끝 절] 목록 (오름차순, 서로 겹치지 않음). */
+  ranges: [number, number][];
+}
+
+/** GET /writing-sessions/book-progress 응답 — 앵커-구간 진행도 계산 입력. */
+export interface BookProgressResponse {
+  bookNo: number;
+  /** 장별 절 수. index 0 = 1장. */
+  chapterVerseCounts: number[];
+  /** 통과(passed=true)한 내 필사 범위(장별 병합). 없는 장은 항목 자체가 없다. */
+  covered: BookChapterCoverage[];
+}
+
+/**
+ * 경전 단위 필사 진행도 조회. 장별 절 수 + 필사 범위를 요청 1회로 받는다
+ * (시편 150장도 본문 없이 가볍게) — useBookProgress가 소비한다.
+ */
+export function getBookProgress(book: number, signal?: AbortSignal) {
+  const query = new URLSearchParams({ book: String(book) });
+
+  return apiRequest<BookProgressResponse>(`/writing-sessions/book-progress?${query.toString()}`, {
     signal,
   });
 }
