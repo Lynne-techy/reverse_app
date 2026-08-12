@@ -491,7 +491,7 @@ export const JOHN2_CONSTELLATION: ConstellationConfig = {
   symbolLabel: "진리의 발자국",
   phrase: {
     ref: "요한이서 1:6",
-    text: "사랑은 우리가 그 계명을 따라 행하는 것이요",
+    text: "사랑은 이것이니 우리가 그 계명을 따라 행하는 것이요",
   },
   anchors: [
     { index: 1, pos: [-0.45, -2.1, 0], size: 0.7 }, // 첫걸음 뒤꿈치 (좌)
@@ -533,7 +533,7 @@ export const JUDE_CONSTELLATION: ConstellationConfig = {
   symbolLabel: "붙드시는 손",
   phrase: {
     ref: "유다서 1:24",
-    text: "능히 너희를 보호하사 거침이 없게 하시고 그 영광 앞에 흠이 없이 기쁨으로 서게 하실 이",
+    text: "능히 너희를 보호하사 거침이 없게 하시고 너희로 그 영광 앞에 흠이 없이 기쁨으로 서게 하실 이",
   },
   anchors: [
     { index: 1, pos: [-0.8, -1.2, 0.2], size: 0.7 }, // 손바닥 호 좌
@@ -892,7 +892,7 @@ export const EPHESIANS_CONSTELLATION: ConstellationConfig = {
   symbolLabel: "전신 갑주",
   phrase: {
     ref: "에베소서 2:8",
-    text: "너희는 그 은혜에 의하여 믿음으로 말미암아 구원을 받았으니 하나님의 선물이라",
+    text: "너희는 그 은혜에 의하여 믿음으로 말미암아 구원을 받았으니 이것은 너희에게서 난 것이 아니요 하나님의 선물이라",
   },
   anchors: [
     { index: 1, pos: [0, 2.1, 0], size: 0.75 }, // 구원의 투구
@@ -1164,7 +1164,7 @@ export const TITUS_CONSTELLATION: ConstellationConfig = {
   symbolLabel: "씻는 샘",
   phrase: {
     ref: "디도서 3:5",
-    text: "오직 그의 긍휼하심을 따라 중생의 씻음과 성령의 새롭게 하심으로 우리를 구원하셨나니",
+    text: "오직 그의 긍휼하심을 따라 중생의 씻음과 성령의 새롭게 하심으로 하셨나니",
   },
   anchors: [
     { index: 1, pos: [-0.7, -1.6, 0.1], size: 0.65 }, // 수반
@@ -1284,7 +1284,7 @@ export const PETER2_CONSTELLATION: ConstellationConfig = {
   symbolLabel: "샛별",
   phrase: {
     ref: "베드로후서 1:19",
-    text: "날이 새어 샛별이 너희 마음에 떠오르기까지 주의하는 것이 옳으니라",
+    text: "날이 새어 샛별이 너희 마음에 떠오르기까지 너희가 이것을 주의하는 것이 옳으니라",
   },
   anchors: [
     { index: 1, pos: [-1.1, -1.3, 0], size: 0.6 }, // 어스름 지평선
@@ -1360,7 +1360,7 @@ export const JOSHUA_CONSTELLATION: ConstellationConfig = {
   symbolLabel: "양각 나팔",
   phrase: {
     ref: "여호수아 1:9",
-    text: "강하고 담대하라 네가 어디로 가든지 네 하나님 여호와가 너와 함께 하느니라",
+    text: "강하고 담대하라 두려워하지 말며 놀라지 말라 네가 어디로 가든지 네 하나님 여호와가 너와 함께 하느니라",
   },
   anchors: [
     { index: 1, pos: [-0.6, -2.2, 0], size: 0.7 }, // 취구
@@ -1526,7 +1526,7 @@ export const EZRA_CONSTELLATION: ConstellationConfig = {
   symbolLabel: "성전 기초",
   phrase: {
     ref: "에스라 7:10",
-    text: "에스라가 여호와의 율법을 연구하여 준행하며 이스라엘에게 가르치기로 결심하였었더라",
+    text: "에스라가 여호와의 율법을 연구하여 준행하며 율례와 규례를 이스라엘에게 가르치기로 결심하였었더라",
   },
   anchors: [
     { index: 1, pos: [-1.0, -1.9, 0], size: 0.7 }, // 기초석 줄
@@ -1813,7 +1813,7 @@ export const MARK_CONSTELLATION: ConstellationConfig = {
   symbolLabel: "풍랑 위의 배",
   phrase: {
     ref: "마가복음 10:45",
-    text: "인자가 온 것은 섬김을 받으려 함이 아니라 도리어 섬기려 하고 자기 목숨을 대속물로 주려 함이니라",
+    text: "인자가 온 것은 섬김을 받으려 함이 아니라 도리어 섬기려 하고 자기 목숨을 많은 사람의 대속물로 주려 함이니라",
   },
   anchors: [
     { index: 1, pos: [-1.15, -1.5, 0], size: 0.6 }, // 파도
@@ -2474,7 +2474,7 @@ export const CHRONICLES2_CONSTELLATION: ConstellationConfig = {
   symbolLabel: "영광의 구름",
   phrase: {
     ref: "역대하 7:14",
-    text: "스스로 낮추고 기도하여 내 얼굴을 찾으면 내가 하늘에서 듣고 그들의 땅을 고칠지라",
+    text: "스스로 낮추고 기도하여 내 얼굴을 찾으면 내가 하늘에서 듣고 그들의 죄를 사하고 그들의 땅을 고칠지라",
   },
   anchors: [
     { index: 1, pos: [-0.7, -2.1, 0], size: 0.6 }, // 성전 실루엣
@@ -2829,7 +2829,7 @@ export const ACTS_CONSTELLATION: ConstellationConfig = {
   symbolLabel: "땅끝으로 퍼지는 빛",
   phrase: {
     ref: "사도행전 1:8",
-    text: "오직 성령이 너희에게 임하시면 너희가 권능을 받고 땅 끝까지 이르러 내 증인이 되리라",
+    text: "오직 성령이 너희에게 임하시면 너희가 권능을 받고 예루살렘과 온 유대와 사마리아와 땅 끝까지 이르러 내 증인이 되리라",
   },
   anchors: [
     { index: 1, pos: [0, -2.1, 0.1], size: 0.85 }, // 예루살렘
