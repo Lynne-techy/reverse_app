@@ -11,7 +11,7 @@
 // 2) 대표 문구(phrase)와 심볼 아이콘(symbol)을 정한다.
 // 3) edges로 앵커를 이어 미완성 상태에서도 형태가 읽히게 한다.
 
-import { DoorOpen } from "lucide-react";
+import { DoorOpen, Fish } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 /** 별자리의 한 꼭지점(= 경전의 한 구간). pos는 3D 좌표(약간의 z로 회전 시 깊이감). */
@@ -93,8 +93,65 @@ export const JOHN3_CONSTELLATION: ConstellationConfig = {
   ],
 };
 
-/** bookNo → 별자리 config. 파일럿은 요한삼서(64)만. */
+/**
+ * 요나 = 큰 물고기 별자리. 깊은 바다로 머리부터 뛰어드는 모습(1:17 "여호와께서 이미
+ * 큰 물고기를 예비하사 요나를 삼키게 하셨으므로") — 코가 아래, 꼬리지느러미가 위로 펼쳐진다.
+ * 다장 경전(4장 48절) 첫 사례: 앵커 14개가 경전 전체를 균등 분할한 구간을 대표한다.
+ * 가슴지느러미(+z)와 살짝 뒤로 젖힌 꼬리(-z)로 회전 시 깊이감이 드러난다.
+ * 앵커 순서는 필사 진행 순서(코=삼켜짐 → 몸통 → 꼬리 → 반대편 몸통 → 눈·지느러미)와 일치.
+ */
+export const JONAH_CONSTELLATION: ConstellationConfig = {
+  bookNo: 32,
+  bookName: "요나",
+  symbol: Fish,
+  symbolLabel: "큰 물고기",
+  phrase: {
+    ref: "요나 2:9",
+    text: "구원은 여호와께 속하였나이다",
+  },
+  anchors: [
+    // 몸통 외곽 — 코(아래)에서 오른쪽으로 올라가 꼬리로, 왼쪽으로 내려와 닫는 유선형
+    { index: 1, pos: [0, -2.3, 0], size: 0.9 }, // 코 (다이빙 머리)
+    { index: 2, pos: [0.85, -1.4, 0], size: 0.75 }, // 우하 몸통
+    { index: 3, pos: [1.0, -0.25, 0], size: 0.8 }, // 우중 몸통 (가장 불룩한 곳)
+    { index: 4, pos: [0.65, 0.85, 0], size: 0.75 }, // 우상 몸통
+    { index: 5, pos: [0.3, 1.45, 0.15], size: 0.7 }, // 꼬리 연결부 우
+    { index: 6, pos: [1.0, 2.25, -0.35], size: 0.85 }, // 꼬리지느러미 우측 끝 (살짝 뒤로)
+    { index: 7, pos: [0, 1.75, -0.15], size: 0.6 }, // 꼬리 갈라짐(노치)
+    { index: 8, pos: [-1.0, 2.25, -0.35], size: 0.85 }, // 꼬리지느러미 좌측 끝 (살짝 뒤로)
+    { index: 9, pos: [-0.3, 1.45, 0.15], size: 0.7 }, // 꼬리 연결부 좌
+    { index: 10, pos: [-0.65, 0.85, 0], size: 0.75 }, // 좌상 몸통
+    { index: 11, pos: [-1.0, -0.25, 0], size: 0.8 }, // 좌중 몸통
+    { index: 12, pos: [-0.85, -1.4, 0], size: 0.75 }, // 좌하 몸통
+    { index: 13, pos: [0.4, -1.55, 0.3], size: 0.55 }, // 눈
+    { index: 14, pos: [0.45, -0.55, 0.85], size: 0.6 }, // 가슴지느러미 (+z, 앞으로)
+  ],
+  edges: [
+    // 몸통 외곽 (꼬리 연결부에서 5-9로 가로질러 닫는다)
+    [1, 2],
+    [2, 3],
+    [3, 4],
+    [4, 5],
+    [5, 9],
+    [9, 10],
+    [10, 11],
+    [11, 12],
+    [12, 1],
+    // 꼬리지느러미 (연결부 → 끝 → 노치 → 끝 → 연결부)
+    [5, 6],
+    [6, 7],
+    [7, 8],
+    [8, 9],
+    // 눈 (코에서)
+    [1, 13],
+    // 가슴지느러미 (우중 몸통에서 앞으로)
+    [3, 14],
+  ],
+};
+
+/** bookNo → 별자리 config. 준비된 경전: 요나(32), 요한삼서(64). */
 export const CONSTELLATIONS: Record<number, ConstellationConfig> = {
+  32: JONAH_CONSTELLATION,
   64: JOHN3_CONSTELLATION,
 };
 
