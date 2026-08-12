@@ -11,7 +11,6 @@ import * as THREE from "three";
 
 import { EMOTION_STAR_COLORS, type EmotionCode } from "../../../../data/emotions";
 import type { ConstellationConfig, AnchorNode } from "../constellations";
-import { genreGlow } from "../themes";
 
 /**
  * 방사형 그라디언트 소프트 글로우 텍스처(별 글로우·파티클 공용). 한 번만 만들어 캐시.
@@ -56,6 +55,13 @@ function makeCluster(size: number, count = 30): Float32Array {
 
 const UNLIT_COLOR = new THREE.Color("#6274a8");
 const LIT_COLOR = new THREE.Color("#fffdf5");
+
+/**
+ * 일반 별의 글로우 — 촛불 같은 은은한 별빛 하나로 통일한다.
+ * 색은 오직 "구절의 감정"(보석 별)만 말하게 해서 색 언어를 감정 단일 축으로 유지한다
+ * (과거 장르별 틴트는 감정색과 두 축이 겹쳐 혼란스럽다는 피드백으로 제거).
+ */
+const BASE_GLOW = "#f4ecdc";
 
 function Star({
   node,
@@ -173,8 +179,6 @@ export default function ConstellationStars({
 }: ConstellationStarsProps) {
   const anchorByIndex = useMemo(() => new Map(config.anchors.map((a) => [a.index, a])), [config]);
 
-  const baseGlow = genreGlow(config.bookNo);
-
   const fractionOf = (index: number) => fractions[index - 1] ?? 0;
   const emotionOf = (index: number) => emotions[index - 1] ?? null;
 
@@ -205,7 +209,7 @@ export default function ConstellationStars({
             key={a.index}
             node={a}
             fraction={fractionOf(a.index)}
-            glowColor={emotion ? EMOTION_STAR_COLORS[emotion] : baseGlow}
+            glowColor={emotion ? EMOTION_STAR_COLORS[emotion] : BASE_GLOW}
             jewel={emotion !== null}
             reducedMotion={reducedMotion}
           />

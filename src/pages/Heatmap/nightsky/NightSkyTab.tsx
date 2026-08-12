@@ -10,7 +10,6 @@ import { bookName } from "../../../data/books";
 import { EMOTIONS } from "../../../data/emotions";
 import { BookCombobox } from "../../Pilsa/steps/BookCombobox";
 import { CONSTELLATIONS, getConstellation, type ConstellationConfig } from "./constellations";
-import { genreTheme } from "./themes";
 import { isWebGLAvailable } from "./webglSupport";
 import { useBookProgress } from "./useBookProgress";
 import SceneErrorBoundary from "./SceneErrorBoundary";
@@ -70,7 +69,6 @@ function ConstellationView({
   const webglOk = useMemo(() => isWebGLAvailable(), []);
 
   const SymbolIcon = config.symbol;
-  const genre = genreTheme(config.bookNo);
 
   // 이 경전의 보석 별에 실제로 등장하는 감정만 색 범례로 보여준다 (EMOTIONS 순서 유지).
   const presentEmotions = useMemo(
@@ -92,19 +90,10 @@ function ConstellationView({
     <div className="flex flex-col gap-3">
       {/* 범례 + 미리보기(데모) 토글 */}
       <div className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-white px-4 py-3">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-body">
+        <div className="flex items-center gap-2 text-sm text-body">
           <SymbolIcon size={20} className="flex-none text-brand" aria-hidden="true" />
           <span>
             <b className="text-ink">{config.symbolLabel}</b> · 필사한 만큼 별이 켜져요
-          </span>
-          {/* 장르 톤 — 이 경전의 별빛이 왜 이 색인지 알려준다. */}
-          <span className="inline-flex items-center gap-1.5 text-xs text-sub">
-            <span
-              aria-hidden="true"
-              className="inline-block h-2.5 w-2.5 rounded-full"
-              style={{ backgroundColor: genre.glow, boxShadow: `0 0 6px ${genre.glow}` }}
-            />
-            {genre.name} 톤
           </span>
         </div>
 
