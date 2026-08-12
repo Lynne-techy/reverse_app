@@ -69,3 +69,26 @@ export function computeAnchorProgress(
 
   return { fractions, coveredCount, totalVerses };
 }
+
+/**
+ * (chapter, verseNo)가 속한 앵커 번호(1..N). 경계에 걸친 절은 시작점 기준으로 배정한다.
+ * 장·절이 범위를 벗어나거나 절 수를 아직 모르면 null. 감정 "보석 별" 색 배정 등에 쓴다.
+ */
+export function anchorIndexFor(
+  anchorCount: number,
+  chapterVerseCounts: readonly number[],
+  chapter: number,
+  verseNo: number,
+): number | null {
+  const totalVerses = chapterVerseCounts.reduce((sum, n) => sum + n, 0);
+  if (anchorCount === 0 || totalVerses === 0) return null;
+  if (chapter < 1 || chapter > chapterVerseCounts.length) return null;
+  if (verseNo < 1 || verseNo > chapterVerseCounts[chapter - 1]) return null;
+
+  let chapterOffset = 0;
+  for (let c = 0; c < chapter - 1; c++) chapterOffset += chapterVerseCounts[c];
+
+  const g = chapterOffset + (verseNo - 1);
+  const segmentLength = totalVerses / anchorCount;
+  return Math.min(anchorCount - 1, Math.floor(g / segmentLength)) + 1;
+}

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 
+import type { EmotionCode } from "../../../data/emotions";
 import type { ConstellationConfig } from "./constellations";
 import Nebula from "./scene/Nebula";
 import ConstellationStars from "./scene/ConstellationStars";
@@ -26,6 +27,8 @@ interface NightSkySceneProps {
   config: ConstellationConfig;
   /** 앵커별 채움 정도(0~1). index 0 = 앵커 1 (useBookProgress.anchorFractions). */
   anchorFractions: number[];
+  /** 앵커별 보석 별 감정색 코드(없으면 null) — useBookProgress.anchorEmotions. */
+  anchorEmotions: (EmotionCode | null)[];
   /** 필사한 절 수 / 경전 전체 절 수 — 스크린리더 라벨용. */
   coveredCount: number;
   totalVerses: number;
@@ -34,6 +37,7 @@ interface NightSkySceneProps {
 export default function NightSkyScene({
   config,
   anchorFractions,
+  anchorEmotions,
   coveredCount,
   totalVerses,
 }: NightSkySceneProps) {
@@ -54,6 +58,7 @@ export default function NightSkyScene({
         <ConstellationStars
           config={config}
           fractions={anchorFractions}
+          emotions={anchorEmotions}
           reducedMotion={reducedMotion}
         />
         <OrbitControls

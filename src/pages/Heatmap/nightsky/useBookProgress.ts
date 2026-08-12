@@ -10,10 +10,12 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 
+import { getVerseEmotions } from "../../../api/verseEmotions";
 import { getVersesInRange } from "../../../api/verses";
 import { getWritingRecordsPage } from "../../../api/writingSessions";
 import { chapterCount } from "../../../data/bibleChapters";
-import { computeAnchorProgress } from "./anchorProgress";
+import type { EmotionCode } from "../../../data/emotions";
+import { anchorIndexFor, computeAnchorProgress } from "./anchorProgress";
 
 const PAGE_SIZE = 50;
 const MAX_VERSES_PER_CHAPTER = 200; // 개역개정 최다 절 = 시편 119편 176절 → 여유 있게 200
@@ -66,6 +68,11 @@ async function fetchCoveredByChapter(
 export interface BookProgress {
   /** 앵커별 채움 정도(0~1). index 0 = 앵커 1. 로딩 전엔 전부 0. */
   anchorFractions: number[];
+  /**
+   * 앵커별 "보석 별" 감정색 코드(index 0 = 앵커 1). 감정이 큐레이션된 절이 든 앵커만 값이 있고
+   * 나머지는 null. 한 앵커에 여러 태그가 겹치면 절 순서가 빠른 태그가 이긴다.
+   */
+  anchorEmotions: (EmotionCode | null)[];
   /** 필사한 절 수(경전 전체). */
   coveredCount: number;
   /** 경전 전체 절 수(로딩 전 0). */
@@ -89,8 +96,17 @@ export function useBookProgress(bookNo: number, anchorCount: number, demo: boole
     enabled: !demo,
   });
 
+  // 감정 보석 별은 순수 장식 레이어 — 실패해도 밤하늘 전체를 막지 않도록 빈 배열로 삼킨다
+  // (백엔드가 아직 이 엔드포인트를 배포하지 않았을 때도 그냥 무채색으로 동작).
+  const emotionsQuery = useQuery({
+    queryKey: ["nightsky", "verseEmotions", bookNo],
+    queryFn: ({ signal }) => getVerseEmotions(bookNo, signal).catch(() => []),
+    staleTime: 24 * 60 * 60_000,
+  });
+
   const chapterVerseCounts = countsQuery.data;
   const coveredData = progressQuery.data;
+  const emotionTags = emotionsQuery.data;
 
   const { fractions, coveredCount, totalVerses } = useMemo(() => {
     const counts = chapterVerseCounts ?? [];
@@ -106,8 +122,25 @@ export function useBookProgress(bookNo: number, anchorCount: number, demo: boole
     return computeAnchorProgress(anchorCount, counts, coveredByChapter);
   }, [demo, anchorCount, chapterVerseCounts, coveredData]);
 
+  // 감정 태그 → 앵커 배정. 절 순서가 빠른 태그가 먼저 자리를 잡는다.
+  const anchorEmotions = useMemo(() => {
+    const result: (EmotionCode | null)[] = new Array<EmotionCode | null>(anchorCount).fill(null);
+    const counts = chapterVerseCounts ?? [];
+    if (!emotionTags || counts.length === 0) return result;
+
+    const sorted = [...emotionTags].sort((a, b) => a.chapter - b.chapter || a.verseNo - b.verseNo);
+    for (const tag of sorted) {
+      const index = anchorIndexFor(anchorCount, counts, tag.chapter, tag.verseNo);
+      if (index !== null && result[index - 1] === null) {
+        result[index - 1] = tag.emotion;
+      }
+    }
+    return result;
+  }, [anchorCount, chapterVerseCounts, emotionTags]);
+
   return {
     anchorFractions: fractions,
+    anchorEmotions,
     coveredCount,
     totalVerses,
     isLoading: countsQuery.isLoading || (!demo && progressQuery.isLoading),

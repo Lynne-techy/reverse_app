@@ -59,14 +59,16 @@ function ConstellationView({
   demo: boolean;
   setDemo: (updater: (prev: boolean) => boolean) => void;
 }) {
-  const { anchorFractions, coveredCount, totalVerses, isLoading, isError } = useBookProgress(
-    config.bookNo,
-    config.anchors.length,
-    demo,
-  );
+  const { anchorFractions, anchorEmotions, coveredCount, totalVerses, isLoading, isError } =
+    useBookProgress(config.bookNo, config.anchors.length, demo);
   const webglOk = useMemo(() => isWebGLAvailable(), []);
 
   const SymbolIcon = config.symbol;
+
+  const jewelCount = useMemo(
+    () => anchorEmotions.filter((emotion) => emotion !== null).length,
+    [anchorEmotions],
+  );
 
   const percent = totalVerses > 0 ? Math.round((coveredCount / totalVerses) * 100) : 0;
 
@@ -103,6 +105,13 @@ function ConstellationView({
 
       <p className="px-1 text-sm text-sub">{progressLabel}</p>
 
+      {/* 보석 별 안내 — 감정이 큐레이션된 절이 든 경전에서만 보인다. */}
+      {jewelCount > 0 && (
+        <p className="px-1 text-xs text-sub">
+          이 경전엔 감정이 담긴 절이 있어요 — 그 절이 든 별 {jewelCount}개는 감정의 빛깔로 빛나요.
+        </p>
+      )}
+
       {webglOk ? (
         <SceneErrorBoundary
           fallback={
@@ -117,6 +126,7 @@ function ConstellationView({
             <NightSkyScene
               config={config}
               anchorFractions={anchorFractions}
+              anchorEmotions={anchorEmotions}
               coveredCount={coveredCount}
               totalVerses={totalVerses}
             />

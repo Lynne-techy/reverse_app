@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { computeAnchorProgress } from "./anchorProgress";
+import { anchorIndexFor, computeAnchorProgress } from "./anchorProgress";
 
 /** 장 번호 → 절 집합 커버리지 헬퍼. */
 function coverage(entries: [number, number[]][]): Map<number, Set<number>> {
@@ -74,5 +74,26 @@ describe("computeAnchorProgress", () => {
       totalVerses: 0,
     });
     expect(computeAnchorProgress(0, [14], coverage([])).fractions).toEqual([]);
+  });
+});
+
+describe("anchorIndexFor", () => {
+  it("전역 인덱스 기준으로 (chapter, verseNo)를 앵커에 배정한다", () => {
+    // 장별 [2, 3]절, N=5 → 구간 길이 1. 2장 1절 = 전역 3번째 절 → 앵커 3.
+    expect(anchorIndexFor(5, [2, 3], 2, 1)).toBe(3);
+    expect(anchorIndexFor(5, [2, 3], 1, 1)).toBe(1);
+    expect(anchorIndexFor(5, [2, 3], 2, 3)).toBe(5);
+  });
+
+  it("경계에 걸친 절은 시작점 기준으로 배정한다", () => {
+    // T=15, N=14 → 2절은 [1, 2) 시작점 1/segLen(≈1.07) → 앵커 1.
+    expect(anchorIndexFor(14, [15], 1, 2)).toBe(1);
+  });
+
+  it("범위를 벗어나거나 절 수를 모르면 null", () => {
+    expect(anchorIndexFor(14, [], 1, 1)).toBeNull();
+    expect(anchorIndexFor(14, [10], 2, 1)).toBeNull();
+    expect(anchorIndexFor(14, [10], 1, 11)).toBeNull();
+    expect(anchorIndexFor(0, [10], 1, 1)).toBeNull();
   });
 });

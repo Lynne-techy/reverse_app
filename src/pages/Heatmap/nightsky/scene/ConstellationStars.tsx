@@ -9,7 +9,9 @@ import { useFrame } from "@react-three/fiber";
 import { Line } from "@react-three/drei";
 import * as THREE from "three";
 
+import { EMOTION_STAR_COLORS, type EmotionCode } from "../../../../data/emotions";
 import type { ConstellationConfig, AnchorNode } from "../constellations";
+import { genreGlow } from "../themes";
 
 /** 방사형 그라디언트 소프트 글로우 텍스처(별 글로우·파티클 공용). 한 번만 만들어 캐시. */
 let glowTexture: THREE.Texture | null = null;
@@ -54,11 +56,17 @@ const LIT_COLOR = new THREE.Color("#fffdf5");
 function Star({
   node,
   fraction,
+  glowColor,
+  jewel,
   reducedMotion,
 }: {
   node: AnchorNode;
   /** 이 앵커가 대표하는 구간의 채움 정도(0~1). 1이면 완성. */
   fraction: number;
+  /** 글로우·별무리 틴트 — 장르 톤, 또는 감정 보석 별이면 감정색. */
+  glowColor: string;
+  /** 감정이 큐레이션된 절이 든 "보석 별" 여부 — 글로우를 살짝 크게 특별 취급. */
+  jewel: boolean;
   reducedMotion: boolean;
 }) {
   const glowRef = useRef<THREE.Sprite>(null);
@@ -71,7 +79,7 @@ function Star({
   const tex = useMemo(getGlowTexture, []);
   // 별무리는 구간 완성의 보상 — 완성 앵커에만 두른다.
   const cluster = useMemo(() => (complete ? makeCluster(size) : null), [complete, size]);
-  const glowBase = 0.7 + size * 0.45;
+  const glowBase = (0.7 + size * 0.45) * (jewel ? 1.15 : 1);
 
   // 코어 색: 진행도에 따라 흐린 남색 → 따뜻한 흰색으로.
   const coreColor = useMemo(() => UNLIT_COLOR.clone().lerp(LIT_COLOR, fraction), [fraction]);
@@ -110,7 +118,7 @@ function Star({
         <sprite ref={glowRef}>
           <spriteMaterial
             map={tex}
-            color="#ffe7bc"
+            color={glowColor}
             transparent
             opacity={0.9 * (0.3 + 0.7 * fraction)}
             depthWrite={false}
@@ -129,7 +137,7 @@ function Star({
           <pointsMaterial
             map={tex}
             size={0.16}
-            color="#fff1cf"
+            color={glowColor}
             sizeAttenuation
             transparent
             opacity={0.7}
@@ -148,17 +156,23 @@ interface ConstellationStarsProps {
   config: ConstellationConfig;
   /** 앵커별 채움 정도(0~1). index 0 = 앵커 1 (useBookProgress.anchorFractions). */
   fractions: number[];
+  /** 앵커별 보석 별 감정색 코드(없으면 null) — useBookProgress.anchorEmotions. */
+  emotions: (EmotionCode | null)[];
   reducedMotion: boolean;
 }
 
 export default function ConstellationStars({
   config,
   fractions,
+  emotions,
   reducedMotion,
 }: ConstellationStarsProps) {
   const anchorByIndex = useMemo(() => new Map(config.anchors.map((a) => [a.index, a])), [config]);
 
+  const baseGlow = genreGlow(config.bookNo);
+
   const fractionOf = (index: number) => fractions[index - 1] ?? 0;
+  const emotionOf = (index: number) => emotions[index - 1] ?? null;
 
   const edges = config.edges.filter(([a, b]) => anchorByIndex.has(a) && anchorByIndex.has(b));
 
@@ -177,9 +191,19 @@ export default function ConstellationStars({
         />
       ))}
 
-      {config.anchors.map((a) => (
-        <Star key={a.index} node={a} fraction={fractionOf(a.index)} reducedMotion={reducedMotion} />
-      ))}
+      {config.anchors.map((a) => {
+        const emotion = emotionOf(a.index);
+        return (
+          <Star
+            key={a.index}
+            node={a}
+            fraction={fractionOf(a.index)}
+            glowColor={emotion ? EMOTION_STAR_COLORS[emotion] : baseGlow}
+            jewel={emotion !== null}
+            reducedMotion={reducedMotion}
+          />
+        );
+      })}
     </group>
   );
 }
