@@ -7,8 +7,10 @@ import { Sparkles } from "lucide-react";
 
 import Skeleton from "../../../components/Skeleton";
 import { bookName } from "../../../data/books";
+import { EMOTIONS } from "../../../data/emotions";
 import { BookCombobox } from "../../Pilsa/steps/BookCombobox";
 import { CONSTELLATIONS, getConstellation, type ConstellationConfig } from "./constellations";
+import { genreTheme } from "./themes";
 import { isWebGLAvailable } from "./webglSupport";
 import { useBookProgress } from "./useBookProgress";
 import SceneErrorBoundary from "./SceneErrorBoundary";
@@ -68,9 +70,11 @@ function ConstellationView({
   const webglOk = useMemo(() => isWebGLAvailable(), []);
 
   const SymbolIcon = config.symbol;
+  const genre = genreTheme(config.bookNo);
 
-  const jewelCount = useMemo(
-    () => anchorEmotions.filter((emotion) => emotion !== null).length,
+  // 이 경전의 보석 별에 실제로 등장하는 감정만 색 범례로 보여준다 (EMOTIONS 순서 유지).
+  const presentEmotions = useMemo(
+    () => EMOTIONS.filter((emotion) => anchorEmotions.includes(emotion.code)),
     [anchorEmotions],
   );
 
@@ -88,10 +92,19 @@ function ConstellationView({
     <div className="flex flex-col gap-3">
       {/* 범례 + 미리보기(데모) 토글 */}
       <div className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-white px-4 py-3">
-        <div className="flex items-center gap-2 text-sm text-body">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-body">
           <SymbolIcon size={20} className="flex-none text-brand" aria-hidden="true" />
           <span>
             <b className="text-ink">{config.symbolLabel}</b> · 필사한 만큼 별이 켜져요
+          </span>
+          {/* 장르 톤 — 이 경전의 별빛이 왜 이 색인지 알려준다. */}
+          <span className="inline-flex items-center gap-1.5 text-xs text-sub">
+            <span
+              aria-hidden="true"
+              className="inline-block h-2.5 w-2.5 rounded-full"
+              style={{ backgroundColor: genre.glow, boxShadow: `0 0 6px ${genre.glow}` }}
+            />
+            {genre.name} 톤
           </span>
         </div>
 
@@ -109,11 +122,24 @@ function ConstellationView({
 
       <p className="px-1 text-sm text-sub">{progressLabel}</p>
 
-      {/* 보석 별 안내 — 감정이 큐레이션된 절이 든 경전에서만 보인다. */}
-      {jewelCount > 0 && (
-        <p className="px-1 text-xs text-sub">
-          이 경전엔 감정이 담긴 절이 있어요 — 그 절이 든 별 {jewelCount}개는 감정의 빛깔로 빛나요.
-        </p>
+      {/* 보석 별 색 범례 — 감정이 큐레이션된 절이 든 경전에서만 보인다. */}
+      {presentEmotions.length > 0 && (
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 px-1 text-xs text-sub">
+          <span>감정이 담긴 절의 별은 그 감정의 빛깔로 빛나요 —</span>
+          {presentEmotions.map((emotion) => (
+            <span key={emotion.code} className="inline-flex items-center gap-1.5">
+              <span
+                aria-hidden="true"
+                className="inline-block h-2.5 w-2.5 rounded-full"
+                style={{
+                  backgroundColor: emotion.starColor,
+                  boxShadow: `0 0 6px ${emotion.starColor}`,
+                }}
+              />
+              {emotion.shortLabel}
+            </span>
+          ))}
+        </div>
       )}
 
       {webglOk ? (
