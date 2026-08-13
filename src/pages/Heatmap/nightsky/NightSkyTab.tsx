@@ -1,4 +1,5 @@
-// 밤하늘 탭 셸 (2D) — 경전 선택(BookCombobox) + 미리보기 토글 + 범례 + 3D 씬(lazy).
+// 밤하늘 탭 셸 (2D) — 범위 선택(전체 은하/경전별 별자리) + 경전 선택(BookCombobox) +
+// 미리보기 토글 + 범례 + 3D 씬(lazy).
 // ⚠️ 이 파일은 three/@react-three/*를 "정적 import 하지 않는다". 씬은 아래 lazy import로만 로드해
 //    three.js가 별도 async 청크로 분리되게 한다(메인/히트맵 번들 영향 0).
 
@@ -12,6 +13,8 @@ import { BookCombobox } from "../../Pilsa/steps/BookCombobox";
 import { CONSTELLATIONS, getConstellation, type ConstellationConfig } from "./constellations";
 import { isWebGLAvailable } from "./webglSupport";
 import { useBookProgress } from "./useBookProgress";
+import { useTotalProgress } from "./useTotalProgress";
+import { TOTAL_SKY_CONFIG, TOTAL_SKY_EMOTIONS } from "./totalSky";
 import SceneErrorBoundary from "./SceneErrorBoundary";
 import NightSkyFallback from "./NightSkyFallback";
 
@@ -30,7 +33,11 @@ const READY_BOOK_NAMES =
 /** 첫 화면에 보여줄 경전 = 별자리가 준비된 경전 중 정경 순서가 가장 빠른 것. */
 const DEFAULT_BOOK_NO = Math.min(...Object.keys(CONSTELLATIONS).map(Number));
 
+/** 밤하늘 범위 — 전체(66권 은하) 또는 경전별 별자리. */
+type SkyScope = "total" | "book";
+
 export default function NightSkyTab() {
+  const [scope, setScope] = useState<SkyScope>("total");
   const [bookNo, setBookNo] = useState(DEFAULT_BOOK_NO);
   const [demo, setDemo] = useState(false);
 
@@ -38,17 +45,146 @@ export default function NightSkyTab() {
 
   return (
     <div className="mt-4 flex flex-col gap-4">
-      {/* 경전 선택 */}
+      {/* 범위 선택: 전체(66권) / 경전별 */}
       <div className="rounded-2xl border border-border bg-white p-5">
-        <div className="text-base font-bold text-brand">경전 선택</div>
-        <p className="mt-1 text-sm text-sub">지금은 {READY_BOOK_NAMES}의 밤하늘이 준비돼 있어요.</p>
-        <BookCombobox bookNo={bookNo} setBookNo={setBookNo} />
+        <div className="text-base font-bold text-brand">밤하늘 선택</div>
+
+        <div role="group" aria-label="밤하늘 범위" className="mt-3 flex gap-2">
+          <ScopeButton active={scope === "total"} onClick={() => setScope("total")}>
+            전체
+          </ScopeButton>
+          <ScopeButton active={scope === "book"} onClick={() => setScope("book")}>
+            경전별
+          </ScopeButton>
+        </div>
+
+        {scope === "total" ? (
+          <p className="mt-3 text-sm text-sub">
+            성경 전체(66권)의 진척이 별 100개의 은하로 차올라요 — 별 하나가 전체의 1%예요.
+          </p>
+        ) : (
+          <>
+            <p className="mt-3 text-sm text-sub">
+              지금은 {READY_BOOK_NAMES}의 밤하늘이 준비돼 있어요.
+            </p>
+            <BookCombobox bookNo={bookNo} setBookNo={setBookNo} />
+          </>
+        )}
       </div>
 
-      {config ? (
+      {scope === "total" ? (
+        <TotalSkyView demo={demo} setDemo={setDemo} />
+      ) : config ? (
         <ConstellationView config={config} demo={demo} setDemo={setDemo} />
       ) : (
         <ComingSoon bookName={bookName(bookNo)} />
+      )}
+    </div>
+  );
+}
+
+/** 범위 선택 버튼 — HeatmapPage 탭 스위처와 같은 시각 언어. */
+function ScopeButton({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      onClick={onClick}
+      className={`rounded-xl border-2 px-4 py-2 text-sm font-bold transition ${
+        active ? "border-brand bg-primary-soft text-brand" : "border-border bg-white text-ink"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+/** 미리보기(완성형 데모) 토글 — 전체/경전별 뷰가 공유한다. */
+function DemoToggle({
+  demo,
+  setDemo,
+}: {
+  demo: boolean;
+  setDemo: (updater: (prev: boolean) => boolean) => void;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={demo}
+      onClick={() => setDemo((prev) => !prev)}
+      className={`flex-none rounded-full border-2 px-3 py-1.5 text-sm font-semibold transition ${
+        demo ? "border-brand bg-primary-soft text-brand" : "border-border bg-white text-sub"
+      }`}
+    >
+      미리보기
+    </button>
+  );
+}
+
+/** 전체(66권) 뷰 — 성경 전체 진척을 100노드 은하로. 진행도 훅은 여기서만 실행된다. */
+function TotalSkyView({
+  demo,
+  setDemo,
+}: {
+  demo: boolean;
+  setDemo: (updater: (prev: boolean) => boolean) => void;
+}) {
+  const { anchorFractions, coveredCount, totalVerses, isError } = useTotalProgress(demo);
+  const webglOk = useMemo(() => isWebGLAvailable(), []);
+
+  const SymbolIcon = TOTAL_SKY_CONFIG.symbol;
+
+  return (
+    <div className="flex flex-col gap-3">
+      {/* 범례 + 미리보기(데모) 토글 */}
+      <div className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-white px-4 py-3">
+        <div className="flex items-center gap-2 text-sm text-body">
+          <SymbolIcon size={20} className="flex-none text-brand" aria-hidden="true" />
+          <span>
+            <b className="text-ink">{TOTAL_SKY_CONFIG.symbolLabel}</b> · 필사한 만큼 은하가 차올라요
+          </span>
+        </div>
+
+        <DemoToggle demo={demo} setDemo={setDemo} />
+      </div>
+
+      {/* 진행도 숫자는 씬(NightSkyScene) 하단 오버레이에서 보여준다 — 여기선 실패했을 때만 알린다. */}
+      {isError && !demo && <p className="px-1 text-sm text-sub">진행도를 불러오지 못했어요</p>}
+
+      {webglOk ? (
+        <SceneErrorBoundary
+          fallback={
+            <NightSkyFallback
+              config={TOTAL_SKY_CONFIG}
+              coveredCount={coveredCount}
+              totalVerses={totalVerses}
+            />
+          }
+        >
+          <Suspense fallback={<Skeleton height="70vh" radius={16} />}>
+            <NightSkyScene
+              config={TOTAL_SKY_CONFIG}
+              anchorFractions={anchorFractions}
+              anchorEmotions={TOTAL_SKY_EMOTIONS}
+              coveredCount={coveredCount}
+              totalVerses={totalVerses}
+            />
+          </Suspense>
+        </SceneErrorBoundary>
+      ) : (
+        <NightSkyFallback
+          config={TOTAL_SKY_CONFIG}
+          coveredCount={coveredCount}
+          totalVerses={totalVerses}
+        />
       )}
     </div>
   );
@@ -90,16 +226,7 @@ function ConstellationView({
           </span>
         </div>
 
-        <button
-          type="button"
-          aria-pressed={demo}
-          onClick={() => setDemo((prev) => !prev)}
-          className={`flex-none rounded-full border-2 px-3 py-1.5 text-sm font-semibold transition ${
-            demo ? "border-brand bg-primary-soft text-brand" : "border-border bg-white text-sub"
-          }`}
-        >
-          미리보기
-        </button>
+        <DemoToggle demo={demo} setDemo={setDemo} />
       </div>
 
       {/* 진행도 숫자는 씬(NightSkyScene) 하단 오버레이에서 보여준다 — 여기선 실패했을 때만 알린다. */}

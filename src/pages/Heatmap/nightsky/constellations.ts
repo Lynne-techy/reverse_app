@@ -95,6 +95,8 @@ export interface ConstellationConfig {
   /** 경전 상징 아이콘(범례·플레이스홀더용). */
   symbol: LucideIcon;
   symbolLabel: string;
+  /** 씬 좌상단 캡션 오버라이드 — 없으면 "{symbolLabel} 별자리"로 표기. */
+  caption?: string;
   /** 별자리 뒤에 은은히 떠 있는 대표 문구. */
   phrase: { ref: string; text: string };
   anchors: AnchorNode[];
