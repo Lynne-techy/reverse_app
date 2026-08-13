@@ -27,9 +27,12 @@ export default function NightSkyFallback({
         — {config.phrase.ref}
       </p>
 
-      <p className="mt-6 text-sm text-white/60">
-        {coveredCount}/{totalVerses}절 · 3D를 표시할 수 없어 간단 화면으로 보여드려요
-      </p>
+      {totalVerses > 0 && (
+        <p className="mt-6 text-sm font-semibold tabular-nums tracking-wide text-white/60">
+          {coveredCount}/{totalVerses} · {Math.round((coveredCount / totalVerses) * 100)}%
+        </p>
+      )}
+      <p className="mt-2 text-xs text-white/45">3D를 표시할 수 없어 간단 화면으로 보여드려요</p>
     </div>
   );
 }

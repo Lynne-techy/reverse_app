@@ -43,6 +43,7 @@ export default function NightSkyScene({
 }: NightSkySceneProps) {
   const reducedMotion = usePrefersReducedMotion();
   const frameloop: "always" | "demand" = reducedMotion ? "demand" : "always";
+  const percent = totalVerses > 0 ? Math.round((coveredCount / totalVerses) * 100) : 0;
 
   return (
     <div className="relative h-[70vh] min-h-[420px] w-full overflow-hidden rounded-2xl bg-[#070a1a]">
@@ -81,8 +82,14 @@ export default function NightSkyScene({
         {config.symbolLabel} 별자리
       </div>
 
-      {/* 대표 문구 — 별자리 밑에 은은히 떠 있는 오버레이 */}
+      {/* 대표 문구 + 진행도 — 별자리 밑에 은은히 떠 있는 오버레이 */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#070a1a] via-[#070a1a]/70 to-transparent px-6 pb-6 pt-16 text-center">
+        {/* 진행도는 문장 없이 분수·퍼센트 숫자로만 (로딩·실패로 절 수를 모르면 숨긴다) */}
+        {totalVerses > 0 && (
+          <p className="mb-3 text-sm font-semibold tabular-nums tracking-wide text-white/70">
+            {coveredCount}/{totalVerses} · {percent}%
+          </p>
+        )}
         <p className="mx-auto max-w-md text-[15px] font-medium leading-7 text-white/85">
           “{config.phrase.text}”
         </p>

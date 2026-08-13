@@ -64,8 +64,11 @@ function ConstellationView({
   demo: boolean;
   setDemo: (updater: (prev: boolean) => boolean) => void;
 }) {
-  const { anchorFractions, anchorEmotions, coveredCount, totalVerses, isLoading, isError } =
-    useBookProgress(config.bookNo, config.anchors.length, demo);
+  const { anchorFractions, anchorEmotions, coveredCount, totalVerses, isError } = useBookProgress(
+    config.bookNo,
+    config.anchors.length,
+    demo,
+  );
   const webglOk = useMemo(() => isWebGLAvailable(), []);
 
   const SymbolIcon = config.symbol;
@@ -75,16 +78,6 @@ function ConstellationView({
     () => EMOTIONS.filter((emotion) => anchorEmotions.includes(emotion.code)),
     [anchorEmotions],
   );
-
-  const percent = totalVerses > 0 ? Math.round((coveredCount / totalVerses) * 100) : 0;
-
-  const progressLabel = demo
-    ? "완성형 미리보기"
-    : isError
-      ? "진행도를 불러오지 못했어요"
-      : isLoading
-        ? "진행도 불러오는 중…"
-        : `${coveredCount}/${totalVerses}절 필사 완료 · ${percent}%`;
 
   return (
     <div className="flex flex-col gap-3">
@@ -109,7 +102,8 @@ function ConstellationView({
         </button>
       </div>
 
-      <p className="px-1 text-sm text-sub">{progressLabel}</p>
+      {/* 진행도 숫자는 씬(NightSkyScene) 하단 오버레이에서 보여준다 — 여기선 실패했을 때만 알린다. */}
+      {isError && !demo && <p className="px-1 text-sm text-sub">진행도를 불러오지 못했어요</p>}
 
       {/* 보석 별 색 범례 — 감정이 큐레이션된 절이 든 경전에서만 보인다. */}
       {presentEmotions.length > 0 && (

@@ -71,7 +71,7 @@ function HeatmapPage() {
         <p className="app-page__description">최근 1년간 하루하루 채워온 기록이에요.</p>
       </section>
 
-      {/* 탭 스위처: 기록(잔디) / 밤하늘(3D 별자리) */}
+      {/* 탭 스위처: 잔디 / 밤하늘(3D 별자리) */}
       <div role="tablist" aria-label="기록 보기 방식" className="mt-6 flex gap-2">
         <button
           type="button"
@@ -86,7 +86,7 @@ function HeatmapPage() {
               : "border-border bg-white text-ink"
           }`}
         >
-          기록
+          잔디
         </button>
         <button
           type="button"
