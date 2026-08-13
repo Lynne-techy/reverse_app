@@ -13,6 +13,7 @@ import { BookCombobox } from "../../Pilsa/steps/BookCombobox";
 import { CONSTELLATIONS, getConstellation, type ConstellationConfig } from "./constellations";
 import { isWebGLAvailable } from "./webglSupport";
 import { useBookProgress } from "./useBookProgress";
+import { useKeyVerse } from "./useKeyVerse";
 import { useTotalProgress } from "./useTotalProgress";
 import { TOTAL_SKY_CONFIG, TOTAL_SKY_EMOTIONS } from "./totalSky";
 import SceneErrorBoundary from "./SceneErrorBoundary";
@@ -205,9 +206,25 @@ function ConstellationView({
     config.anchors.length,
     demo,
   );
+  const keyVerse = useKeyVerse(config.bookNo);
   const webglOk = useMemo(() => isWebGLAvailable(), []);
 
   const SymbolIcon = config.symbol;
+
+  // 유저가 필사하며 고른 대표절이 있으면 고정 대표 문구 대신 그 절을 띄운다 — "나의 밤하늘"답게.
+  const displayConfig = useMemo(
+    () =>
+      keyVerse
+        ? {
+            ...config,
+            phrase: {
+              ref: `${keyVerse.bookName} ${keyVerse.chapter}:${keyVerse.verseNo}`,
+              text: keyVerse.text,
+            },
+          }
+        : config,
+    [config, keyVerse],
+  );
 
   // 이 경전의 보석 별에 실제로 등장하는 감정만 색 범례로 보여준다 (EMOTIONS 순서 유지).
   const presentEmotions = useMemo(
@@ -256,7 +273,7 @@ function ConstellationView({
         <SceneErrorBoundary
           fallback={
             <NightSkyFallback
-              config={config}
+              config={displayConfig}
               coveredCount={coveredCount}
               totalVerses={totalVerses}
             />
@@ -264,7 +281,7 @@ function ConstellationView({
         >
           <Suspense fallback={<Skeleton height="70vh" radius={16} />}>
             <NightSkyScene
-              config={config}
+              config={displayConfig}
               anchorFractions={anchorFractions}
               anchorEmotions={anchorEmotions}
               coveredCount={coveredCount}
@@ -273,7 +290,11 @@ function ConstellationView({
           </Suspense>
         </SceneErrorBoundary>
       ) : (
-        <NightSkyFallback config={config} coveredCount={coveredCount} totalVerses={totalVerses} />
+        <NightSkyFallback
+          config={displayConfig}
+          coveredCount={coveredCount}
+          totalVerses={totalVerses}
+        />
       )}
     </div>
   );
