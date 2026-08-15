@@ -13,10 +13,7 @@ import TodayVerse from "../../components/TodayVerse";
 import { getActivity, getMyStatistics } from "../../api/stats";
 import { getMyProfile, getUserProgress } from "../../api/users";
 import { getTodayVerse } from "../../api/verses";
-import {
-  getRecentMeditationCount,
-  getRecentWritingRecords,
-} from "../../api/writingSessions";
+import { getRecentMeditationCount, getRecentWritingRecords } from "../../api/writingSessions";
 
 import "./MainPage.css";
 
@@ -46,9 +43,22 @@ function getActivityDateRange() {
    신규 가입 축하 폭죽 (Fireworks)
 ───────────────────────────────────── */
 
-const FIREWORK_COLORS = ["#ffd93d", "#ff6b6b", "#6bc7ef", "#8d69cc", "#61b7aa"];
+const FIREWORK_COLORS = [
+  "#ff3b30",
+  "#ff9500",
+  "#ffd60a",
+  "#34c759",
+  "#00c7be",
+  "#32ade6",
+  "#0a84ff",
+  "#5856d6",
+  "#af52de",
+  "#ff2d55",
+  "#ff375f",
+  "#64d2ff",
+];
 
-const FIREWORK_AUTO_HIDE_MS = 4000;
+const FIREWORK_AUTO_HIDE_MS = 6500;
 
 interface FireworkParticle {
   id: number;
@@ -65,11 +75,11 @@ interface FireworkBurst {
   particles: FireworkParticle[];
 }
 
-/** 폭죽 한 다발(burst)의 파티클(불꽃 조각)들을 방사형으로 배치한다. */
+/** 폭죽 한 다발(burst)의 파티클(불꽃 조각)들을 넓고 촘촘하게 방사형으로 배치한다. */
 function createParticles(count: number): FireworkParticle[] {
   return Array.from({ length: count }).map((_, i) => {
     const angle = (i / count) * 2 * Math.PI;
-    const distance = 70 + Math.random() * 40;
+    const distance = 145 + Math.random() * 115;
 
     return {
       id: i,
@@ -80,25 +90,24 @@ function createParticles(count: number): FireworkParticle[] {
   });
 }
 
-/** 화면 여러 지점에서 순차적으로 터지는 폭죽 다발들. 모듈 로드 시 1회만 계산된다. */
+/** 화면 여러 지점에서 시간차를 두고 크게 터지는 폭죽 다발들. 모듈 로드 시 1회만 계산된다. */
 const FIREWORK_BURSTS: FireworkBurst[] = [
-  { id: 0, top: "28%", left: "22%", delay: "0s" },
-  { id: 1, top: "18%", left: "72%", delay: "0.25s" },
-  { id: 2, top: "55%", left: "50%", delay: "0.5s" },
-  { id: 3, top: "65%", left: "20%", delay: "0.75s" },
-  { id: 4, top: "38%", left: "82%", delay: "1s" },
-].map((burst) => ({ ...burst, particles: createParticles(12) }));
+  { id: 0, top: "25%", left: "18%", delay: "0s" },
+  { id: 1, top: "17%", left: "50%", delay: "0.45s" },
+  { id: 2, top: "24%", left: "82%", delay: "0.9s" },
+  { id: 3, top: "50%", left: "34%", delay: "1.35s" },
+  { id: 4, top: "47%", left: "68%", delay: "1.8s" },
+  { id: 5, top: "67%", left: "18%", delay: "2.2s" },
+  { id: 6, top: "64%", left: "50%", delay: "2.6s" },
+  { id: 7, top: "68%", left: "82%", delay: "3s" },
+].map((burst) => ({ ...burst, particles: createParticles(28) }));
 
 /** 신규 가입 축하 폭죽 오버레이. 전체 화면을 덮으며 클릭을 막지 않는다. */
 function Fireworks() {
   return (
     <div className="welcome-fireworks" aria-hidden="true">
       {FIREWORK_BURSTS.map((burst) => (
-        <div
-          key={burst.id}
-          className="firework-burst"
-          style={{ top: burst.top, left: burst.left }}
-        >
+        <div key={burst.id} className="firework-burst" style={{ top: burst.top, left: burst.left }}>
           {burst.particles.map((particle) => (
             <span
               key={particle.id}
@@ -125,15 +134,7 @@ function MainPage() {
   const today = formatLocalDate(new Date());
   const { from, to } = getActivityDateRange();
 
-  const [
-    profileQ,
-    verseQ,
-    progressQ,
-    statsQ,
-    activityQ,
-    recordsQ,
-    meditationCountQ,
-  ] = useQueries({
+  const [profileQ, verseQ, progressQ, statsQ, activityQ, recordsQ, meditationCountQ] = useQueries({
     queries: [
       { queryKey: ["profile"], queryFn: getMyProfile },
       { queryKey: ["todayVerse", today], queryFn: () => getTodayVerse(today) },
@@ -178,9 +179,7 @@ function MainPage() {
     meditationCountQ.isError && "최근 기록 통계",
   ].filter(Boolean) as string[];
 
-  const errorMessage = failed.length
-    ? `${failed.join(", ")} 데이터를 불러오지 못했습니다.`
-    : "";
+  const errorMessage = failed.length ? `${failed.join(", ")} 데이터를 불러오지 못했습니다.` : "";
 
   return (
     <main className="home-page">
@@ -201,11 +200,7 @@ function MainPage() {
           <p className="home-hero__description">오늘도 한 글자씩, 만나러 가볼까요.</p>
         </div>
 
-        <button
-          type="button"
-          onClick={() => navigate("/pilsa")}
-          className="home-primary-button"
-        >
+        <button type="button" onClick={() => navigate("/pilsa")} className="home-primary-button">
           <span aria-hidden="true">✎</span>
           오늘 필사 시작
         </button>
@@ -220,15 +215,9 @@ function MainPage() {
       <TodayVerse verse={verseQ.data ?? null} isLoading={verseQ.isPending} />
 
       <div className="home-summary-grid">
-        <ProgressCard
-          progress={progressQ.data ?? null}
-          isLoading={progressQ.isPending}
-        />
+        <ProgressCard progress={progressQ.data ?? null} isLoading={progressQ.isPending} />
 
-        <StreakCard
-          statistics={statsQ.data ?? null}
-          isLoading={statsQ.isPending}
-        />
+        <StreakCard statistics={statsQ.data ?? null} isLoading={statsQ.isPending} />
 
         <CompletedCard
           meditationCount={meditationCountQ.data ?? null}
@@ -237,15 +226,9 @@ function MainPage() {
       </div>
 
       <div className="home-dashboard-grid">
-        <ContributionGraph
-          activity={activityQ.data ?? []}
-          isLoading={activityQ.isPending}
-        />
+        <ContributionGraph activity={activityQ.data ?? []} isLoading={activityQ.isPending} />
 
-        <RecentRecords
-          records={recordsQ.data ?? []}
-          isLoading={recordsQ.isPending}
-        />
+        <RecentRecords records={recordsQ.data ?? []} isLoading={recordsQ.isPending} />
       </div>
     </main>
   );
