@@ -9,6 +9,7 @@ export interface UserProfile {
   displayName: string | null;
   avatarUrl: string | null;
   language: "ko" | "en";
+  isNewUser: boolean;
   createdAt: string;
   updatedAt: string;
 }

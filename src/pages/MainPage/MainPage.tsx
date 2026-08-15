@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useQueries } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
@@ -41,6 +42,84 @@ function getActivityDateRange() {
   };
 }
 
+/* ─────────────────────────────────────
+   신규 가입 축하 폭죽 (Fireworks)
+───────────────────────────────────── */
+
+const FIREWORK_COLORS = ["#ffd93d", "#ff6b6b", "#6bc7ef", "#8d69cc", "#61b7aa"];
+
+const FIREWORK_AUTO_HIDE_MS = 4000;
+
+interface FireworkParticle {
+  id: number;
+  x: number;
+  y: number;
+  color: string;
+}
+
+interface FireworkBurst {
+  id: number;
+  top: string;
+  left: string;
+  delay: string;
+  particles: FireworkParticle[];
+}
+
+/** 폭죽 한 다발(burst)의 파티클(불꽃 조각)들을 방사형으로 배치한다. */
+function createParticles(count: number): FireworkParticle[] {
+  return Array.from({ length: count }).map((_, i) => {
+    const angle = (i / count) * 2 * Math.PI;
+    const distance = 70 + Math.random() * 40;
+
+    return {
+      id: i,
+      x: Math.cos(angle) * distance,
+      y: Math.sin(angle) * distance,
+      color: FIREWORK_COLORS[i % FIREWORK_COLORS.length],
+    };
+  });
+}
+
+/** 화면 여러 지점에서 순차적으로 터지는 폭죽 다발들. 모듈 로드 시 1회만 계산된다. */
+const FIREWORK_BURSTS: FireworkBurst[] = [
+  { id: 0, top: "28%", left: "22%", delay: "0s" },
+  { id: 1, top: "18%", left: "72%", delay: "0.25s" },
+  { id: 2, top: "55%", left: "50%", delay: "0.5s" },
+  { id: 3, top: "65%", left: "20%", delay: "0.75s" },
+  { id: 4, top: "38%", left: "82%", delay: "1s" },
+].map((burst) => ({ ...burst, particles: createParticles(12) }));
+
+/** 신규 가입 축하 폭죽 오버레이. 전체 화면을 덮으며 클릭을 막지 않는다. */
+function Fireworks() {
+  return (
+    <div className="welcome-fireworks" aria-hidden="true">
+      {FIREWORK_BURSTS.map((burst) => (
+        <div
+          key={burst.id}
+          className="firework-burst"
+          style={{ top: burst.top, left: burst.left }}
+        >
+          {burst.particles.map((particle) => (
+            <span
+              key={particle.id}
+              className="firework-particle"
+              style={
+                {
+                  "--x": `${particle.x}px`,
+                  "--y": `${particle.y}px`,
+                  animationDelay: burst.delay,
+                  background: particle.color,
+                  color: particle.color,
+                } as React.CSSProperties
+              }
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function MainPage() {
   const navigate = useNavigate();
   const today = formatLocalDate(new Date());
@@ -71,6 +150,24 @@ function MainPage() {
 
   const userName = profileQ.data?.displayName || "사용자";
 
+  // undefined(로딩 중)와 false(기존 사용자)를 모두 "폭죽 없음"으로 취급한다.
+  // === true 로 명시해야 데이터가 오기 전에 잘못된 분기로 새지 않는다.
+  const isNewUser = profileQ.data?.isNewUser === true;
+
+  const [showFireworks, setShowFireworks] = useState(false);
+
+  useEffect(() => {
+    if (!isNewUser) return;
+
+    setShowFireworks(true);
+
+    const timer = setTimeout(() => {
+      setShowFireworks(false);
+    }, FIREWORK_AUTO_HIDE_MS);
+
+    return () => clearTimeout(timer);
+  }, [isNewUser]);
+
   const failed = [
     profileQ.isError && "사용자 정보",
     verseQ.isError && "오늘의 말씀",
@@ -87,6 +184,8 @@ function MainPage() {
 
   return (
     <main className="home-page">
+      {showFireworks && <Fireworks />}
+
       <section className="home-hero">
         <div className="home-hero__copy">
           <h1 className="home-hero__title">
