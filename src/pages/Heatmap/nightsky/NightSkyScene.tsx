@@ -7,6 +7,7 @@ import { OrbitControls } from "@react-three/drei";
 
 import type { EmotionCode } from "../../../data/emotions";
 import type { ConstellationConfig } from "./constellations";
+import { formatPercent } from "./formatPercent";
 import Nebula from "./scene/Nebula";
 import ConstellationStars from "./scene/ConstellationStars";
 
@@ -78,11 +79,17 @@ export default function NightSkyScene({
 
       {/* 별자리 이름 캡션 — 무엇을 그린 형태인지 한눈에 알려준다. */}
       <div className="pointer-events-none absolute left-4 top-4 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold tracking-wide text-white/75 backdrop-blur-sm">
-        {config.symbolLabel} 별자리
+        {config.caption ?? `${config.symbolLabel} 별자리`}
       </div>
 
-      {/* 대표 문구 — 별자리 밑에 은은히 떠 있는 오버레이 */}
+      {/* 대표 문구 + 진행도 — 별자리 밑에 은은히 떠 있는 오버레이 */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#070a1a] via-[#070a1a]/70 to-transparent px-6 pb-6 pt-16 text-center">
+        {/* 진행도는 문장 없이 분수·퍼센트 숫자로만 (로딩·실패로 절 수를 모르면 숨긴다) */}
+        {totalVerses > 0 && (
+          <p className="mb-3 text-sm font-semibold tabular-nums tracking-wide text-white/70">
+            {coveredCount}/{totalVerses} · {formatPercent(coveredCount, totalVerses)}%
+          </p>
+        )}
         <p className="mx-auto max-w-md text-[15px] font-medium leading-7 text-white/85">
           “{config.phrase.text}”
         </p>

@@ -1,6 +1,7 @@
 // WebGL 불가/씬 예외 시 보여줄 2D 폴백 — three 없이 심볼 아이콘 + 대표 문구만.
 
 import type { ConstellationConfig } from "./constellations";
+import { formatPercent } from "./formatPercent";
 
 interface NightSkyFallbackProps {
   config: ConstellationConfig;
@@ -27,9 +28,12 @@ export default function NightSkyFallback({
         — {config.phrase.ref}
       </p>
 
-      <p className="mt-6 text-sm text-white/60">
-        {coveredCount}/{totalVerses}절 · 3D를 표시할 수 없어 간단 화면으로 보여드려요
-      </p>
+      {totalVerses > 0 && (
+        <p className="mt-6 text-sm font-semibold tabular-nums tracking-wide text-white/60">
+          {coveredCount}/{totalVerses} · {formatPercent(coveredCount, totalVerses)}%
+        </p>
+      )}
+      <p className="mt-2 text-xs text-white/45">3D를 표시할 수 없어 간단 화면으로 보여드려요</p>
     </div>
   );
 }
