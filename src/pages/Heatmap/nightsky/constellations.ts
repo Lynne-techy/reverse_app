@@ -89,8 +89,11 @@ export interface AnchorNode {
   size?: number;
 }
 
-export interface ConstellationConfig {
-  bookNo: number;
+/**
+ * 밤하늘 한 화면의 "이름표" — 캡션·상징·대표 문구.
+ * 별자리(경전별)와 은하(전체)가 같은 씬 셸(NightSkyScene)·폴백을 공유하기 위한 공통 부분이다.
+ */
+export interface SkyMeta {
   bookName: string;
   /** 경전 상징 아이콘(범례·플레이스홀더용). */
   symbol: LucideIcon;
@@ -99,6 +102,10 @@ export interface ConstellationConfig {
   caption?: string;
   /** 별자리 뒤에 은은히 떠 있는 대표 문구. */
   phrase: { ref: string; text: string };
+}
+
+export interface ConstellationConfig extends SkyMeta {
+  bookNo: number;
   anchors: AnchorNode[];
   /** 앵커를 잇는 선(index 쌍). 미완성 상태에서도 형태가 읽히도록 상시 은은히 표시. */
   edges: [number, number][];

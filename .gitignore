@@ -43,6 +43,9 @@ pnpm-debug.log*
 # design reference dumps (external, ~200MB)
 docs/design_mds/
 
+# 밤하늘 렌더 확인용 스크린샷 덤프 (로컬 전용)
+.preview/
+
 # throwaway figma debug screenshots
 docs/figmatest*.png
 docs/figmatest*.PNG

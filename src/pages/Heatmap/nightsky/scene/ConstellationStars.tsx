@@ -11,32 +11,7 @@ import * as THREE from "three";
 
 import { EMOTION_STAR_COLORS, type EmotionCode } from "../../../../data/emotions";
 import type { ConstellationConfig, AnchorNode } from "../constellations";
-
-/**
- * 방사형 그라디언트 소프트 글로우 텍스처(별 글로우·파티클 공용). 한 번만 만들어 캐시.
- * ⚠️ 반드시 무채색(흰색)으로 굽는다 — 색은 material color(장르 틴트/감정색)가 입힌다.
- * 텍스처에 색을 구우면 곱연산 때문에 모든 별이 그 색 기운(과거: 주황)으로 쏠린다.
- */
-let glowTexture: THREE.Texture | null = null;
-function getGlowTexture(): THREE.Texture {
-  if (glowTexture) return glowTexture;
-  const size = 128;
-  const canvas = document.createElement("canvas");
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext("2d")!;
-  const grad = ctx.createRadialGradient(size / 2, size / 2, 0, size / 2, size / 2, size / 2);
-  grad.addColorStop(0, "rgba(255,255,255,1)");
-  grad.addColorStop(0.18, "rgba(255,255,255,0.6)");
-  grad.addColorStop(0.45, "rgba(255,255,255,0.2)");
-  grad.addColorStop(1, "rgba(255,255,255,0)");
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, size, size);
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.needsUpdate = true;
-  glowTexture = tex;
-  return tex;
-}
+import { getGlowTexture } from "./glowTexture";
 
 /** 별 주변 별무리 파티클 좌표(중심에 몰리도록 분포). */
 function makeCluster(size: number, count = 30): Float32Array {

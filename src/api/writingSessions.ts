@@ -58,6 +58,31 @@ export function getBookProgress(book: number, signal?: AbortSignal) {
   });
 }
 
+/** 목록 API 한 페이지 최대 개수(백엔드 MAX_LIST_LIMIT). */
+const LIST_PAGE_SIZE = 50;
+/**
+ * 전량 조회 상한 — 하루 몇 건 페이스로 몇 년 치를 덮는 크기.
+ * 상한에 걸리면 오래된 기록이 빠지지만, 이 데이터를 쓰는 곳(밤하늘 카테고리 색)은
+ * 장식 레이어라 화면에 크게 뜨는 진척 수치(서버 집계)와는 무관하다.
+ */
+const LIST_MAX_PAGES = 30;
+
+/**
+ * 내 필사 기록 전량(최신순). 백엔드가 통과(passed=true)한 세션만 주므로
+ * 그대로 "필사한 범위"로 쓸 수 있다 — 밤하늘 은하의 권별/카테고리별 진행도 계산 입력.
+ */
+export async function getAllWritingRecords(signal?: AbortSignal): Promise<WritingRecord[]> {
+  const all: WritingRecord[] = [];
+
+  for (let page = 0; page < LIST_MAX_PAGES; page++) {
+    const records = await getWritingRecordsPage(LIST_PAGE_SIZE, page * LIST_PAGE_SIZE, signal);
+    all.push(...records);
+    if (records.length < LIST_PAGE_SIZE) break; // 마지막 페이지
+  }
+
+  return all;
+}
+
 function formatLocalDate(date: Date): string {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0");
